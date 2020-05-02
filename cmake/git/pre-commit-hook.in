@@ -1,0 +1,105 @@
+#!/bin/bash
+
+<<COMMENT
+
+\file pre-commit-hook.in
+
+\author Boubacar DIENE <boubacar.diene@gmail.com>
+\date   April 2020
+
+\brief  A template file from which CMake generates the pre-commit
+        git hook.
+
+        The goal of the script is always make sure the *.h, *.cpp
+        and *.hpp source files being commited are:
+
+        - Well-formatted respecting rules defined in .clang-format
+        - able to successfully pass the static analysis and linting
+          performed by clang-tidy based on .clang-tidy config file
+
+\note  clang-format and clang-tidy 10 are required
+
+COMMENT
+
+# Function to print given message then exit
+# Expects: The log message to print
+function error()
+{
+    echo -e "$1"
+    exit 1
+}
+
+# If neither clang-format 10 nor clang-tidy 10 are available then
+# there's nothing to do
+clangFormat10Found=`clang-format --version | grep 'clang-format version 10\.0'`
+clangTidy10Found=`clang-tidy --version | grep 'LLVM version 10\.0'`
+
+if [[ ! $clangFormat10Found && ! $clangTidy10Found ]]; then
+    exit 0
+fi
+
+# Root directory is where the .git directory can be found.
+# ${CMAKE_SOURCE_DIR} could be used but commiting usually
+# occur outside docker container
+ROOT_DIRECTORY=`git rev-parse --show-toplevel`
+
+# Build directory is where "cmake" is run
+#
+# What the following statement does is to set the full path
+# to the build directory by supposing that the build directory
+# is aside .git/ directory
+BUILD_DIRECTORY=$ROOT_DIRECTORY/`basename @CMAKE_BINARY_DIR@`
+
+# Make sure the configuration files exist
+test -e $ROOT_DIRECTORY/.clang-format || error ".clang-format not found"
+test -e $ROOT_DIRECTORY/.clang-tidy || error ".clang-tidy not found"
+
+# Make sure the build directory exists
+test -e $BUILD_DIRECTORY || error "$BUILD_DIRECTORY not found"
+
+# Build is performed inside docker container so we need to update
+# paths in compile_commands.json file oherwise clang-tidy can't
+# deal with it and will return "Compile command not found"
+cp $BUILD_DIRECTORY/compile_commands.json \
+    $BUILD_DIRECTORY/compile_commands.json.bk
+
+sed -i "s|@CMAKE_SOURCE_DIR@|$ROOT_DIRECTORY|g" \
+    $BUILD_DIRECTORY/compile_commands.json
+
+# Get the list of staged files
+STAGED_FILES=`git diff --cached --name-only --diff-filter=ACMR`
+
+for stagedFile in $STAGED_FILES; do
+    for ext in cpp h hpp; do
+        if [[ "$stagedFile" == *.$ext ]]; then
+            # Some staged files can be partially staged i.e some new changes in
+            # the same file not "git added" yet
+            #
+            # static anlysis and linting are performed in all cases
+            clang-tidy $stagedFile -p $NEW_PATH_TO_COMPILE_COMMANDS
+
+            if [[ `git diff --name-only "$stagedFile"` == "$stagedFile" ]]; then
+                # Partially staged file
+                #
+                # Run clang-format without editing the file to avoid impacting
+                # current user's work. Just show him there are some formatting
+                # to do
+                clang-format -style=file -fallback-style=none $stagedFile
+            else
+                # Fully staged file
+                #
+                # Run clang-format and edit the file when necessary then stage
+                # the updated file again
+                clang-format -i -style=file -fallback-style=none $stagedFile
+                git add $stagedFile
+            fi
+            break;
+        fi
+    done
+done
+
+# Restore originalcompile_commands.json file
+mv $BUILD_DIRECTORY/compile_commands.json.bk \
+    $BUILD_DIRECTORY/compile_commands.json
+
+exit 0
