@@ -34,7 +34,9 @@ public:
         const std::vector<std::string>& interfaceCommands) const override;
 
     void applyLayerCommands(
-        const std::map<std::string, std::string>& layerCommands) const override;
+        const std::vector<
+            service::plugins::config::ConfigData::Network::LayerCommand>&
+            layerCommands) const override;
 
 private:
     struct Internal;

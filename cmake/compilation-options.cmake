@@ -24,7 +24,7 @@
 ##
 
 #################################################################
-#                         CMake's stuffs                        #
+#                        CMake's stuffs                         #
 #################################################################
 
 # Set "CMAKE_EXPORT_COMPILE_COMMANDS" to "ON" to ask CMake provide
@@ -33,7 +33,7 @@
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #################################################################
-#                            Language                           #
+#                           Language                            #
 #################################################################
 
 # -std=c++<version> instead of -std=gnu++<version>
@@ -42,7 +42,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 #################################################################
-#                       Compilation options                     #
+#                      Compilation options                      #
 #################################################################
 
 # Common flags
@@ -114,11 +114,9 @@ endif()
 # These options are used when compiling targets from the current
 # directory and below. COMPILE_OPTIONS is the list of options to
 # pass to the compiler
-#
 add_compile_options(${CFLAGS_OPTIONS})
 
 # Add options to the link step for executable, shared library or
 # module library targets in the current directory and below that
 # are added after this command is invoked
-#
 add_link_options(${LDFLAGS_OPTIONS})

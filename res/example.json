@@ -3,39 +3,39 @@
         "interfaceNames": ["lo"],
 
         "interfaceCommands": [
-	        "/sbin/ip tuntap add tap10 mode tap",
-	        "/sbin/ip addr add 192.168.2.15/28 dev tap10",
-	        "/sbin/ip link set dev tap10 up",
-	        "/sbin/ip addr show",
-	        "/sbin/ip link del tap10"
+            "/sbin/ip tuntap add tap10 mode tap",
+            "/sbin/ip addr add 192.168.2.15/28 dev tap10",
+            "/sbin/ip link set dev tap10 up",
+            "/sbin/ip addr show",
+            "/sbin/ip link del tap10"
         ],
 
         "layerCommands": [
-        	{
-        		"pathname": "/proc/sys/net/ipv4/ip_forward",
-        		"value": "0"
-        	},
-        	{
-        		"pathname": "/proc/sys/net/ipv4/ip_local_port_range",
-        		"value": "42768-50999"
-        	}
+            {
+                "pathname": "/proc/sys/net/ipv4/ip_forward",
+                "value": "0"
+            },
+            {
+                "pathname": "/proc/sys/net/ipv4/ip_local_port_range",
+                "value": "42768-50999"
+            }
         ]
     },
 
     "rules": [
-    	{
-    		"name": "rule 1.0",
-    		"commands": [
-    		    "/sbin/iptables -A INPUT -i lo --ipv4 -p tcp -j DROP",
-    		    "/sbin/iptables -A OUTPUT -o lo --ipv4 -p tcp --dport 80 -j DROP",
-    		    "/sbin/iptables -L"
-    		]
-    	},
-    	{
-    		"name": "rule 1.1",
-    		"commands": [
-    		    "/sbin/iptables -P OUTPUT ACCEPT"
-    		]
-    	}
+        {
+            "name": "rule 1.0",
+            "commands": [
+                "/sbin/iptables -A INPUT -i lo --ipv4 -p tcp -j DROP",
+                "/sbin/iptables -A OUTPUT -o lo --ipv4 -p tcp --dport 80 -j DROP",
+                "/sbin/iptables -L"
+            ]
+        },
+        {
+            "name": "rule 1.1",
+            "commands": [
+                "/sbin/iptables -P OUTPUT ACCEPT"
+            ]
+        }
     ]
 }

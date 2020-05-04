@@ -1,9 +1,10 @@
 #ifndef __SERVICE_PLUGINS_INETWORK_H__
 #define __SERVICE_PLUGINS_INETWORK_H__
 
-#include <map>
 #include <string>
 #include <vector>
+
+#include "IConfigData.h"
 
 namespace service::plugins::network {
 
@@ -29,7 +30,9 @@ public:
         const std::vector<std::string>& interfaceCommands) const = 0;
 
     virtual void applyLayerCommands(
-        const std::map<std::string, std::string>& layerCommands) const = 0;
+        const std::vector<
+            service::plugins::config::ConfigData::Network::LayerCommand>&
+            layerCommands) const = 0;
 };
 
 }

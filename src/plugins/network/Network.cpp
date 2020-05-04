@@ -11,6 +11,7 @@
 
 #include "Network.h"
 
+using namespace service::plugins::config;
 using namespace service::plugins::logger;
 using namespace service::plugins::network;
 using namespace service::plugins::network::interface;
@@ -78,10 +79,12 @@ void Network::applyInterfaceCommands(
 }
 
 void Network::applyLayerCommands(
-    const std::map<std::string, std::string>& layerCommands) const
+    const std::vector<ConfigData::Network::LayerCommand>& layerCommands) const
 {
-    for (const auto& [pathname, value] : layerCommands) {
-        m_internal->logger.debug("Apply layer command to: " + pathname);
-        m_internal->layer->applyCommand(pathname, value);
+    for (const auto& layerCommand : layerCommands) {
+        m_internal->logger.debug("Apply layer command to: "
+                                 + layerCommand.pathname);
+        m_internal->layer->applyCommand(layerCommand.pathname,
+                                        layerCommand.value);
     }
 }
