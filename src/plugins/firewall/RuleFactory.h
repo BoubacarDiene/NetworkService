@@ -31,25 +31,70 @@
 
 namespace service::plugins::firewall {
 
+/**
+ * @class RuleFactory RuleFactory.h "plugins/firewall/RuleFactory.h"
+ * @ingroup Implementation
+ *
+ * @brief A factory class to help creating firewalling rules
+ *
+ * This class is the "low level class" that implements @ref IRuleFactory.h
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
 class RuleFactory : public IRuleFactory {
 
 public:
+    /**
+     * Class constructor
+     *
+     * @param logger Logger object to print some useful logs
+     *
+     * @note Instead of allowing this class to have its own copy of the logger
+     *       object (shared_ptr), logger is made a non-const reference to a
+     *       const object for better performances. The counterpart is that the
+     *       logger object must (obviously) be kept valid by Main.cpp where it
+     *       is created until this class is no longer used.
+     */
     explicit RuleFactory(const service::plugins::logger::ILogger& logger);
 
     /**
-     * Not common but makes the compiler warn if the base destructor is not
-     * virtual
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
      */
     ~RuleFactory() override;
 
+    /** Class copy constructor */
     RuleFactory(const RuleFactory&) = delete;
 
+    /** Class copy-assignment operator */
     RuleFactory& operator=(const RuleFactory&) = delete;
 
+    /** Class move constructor */
     RuleFactory(RuleFactory&&) = delete;
 
+    /** Class move-assignment operator */
     RuleFactory& operator=(RuleFactory&&) = delete;
 
+    /**
+     * @brief Create a firewalling rule
+     *
+     * Create a firewall rule based on informations provided by user in the
+     * configuration file.
+     *
+     * @param name     The name of the rule (For internal usage: logging, ...)
+     * @param commands The list of shell commands that compose the rule
+     *
+     * @return The created rule
+     */
     [[nodiscard]] std::unique_ptr<IRule>
         createRule(const std::string& name,
                    const std::vector<std::string>& commands) const override;

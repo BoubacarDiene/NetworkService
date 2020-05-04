@@ -94,11 +94,11 @@ struct Executor::Internal {
     static void dropPrivileges()
     {
         /* - realGid : The group id of the user that has launched this program
-         * - effectiveGid: The group id used by the kernel to determines
-         * privileges granted to the process
+         * - effectiveGid: The group id used by the kernel to determine
+         *   privileges granted to the process
          * - realUid : The user id of the user that has launched this program
-         * - effectiveGid: The user id used by the kernel to determines
-         * privileges granted to the process
+         * - effectiveGid: The user id used by the kernel to determine
+         *   privileges granted to the process
          *
          * Note: The real uid can differ from the effective one when for example
          *       root changes the owner of the program to itself and set

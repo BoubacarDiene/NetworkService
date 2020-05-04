@@ -31,49 +31,70 @@
 
 namespace service::plugins::config {
 
+/**
+ * @class Config Config.h "plugins/config/Config.h"
+ * @ingroup Implementation
+ *
+ * @brief Load the provided configuration file
+ *
+ * This class is the "low level class" that implements @ref IConfig.h
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
 class Config : public IConfig {
 
 public:
     /**
-     * logger made a const reference for better performances instead of
-     * allowing this class to have its own copy of the logger (shared_ptr).
-     * The counterpart is that the logger object must remain valid until
-     * this class is no longer used.
+     * Class constructor
      *
-     * For example, the following code in "upper layer" where this class
-     * is instantiated would make the service crash:
+     * @param logger Logger object to print some useful logs while loading
+     *        the configuration file
      *
-     * // Declare config here
-     * {
-     *     // Initialize logger
-     *     <type> logger = ...
-     *     // Initialize Config
-     *     config = Config(logger, ...)
-     * }
-     * // Using config here (out of scope) => crash because logger is not
-     *    valid anymore.
-     *
-     * Passing std::shared_ptr by copy would solve that problem but it's
-     * fine doing things this way because, by design, the plugins are part
-     * of the lower-level details so the "upper layer" which instantiates
-     * this class has to know how to properly use it
+     * @note Instead of allowing this class to have its own copy of the logger
+     *       object (shared_ptr), logger is made a non-const reference to a
+     *       const object for better performances. The counterpart is that the
+     *       logger object must (obviously) be kept valid by Main.cpp where it
+     *       is created until this class is no longer used.
      */
     explicit Config(const service::plugins::logger::ILogger& logger);
 
     /**
-     * Not common but makes the compiler warn if the base destructor is not
-     * virtual
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
      */
     ~Config() override;
 
+    /** Class copy constructor */
     Config(const Config&) = delete;
 
+    /** Class copy-assignment operator */
     Config& operator=(const Config&) = delete;
 
+    /** Class move constructor */
     Config(Config&&) = delete;
 
+    /** Class move-assignment operator */
     Config& operator=(Config&&) = delete;
 
+    /**
+     * @brief Load the configuration file into @ref @ConfigData
+     *
+     * @param configFile Configuration file to load
+     *
+     * @return A data structure containing all the informations retrieved
+     *         from the configuration file
+     *
+     * @see ConfigData
+     */
     [[nodiscard]] std::unique_ptr<ConfigData>
         load(const std::string& configFile) const override;
 

@@ -28,9 +28,26 @@
 
 namespace utils::helper {
 
+/**
+ * @class Errno Errno.h "utils/helper/Errno.h"
+ * @ingroup Helper
+ *
+ * @brief A helper class to convert errno to string with additional
+ *        informations
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
 class Errno {
 
 public:
+    /**
+     * @brief A static member function which converts the given error
+     *        to string
+     *
+     * @param whichCall The name of the function that has failed
+     * @param error     The errno
+     */
     static std::string toString(const char* whichCall, int error);
 };
 

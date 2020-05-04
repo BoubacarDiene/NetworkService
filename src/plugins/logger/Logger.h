@@ -30,31 +30,75 @@
 
 namespace service::plugins::logger {
 
+/**
+ * @class Logger Logger.h "plugins/logger/Logger.h"
+ * @ingroup Implementation
+ *
+ * @brief Print logs to help understanding what the service is doing
+ *
+ * This class is the "low level class" that implements @ref ILogger.h
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
 class Logger : public ILogger {
 
 public:
+    /** Class constructor */
     explicit Logger();
 
     /**
-     * Not common but makes the compiler warn if the base destructor is not
-     * virtual
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
      */
     ~Logger() override;
 
+    /** Class copy constructor */
     Logger(const Logger&) = delete;
 
+    /** Class copy-assignment operator */
     Logger& operator=(const Logger&) = delete;
 
+    /** Class move constructor */
     Logger(Logger&&) = delete;
 
+    /** Class move-assignment operator */
     Logger& operator=(Logger&&) = delete;
 
+    /**
+     * @brief Print debug-level logs
+     *
+     * @param message The log message to print
+     */
     void debug(const std::string& message) const override;
 
+    /**
+     * @brief Print info-level logs
+     *
+     * @param message The log message to print
+     */
     void info(const std::string& message) const override;
 
+    /**
+     * @brief Print warning-level logs
+     *
+     * @param message The log message to print
+     */
     void warn(const std::string& message) const override;
 
+    /**
+     * @brief Print error-level logs
+     *
+     * @param message The log message to print
+     */
     void error(const std::string& message) const override;
 
 private:

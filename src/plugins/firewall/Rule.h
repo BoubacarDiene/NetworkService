@@ -31,27 +31,65 @@
 
 namespace service::plugins::firewall {
 
+/**
+ * @class Rule Rule.h "plugins/firewall/Rule.h"
+ * @ingroup Implementation
+ *
+ * @brief Represents a single firewall rule
+ *
+ * This class is the "low level class" that implements @ref IRule.h
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
 class Rule : public IRule {
 
 public:
+    /**
+     * Class constructor
+     *
+     * @param logger  Logger object to print some useful logs
+     * @param name    A name for the rule mainly used in logs messages to
+     *                help identifying rules
+     * @param commands The list of shell commands that compose the rule
+     *
+     * @note Instead of allowing this class to have its own copy of the logger
+     *       object (shared_ptr), logger is made a non-const reference to a
+     *       const object for better performances. The counterpart is that the
+     *       logger object must (obviously) be kept valid by Main.cpp where it
+     *       is created until this class is no longer used.
+     */
     explicit Rule(const service::plugins::logger::ILogger& logger,
                   const std::string& name,
                   const std::vector<std::string>& commands);
 
     /**
-     * Not common but makes the compiler warn if the base destructor is not
-     * virtual
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
      */
     ~Rule() override;
 
+    /** Class copy constructor */
     Rule(const Rule&) = delete;
 
+    /** Class copy-assignment operator */
     Rule& operator=(const Rule&) = delete;
 
+    /** Class move constructor */
     Rule(Rule&&) = delete;
 
+    /** Class move-assignment operator */
     Rule& operator=(Rule&&) = delete;
 
+    /** Apply all commands in this rule */
     void applyCommands() const override;
 
 private:

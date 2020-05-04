@@ -29,21 +29,55 @@
 
 namespace service::plugins::firewall {
 
+/**
+ * @interface IRule IRule.h "service/plugins/IRule.h"
+ * @ingroup Abstraction
+ *
+ * @brief Represents a single firewall rule
+ *
+ * This class is the high level interface that must be implemented in firewall
+ * plugin. The core service depends on it and not on its implementation(s) to
+ * respect the Dependency Inversion Principle. Firewalling is made possible by
+ * a set of rules.
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
 class IRule {
 
 public:
+    /** Class constructor */
     IRule() = default;
 
+    /** Class destructor made virtual because it is used as base class by
+     *  derived classes in firewall plugin */
     virtual ~IRule() = default;
 
+    /** Class copy constructor */
     IRule(const IRule&) = delete;
 
+    /** Class copy-assignment operator */
     IRule& operator=(const IRule&) = delete;
 
+    /** Class move constructor */
     IRule(IRule&&) = delete;
 
+    /** Class move-assignment operator */
     IRule& operator=(IRule&&) = delete;
 
+    /**
+     * @brief Apply all commands in this rule
+     *
+     * It's about iterating the commands which are shell commands and apply
+     * them one by one. To do so, one can rely on helper classes that can
+     * execute shell command securely.
+     */
     virtual void applyCommands() const = 0;
 };
 
