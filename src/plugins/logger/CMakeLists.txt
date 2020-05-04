@@ -26,12 +26,10 @@ set(TARGET_PLUGINS_LOGGER ${CMAKE_PROJECT_NAME}-plugins-logger
 add_library(${TARGET_PLUGINS_LOGGER} STATIC "")
 
 #################################################################
-#                          Sources                              #
+#                    Conditional compilation                    #
 #################################################################
 
+# -DLOGS_OUTPUT value is not checked because there is only one
+# implementation of Logger for now
 target_sources(${TARGET_PLUGINS_LOGGER}
-    PRIVATE
-        StdLogger.cpp
-    PUBLIC
-        Logger.h
-)
+    PRIVATE StdLogger.cpp PUBLIC Logger.h)

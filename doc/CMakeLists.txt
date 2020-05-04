@@ -35,9 +35,8 @@ set(DOXYGEN_INPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 # Define "doc" target
 # "make doc" has to be used to generate documentation
 add_custom_target(doc
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+    COMMENT "Building API Documentation..."
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > /dev/null 2>&1
-    COMMAND ${CMAKE_COMMAND} -E echo "Done."
 )
 
 #################################################################

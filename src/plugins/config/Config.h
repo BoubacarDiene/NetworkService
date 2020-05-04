@@ -34,8 +34,6 @@ namespace service::plugins::config {
 class Config : public IConfig {
 
 public:
-    enum class Source { JSON, MOCK, YAML };
-
     /**
      * logger made a const reference for better performances instead of
      * allowing this class to have its own copy of the logger (shared_ptr).
@@ -60,8 +58,7 @@ public:
      * of the lower-level details so the "upper layer" which instantiates
      * this class has to know how to properly use it
      */
-    explicit Config(const service::plugins::logger::ILogger& logger,
-                    const Source& dataSource);
+    explicit Config(const service::plugins::logger::ILogger& logger);
 
     /**
      * Not common but makes the compiler warn if the base destructor is not

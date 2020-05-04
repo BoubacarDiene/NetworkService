@@ -25,7 +25,7 @@ find_package(Doxygen REQUIRED COMPONENTS dot)
 #                         Variables                             #
 #################################################################
 
-# Set the working directory and make sure it exists
+# Create the working directory if it does not exist
 set(GRAPHVIZ_WORKING_DIR ${CMAKE_BINARY_DIR}/dependency-graph)
 if(NOT EXISTS ${GRAPHVIZ_WORKING_DIR})
     file(MAKE_DIRECTORY ${GRAPHVIZ_WORKING_DIR})
@@ -42,11 +42,10 @@ set(GRAPHVIZ_PNG dependency_graph.png)
 # Define "dependency-graph" target
 # "make dependency-graph" has to be used to generate the .png file
 add_custom_target(dependency-graph
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Generating dependency graph..."
+    COMMENT "Generating dependency graph..."
     COMMAND ${CMAKE_COMMAND} "--graphviz=${GRAPHVIZ_DOT}" .. > /dev/null 2>&1
     COMMAND ${DOXYGEN_DOT_EXECUTABLE} -Tpng ${GRAPHVIZ_DOT}
                                       -o ${GRAPHVIZ_PNG} > /dev/null 2>&1
-    COMMAND ${CMAKE_COMMAND} -E echo "Done"
     WORKING_DIRECTORY ${GRAPHVIZ_WORKING_DIR}
 )
 

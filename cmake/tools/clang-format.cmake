@@ -39,12 +39,11 @@ find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format)
 #   the changes
 if(CLANG_FORMAT_EXECUTABLE AND EXISTS ${CMAKE_SOURCE_DIR}/.clang-format)
     add_custom_target(clang-format
-        COMMAND ${CMAKE_COMMAND} -E echo_append "Starting clang-format..."
+        COMMENT "Starting clang-format..."
         COMMAND ${CLANG_FORMAT_EXECUTABLE}
             -i
             -style=file
             -fallback-style=none
             ${ALL_CXX_SOURCE_FILES}
-        COMMAND ${CMAKE_COMMAND} -E echo "Done"
     )
 endif()

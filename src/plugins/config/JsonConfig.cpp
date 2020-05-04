@@ -24,12 +24,11 @@
 #include <fstream>
 #include <json.hpp>
 
-#include "JsonReader.h"
+#include "Config.h"
 
 using json = nlohmann::json;
 
 using namespace service::plugins::config;
-using namespace service::plugins::config::reader;
 using namespace service::plugins::logger;
 
 // See https://github.com/nlohmann/json#conversion-from-stl-containers
@@ -71,7 +70,7 @@ static void from_json(const json& jsonObject, ConfigData& config)
 
 }
 
-struct JsonReader::Internal {
+struct Config::Internal {
     const ILogger& logger;
 
     explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
@@ -84,18 +83,15 @@ struct JsonReader::Internal {
 
         return std::make_unique<ConfigData>(jsonObject.get<ConfigData>());
     }
-
-private:
 };
 
-JsonReader::JsonReader(const ILogger& logger)
+Config::Config(const ILogger& logger)
     : m_internal(std::make_unique<Internal>(logger))
 {}
 
-JsonReader::~JsonReader() = default;
+Config::~Config() = default;
 
-std::unique_ptr<ConfigData>
-    JsonReader::readFrom(const std::string& configFile) const
+std::unique_ptr<ConfigData> Config::load(const std::string& configFile) const
 {
     m_internal->logger.debug("Read config from: " + configFile);
     return Internal::getConfigDataFrom(configFile);

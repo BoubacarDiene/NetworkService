@@ -132,7 +132,8 @@ struct Executor::Internal {
 private:
     /* Reopen the standard stream (stdin, stdout or stderr) and redirect it
      * to the the provided destination file */
-    static bool redirectStandardStream(int fd, const char* const destPathname)
+    static inline bool redirectStandardStream(int fd,
+                                              const char* const destPathname)
     {
         FILE* file = nullptr;
 

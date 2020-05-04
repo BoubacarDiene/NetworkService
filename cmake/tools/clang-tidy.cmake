@@ -43,10 +43,9 @@ find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy)
 #   .clang-tidy file
 if(CLANG_TIDY_EXECUTABLE AND EXISTS ${CMAKE_SOURCE_DIR}/.clang-tidy)
     add_custom_target(clang-tidy
-        COMMAND ${CMAKE_COMMAND} -E echo_append "Starting clang-tidy..."
+        COMMENT "Starting clang-tidy..."
         COMMAND ${CLANG_TIDY_EXECUTABLE}
             ${ALL_CXX_SOURCE_FILES}
             -p ${CMAKE_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E echo "Done"
     )
 endif()

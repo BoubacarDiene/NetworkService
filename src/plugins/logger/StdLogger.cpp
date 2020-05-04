@@ -35,13 +35,14 @@
 using namespace service::plugins::logger;
 
 struct Logger::Internal {
-    static void debug(const std::string& message,
-                      const char* const color = BLUE)
+    static inline void debug(const std::string& message,
+                             const char* const color = BLUE)
     {
         std::cout << color << message << END << std::endl;
     }
 
-    static void error(const std::string& message, const char* const color = RED)
+    static inline void error(const std::string& message,
+                             const char* const color = RED)
     {
         std::cerr << color << message << END << std::endl;
     }

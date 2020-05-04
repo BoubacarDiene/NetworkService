@@ -37,12 +37,7 @@ using namespace service::plugins::firewall;
 using namespace service::plugins::logger;
 using namespace service::plugins::network;
 
-struct CommandLine {
-    Config::Source dataSource;
-    std::string configFile;
-};
-
-static CommandLine parseCommandLine(int argc, char** argv)
+static inline std::string parseCommandLine(int argc, char** argv)
 {
     CLI::App app(" ");
 
@@ -50,18 +45,9 @@ static CommandLine parseCommandLine(int argc, char** argv)
     app.get_formatter()->column_width(columnWidth);
     app.get_formatter()->label("REQUIRED", "(REQUIRED)");
 
-    std::map<std::string, Config::Source> text2source {
-        {"JSON", Config::Source::JSON},
-        {"MOCK", Config::Source::MOCK},
-        {"YAML", Config::Source::YAML}};
+    std::string configFile;
 
-    CommandLine commandLine;
-
-    app.add_option("-s", commandLine.dataSource, "Source of network commands")
-        ->required()
-        ->transform(CLI::CheckedTransformer(text2source, CLI::ignore_case));
-
-    app.add_option("-c", commandLine.configFile, "Path to configuration file")
+    app.add_option("-c", configFile, "Path to configuration file")
         ->required()
         ->check(CLI::ExistingFile);
 
@@ -73,19 +59,16 @@ static CommandLine parseCommandLine(int argc, char** argv)
         std::exit(EXIT_FAILURE);
     }
 
-    return commandLine;
+    return configFile;
 }
 
 int main(int argc, char** argv)
 {
-    CommandLine commandLine    = parseCommandLine(argc, argv);
-    Config::Source& dataSource = commandLine.dataSource;
-    std::string& configFile    = commandLine.configFile;
+    std::string configFile = parseCommandLine(argc, argv);
 
     /* Initialize and inject dependencies */
-    std::shared_ptr<ILogger> logger = std::make_shared<Logger>();
-    std::unique_ptr<IConfig> config
-        = std::make_unique<Config>(*logger, dataSource);
+    std::shared_ptr<ILogger> logger   = std::make_shared<Logger>();
+    std::unique_ptr<IConfig> config   = std::make_unique<Config>(*logger);
     std::unique_ptr<INetwork> network = std::make_unique<Network>(*logger);
     std::unique_ptr<IRuleFactory> ruleFactory
         = std::make_unique<RuleFactory>(*logger);
@@ -93,6 +76,6 @@ int main(int argc, char** argv)
     NetworkService networkService(
         logger, std::move(config), std::move(network), std::move(ruleFactory));
 
-    /* Apply config */
+    /* Set up the network and firewall based on provided file */
     return networkService.applyConfig(configFile);
 }

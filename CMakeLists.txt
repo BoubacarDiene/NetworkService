@@ -11,9 +11,20 @@
 #         be useful to build executable and libraries if any
 #
 # mkdir build && cd build
-# cmake .. -DCMAKE_INSTALL_PREFIX=./out -DBUILD_TYPE="debug asan secu"
+# cmake .. -DCMAKE_INSTALL_PREFIX=./out
+#          -DBUILD_TYPE="debug asan secu"
+#          -DCONFIG_LOADER=<json = default | mock>
+#          -DLOGS_OUTPUT=<std = default>
 # make && make install
 #
+#
+# \note
+#     -DCONFIG_LOADER=mock can be used to test the service with
+#     the mock version of the config loader. "json" is the default
+#     value
+#
+#     -DLOGS_OUTPUT=std can be used to output logs messages to
+#     the standard output. It's the default value
 ##
 
 cmake_minimum_required(VERSION 3.17.2)

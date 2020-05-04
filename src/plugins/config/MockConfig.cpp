@@ -21,13 +21,12 @@
 //                                                                          //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "MockReader.h"
+#include "Config.h"
 
 using namespace service::plugins::config;
-using namespace service::plugins::config::reader;
 using namespace service::plugins::logger;
 
-struct MockReader::Internal {
+struct Config::Internal {
     const ILogger& logger;
 
     explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
@@ -47,8 +46,8 @@ struct MockReader::Internal {
     }
 
 private:
-    static void fillInNetworkData(const std::string& configFile,
-                                  ConfigData::Network* network)
+    static inline void fillInNetworkData(const std::string& configFile,
+                                         ConfigData::Network* network)
     {
         network->interfaceNames.emplace_back("lo");
 
@@ -61,8 +60,8 @@ private:
             configFile, "[MOCK] Layer: value\n"});
     }
 
-    static void fillInRulesData(const std::string& configFile,
-                                std::vector<ConfigData::Rule>* rules)
+    static inline void fillInRulesData(const std::string& configFile,
+                                       std::vector<ConfigData::Rule>* rules)
     {
         std::vector<std::string> rule1Commands
             = {"/bin/echo \"[MOCK] Rule 1: command 1\n\" >> " + configFile,
@@ -75,14 +74,13 @@ private:
     }
 };
 
-MockReader::MockReader(const ILogger& logger)
+Config::Config(const ILogger& logger)
     : m_internal(std::make_unique<Internal>(logger))
 {}
 
-MockReader::~MockReader() = default;
+Config::~Config() = default;
 
-std::unique_ptr<ConfigData>
-    MockReader::readFrom(const std::string& configFile) const
+std::unique_ptr<ConfigData> Config::load(const std::string& configFile) const
 {
     std::unique_ptr<ConfigData> configData = std::make_unique<ConfigData>();
 
