@@ -41,7 +41,7 @@ find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy)
 # - set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
 #   could be used instead but I prefer having my settings in a
 #   .clang-tidy file
-if(CLANG_TIDY_EXECUTABLE AND EXISTS ${CMAKE_SOURCE_DIR}/.clang-tidy)
+if (CLANG_TIDY_EXECUTABLE AND EXISTS ${CMAKE_SOURCE_DIR}/.clang-tidy)
     add_custom_target(clang-tidy
         COMMENT "Starting clang-tidy..."
         COMMAND ${CLANG_TIDY_EXECUTABLE}

@@ -17,8 +17,8 @@
 list_subdirectories(subdirectories ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add all subdirectories that contain a CMakeLists.txt file
-foreach(subdirectory ${subdirectories})
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdirectory}/CMakeLists.txt)
+foreach (subdirectory ${subdirectories})
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdirectory}/CMakeLists.txt)
         message(STATUS "Add utils directory: ${subdirectory}")
         add_subdirectory(${subdirectory})
     endif()

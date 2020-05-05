@@ -14,17 +14,7 @@
 #                           Macros                              #
 #################################################################
 
-# List all subdirectories inside provided currentDir
-macro(list_subdirectories result currentDir)
-    file(GLOB children RELATIVE ${currentDir} ${currentDir}/*)
-    set(dirList "")
-    foreach(child ${children})
-        if(IS_DIRECTORY ${currentDir}/${child})
-            list(APPEND dirList ${child})
-        endif()
-    endforeach()
-    set(${result} ${dirList})
-endmacro()
+include(${CMAKE_SOURCE_DIR}/cmake/tools/macros.cmake)
 
 #################################################################
 #                      Object libraries                         #
@@ -87,8 +77,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 list_subdirectories(subdirectories ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add all subdirectories that contain a CMakeLists.txt file
-foreach(subdirectory ${subdirectories})
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdirectory}/CMakeLists.txt)
+foreach (subdirectory ${subdirectories})
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdirectory}/CMakeLists.txt)
         message(STATUS "Add source directory: ${subdirectory}")
         add_subdirectory(${subdirectory})
     endif()
@@ -99,9 +89,9 @@ endforeach()
 #################################################################
 
 # Link with dependencies and build
-add_executable(${CMAKE_PROJECT_NAME} Main.cpp)
+add_executable(${EXECUTABLE_NAME} Main.cpp)
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
+target_link_libraries(${EXECUTABLE_NAME}
     PRIVATE
         ${TARGET_SERVICE}
         ${TARGET_PLUGINS_CONFIG}
@@ -111,5 +101,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 
 # Install to bin directory
-install(TARGETS ${CMAKE_PROJECT_NAME}
+install(TARGETS ${EXECUTABLE_NAME}
         DESTINATION ${CMAKE_INSTALL_BINDIR})

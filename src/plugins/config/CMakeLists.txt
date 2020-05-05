@@ -25,7 +25,7 @@ add_library(${TARGET_PLUGINS_CONFIG} STATIC "")
 #                    Conditional compilation                    #
 #################################################################
 
-if(CONFIG_LOADER MATCHES mock)
+if (CONFIG_LOADER MATCHES mock)
     target_sources(${TARGET_PLUGINS_CONFIG}
         PRIVATE MockConfig.cpp PUBLIC Config.h)
 else()

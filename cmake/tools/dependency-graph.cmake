@@ -27,7 +27,7 @@ find_package(Doxygen REQUIRED COMPONENTS dot)
 
 # Create the working directory if it does not exist
 set(GRAPHVIZ_WORKING_DIR ${CMAKE_BINARY_DIR}/dependency-graph)
-if(NOT EXISTS ${GRAPHVIZ_WORKING_DIR})
+if (NOT EXISTS ${GRAPHVIZ_WORKING_DIR})
     file(MAKE_DIRECTORY ${GRAPHVIZ_WORKING_DIR})
 endif()
 

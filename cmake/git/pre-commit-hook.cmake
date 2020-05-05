@@ -15,10 +15,10 @@
 #                          Installation                         #
 #################################################################
 
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/.git/hooks)
+if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git/hooks)
     message(WARNING "Not a valid git project")
 else()
-    if(EXISTS ${CMAKE_SOURCE_DIR}/.git/hooks/pre-commit)
+    if (EXISTS ${CMAKE_SOURCE_DIR}/.git/hooks/pre-commit)
         message(VERBOSE "pre-commit script already installed")
     else()
         configure_file(

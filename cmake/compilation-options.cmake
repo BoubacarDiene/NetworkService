@@ -11,20 +11,56 @@
 #         enabled to help analysing the source code (linting, static
 #         analysis, link what you use, include what you use, ...)
 #
-# Additional flags can be added depending on BUILD_TYPE environment
-# variable (Possible values: debug, asan, secu):
+# Additional flags can be added depending on CMAKE_BUILD_TYPE (
+# Release or Debug):
 #
-# -DBUILD_TYPE="values..."
-#     If not set => Release build (default unless "debug" is set)
-#     If set,
-#         debug => Debug build
-#         asan  => Add address sanitizer flags
-#         secu  => Add security flags
+#     -DENABLE_ASAN=ON      Enable address sanitizer
+#     -DENABLE_SECURITY=ON  Enable security flags
+#     -DENABLE_IWYU=ON      Enable Include What You Use
+#     -DENABLE_LWYU=ON      Enable Link What You Use
+#
+# If CMAKE_BUILD_TYPE is not explicitly set to Release, the project
+# is built in Debug mode. In Deebug mode, ASAN, SECURITY and LWYU
+# are automatically enabled.
 #
 ##
 
 #################################################################
-#                        CMake's stuffs                         #
+#                          Options                              #
+#################################################################
+
+# Allow to enable/disable ASAN in Release build
+#
+# Note:
+# In Debug build, ASAN is enabled automatically
+option(ENABLE_ASAN "Enable Address sanitizer" OFF)
+
+# Allow to add/remove security flags in Release build
+#
+# Note:
+# In Debug build, security flags are enabled automatically
+option(ENABLE_SECURITY "Add security flags" OFF)
+
+# Allow to enable/disable the IWYU tool
+#
+# Note:
+# OFF by default because this tool is a bit verbose due to the
+# fact that it expects for each source file to explicitly include
+# all header files it uses. Consider A.h which includes B.h, if
+# Main.cpp includes A.h but also uses functions in B.h, IWYU will
+# warn because a #include "B.h" is not found in Main.cpp
+option(ENABLE_IWYU "Enable Include What You Use" OFF)
+
+# Allow to enable/disable the LWYU tool in Release build
+#
+# Note:
+# It could be ON by default because it's really useful to make
+# sure more than the needed libraries are not linked to. However,
+# it will be automatically enabled in Debug build
+option(ENABLE_LWYU "Enable Link What You Use" OFF)
+
+#################################################################
+#                      Compile commands                         #
 #################################################################
 
 # Set "CMAKE_EXPORT_COMPILE_COMMANDS" to "ON" to ask CMake provide
@@ -55,59 +91,63 @@ list(APPEND CFLAGS_OPTIONS -Wall -Wextra -Werror
                            -Wparentheses -Winit-self -Wredundant-decls
                            -Wcast-qual -Wcast-align -Wshadow)
 
-# Check BUILD_TYPE and define flags accordingly
-if(NOT BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
+# Settings depending on build type
+if (CMAKE_BUILD_TYPE MATCHES Release)
+    message(STATUS "Release build")
     list(APPEND CFLAGS_OPTIONS -s)
 else()
-    string(REPLACE " " ";" TYPES ${BUILD_TYPE})
+    message(STATUS "Debug build")
+    list(APPEND CFLAGS_OPTIONS -g)
 
-    if("debug" IN_LIST TYPES)
-        message(STATUS "Debug build")
-        set(CMAKE_BUILD_TYPE Debug)
+    set(ENABLE_ASAN ON)
+    set(ENABLE_SECURITY ON)
+    set(ENABLE_LWYU ON)
+endif()
 
-        # Set "CMAKE_LINK_WHAT_YOU_USE" to "TRUE" to ask CMake add the
-        # linker flag "-Wl,--no-as-needed" and run the command "ldd -r -u"
-        # on the target after it is linked.
-        #
-        # Notes:
-        # - This is only applicable to executable and shared library targets
-        #   and will only work when ld and ldd accept the flags used
-        # - See https://linux.die.net/man/1/ld
-        set(CMAKE_LINK_WHAT_YOU_USE TRUE)
+# Address sanitizer
+if (ENABLE_ASAN)
+    message(STATUS "Add address sanitizer flags")
+    list(APPEND LDFLAGS_OPTIONS -fsanitize=address -fno-omit-frame-pointer)
+    list(APPEND CFLAGS_OPTIONS -fsanitize=address -fno-omit-frame-pointer)
+endif()
 
-        # Enable "Include What You Use" to make sure to always include the
-        # exact list of required headers
-        #
-        # Note:
-        # - "--no_fwd_decls": Do not use forward declarations even if it can speed up
-        #                     compilation
-        # - For the pros and cons of using forward declarations, see:
-        #   https://google.github.io/styleguide/cppguide.html#Forward_Declarations
-        find_program(IWYU_EXECUTABLE NAMES iwyu)
-        if(IWYU_EXECUTABLE)
-            set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXECUTABLE}
-                                               -Xiwyu --no_fwd_decls -Xiwyu --cxx17ns)
-        endif()
-    else()
-        message(STATUS "Release build")
-        set(CMAKE_BUILD_TYPE Release)
-        list(APPEND CFLAGS_OPTIONS -s)
+# Security
+if (ENABLE_SECURITY)
+    message(STATUS "Add security flags")
+    list(APPEND LDFLAGS_OPTIONS -Wl,-z,now -Wl,-z,relro -Wl,-z,noexecstack)
+    list(APPEND CFLAGS_OPTIONS -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
+                               -fstack-protector-all -Wstack-protector --param ssp-buffer-size=4
+                               -pie -fPIE -ftrapv)
+endif()
+
+# Set "CMAKE_LINK_WHAT_YOU_USE" to "TRUE" to ask CMake add the
+# linker flag "-Wl,--no-as-needed" and run the command "ldd -r -u"
+# on the target after it is linked.
+#
+# Notes:
+# - This is only applicable to executable and shared library targets
+#   and will only work when ld and ldd accept the flags used
+# - See https://linux.die.net/man/1/ld
+if (ENABLE_LWYU)
+    message(STATUS "Enable Include What You Use")
+    set(CMAKE_LINK_WHAT_YOU_USE TRUE)
+endif()
+
+# Enable "Include What You Use" to make sure to always include the
+# exact list of required headers
+#
+# Note:
+# - "--no_fwd_decls": Do not use forward declarations even if it can speed up
+#                     compilation
+# - For the pros and cons of using forward declarations, see:
+#   https://google.github.io/styleguide/cppguide.html#Forward_Declarations
+if (ENABLE_IWYU)
+    find_program(IWYU_EXECUTABLE NAMES iwyu)
+    if (IWYU_EXECUTABLE)
+        message(STATUS "Enable Link What You Use")
+        set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXECUTABLE}
+            -Xiwyu --no_fwd_decls -Xiwyu --cxx17ns)
     endif()
-
-    foreach(type ${TYPES})
-        if(type STREQUAL "asan")
-            message(STATUS "Add address sanitizer flags")
-            list(APPEND LDFLAGS_OPTIONS -fsanitize=address -fno-omit-frame-pointer)
-            list(APPEND CFLAGS_OPTIONS -fsanitize=address -fno-omit-frame-pointer)
-        elseif(type STREQUAL "secu")
-            message(STATUS "Add security flags")
-            list(APPEND LDFLAGS_OPTIONS -Wl,-z,now -Wl,-z,relro -Wl,-z,noexecstack)
-            list(APPEND CFLAGS_OPTIONS -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
-                                       -fstack-protector-all -Wstack-protector --param ssp-buffer-size=4
-                                       -pie -fPIE -ftrapv)
-        endif()
-    endforeach()
 endif()
 
 # Adds options to the COMPILE_OPTIONS directory property.

@@ -12,7 +12,7 @@
 #
 # mkdir build && cd build
 # cmake .. -DCMAKE_INSTALL_PREFIX=./out
-#          -DBUILD_TYPE="debug asan secu"
+#          -DCMAKE_BUILD_TYPE=<Debug = default | Release>
 #          -DCONFIG_LOADER=<json = default | mock>
 #          -DLOGS_OUTPUT=<std = default>
 # make && make install
@@ -45,7 +45,10 @@ project(networkservice
                  (ip, iptables, ebtables, nftables, ...)"
     HOMEPAGE_URL "https://github.com/BoubacarDiene/NetworkService"
 )
-    
+
+# A name for the generated executable file
+set(EXECUTABLE_NAME ${CMAKE_PROJECT_NAME})
+
 # Compilation options
 #
 # Note: CMAKE_MODULE_PATH could be set to add our cmake directory
