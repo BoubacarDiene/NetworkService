@@ -40,30 +40,31 @@ services:
 before_install:
   - docker build -t networkservice-image ci
 
-script:
-  # Build MOCK version (Debug build) + run executable
-  - docker run -v $(pwd):/workdir networkservice-image:latest -c "mkdir build && cd build;
-        cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=mock;
-        make && make install;
-        ./out/bin/networkservice -c /dev/null;"
+before_script:
+  - mkdir -p build/analysis build/debug/mock build/release/mock build/debug/json build/release/json
 
-  # Build MOCK version (Release build) + run executable
-  - docker run -v $(pwd):/workdir networkservice-image:latest -c "mkdir build && cd build;
+script:
+  # Build MOCK version (Debug build)
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build/debug/mock;
+        cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=mock;
+        make && make install;"
+
+  # Build MOCK version (Release build)
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build/release/mock;
         cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=mock;
-        make && make install;
-        ./out/bin/networkservice -c /dev/null;"
+        make && make install;"
 
   # Build JSON version (Debug build)
-  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build && rm -rf *;
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build/debug/json;
         cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=json;
         make && make install;"
 
   # Build JSON version (Release build)
-  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build && rm -rf *;
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build/release/json;
         cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=json;
         make && make install;"
 
   # Run "analysis" target (=> doc, dependency graph, clang-format and clang-tidy)
-  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build && rm -rf *;
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build/analysis;
         cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DCONFIG_LOADER=json;
         make analysis && make install;"
