@@ -64,6 +64,9 @@ RUN pip install cmake_format
 # Install gcovr (See https://gcovr.com/en/stable/guide.html)
 RUN pip3 install gcovr
 
+# Install cpp-coveralls
+RUN pip install --system cpp-coveralls
+
 # IWYU (Include What You Use)
 # Example: ${IWYU_VERSION##*_} = ${clang_10##*_} = 10
 ARG IWYU_VERSION=clang_10

@@ -42,29 +42,34 @@ before_install:
 
 script:
   # Build MOCK version (Debug build)
-  - docker run -v $(pwd):/workdir networkservice-image:latest
-      -c "cmake . -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=mock;
-      make && make install;"
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=mock;
+          make && make install;"
 
   # Build MOCK version (Release build)
-  - docker run -v $(pwd):/workdir networkservice-image:latest
-      -c "cmake . -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=mock;
-      make && make install;"
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=mock;
+          make && make install;"
 
   # Build JSON version (Debug build)
-  - docker run -v $(pwd):/workdir networkservice-image:latest
-      -c "cmake . -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=json;
-      make && make install;"
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=json;
+          make && make install;"
 
   # Build JSON version (Release build)
-  - docker run -v $(pwd):/workdir networkservice-image:latest
-      -c "cmake . -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=json;
-      make && make install;"
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=json;
+          make && make install;"
 
   # Run "analysis" target (=> doc, dependency graph, clang-format and clang-tidy)
-  - docker run -v $(pwd):/workdir networkservice-image:latest
-      -c "cmake . -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DCONFIG_LOADER=json;
-      make analysis && make install;"
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DCONFIG_LOADER=json;
+          make analysis && make install;"
 
 # Deploy documentation
 # See https://docs.travis-ci.com/user/deployment/pages/
@@ -72,7 +77,7 @@ script:
 deploy:
   provider: pages
   skip_cleanup: true
-  local_dir: out/share/doc/html
+  local_dir: build/out/share/doc/html
   github_token: $GH_REPO_TOKEN
   on:
     branch: master

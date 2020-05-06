@@ -16,6 +16,7 @@
 #
 #     -DENABLE_ASAN=ON      Enable address sanitizer
 #     -DENABLE_SECURITY=ON  Enable security flags
+#     -DENABLE_COVERAGE=ON  Enable code coverage flags
 #     -DENABLE_IWYU=ON      Enable Include What You Use
 #     -DENABLE_LWYU=ON      Enable Link What You Use
 #
@@ -40,6 +41,10 @@ option(ENABLE_ASAN "Enable Address sanitizer" OFF)
 # Note:
 # In Debug build, security flags are enabled automatically
 option(ENABLE_SECURITY "Add security flags" OFF)
+
+# Allow to add/remove gcov's related flags
+# This option will be almost used in test mode
+option(ENABLE_COVERAGE "Add necessary flags to use gcov" OFF)
 
 # Allow to enable/disable the IWYU tool
 #
@@ -118,6 +123,18 @@ if (ENABLE_SECURITY)
     list(APPEND CFLAGS_OPTIONS -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
                                -fstack-protector-all -Wstack-protector --param ssp-buffer-size=4
                                -pie -fPIE -ftrapv)
+endif()
+
+# Add logic to generate output files that can be processed by the gcov command.
+#
+# Note:
+# Optimization is disabled (-O0) because it may combine lines of code and
+# otherwise change the flow of execution in the program.
+#
+# See https://gcovr.com/en/stable/guide.html
+if (ENABLE_COVERAGE)
+    list(APPEND CFLAGS_OPTIONS -fprofile-arcs -ftest-coverage -fPIC -O0)
+    list(APPEND LDFLAGS_OPTIONS --coverage)
 endif()
 
 # Set "CMAKE_LINK_WHAT_YOU_USE" to "TRUE" to ask CMake add the
