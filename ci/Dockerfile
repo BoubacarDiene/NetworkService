@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         iptables \
         net-tools \
         python-pip \
+        python3-pip \
         python-setuptools \
         python-wheel \
         strace \
@@ -59,6 +60,9 @@ RUN ln -s /usr/bin/clang-format-10 /usr/bin/clang-format && \
 
 # Install cmake_format (See https://github.com/cheshirekow/cmake_format)
 RUN pip install cmake_format
+
+# Install gcovr (See https://gcovr.com/en/stable/guide.html)
+RUN pip3 install gcovr
 
 # IWYU (Include What You Use)
 # Example: ${IWYU_VERSION##*_} = ${clang_10##*_} = 10
