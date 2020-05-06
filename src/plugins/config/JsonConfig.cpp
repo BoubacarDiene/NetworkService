@@ -55,9 +55,8 @@ static void from_json(const json& jsonObject, ConfigData& config)
     }
 
     for (const auto& layerCommand : network.at("layerCommands")) {
-        config.network.layerCommands.emplace_back(
-            ConfigData::Network::LayerCommand {layerCommand.at("pathname"),
-                                               layerCommand.at("value")});
+        config.network.layerCommands.emplace_back(ConfigData::Network::LayerCommand {
+            layerCommand.at("pathname"), layerCommand.at("value")});
     }
 
     // Fill in rules

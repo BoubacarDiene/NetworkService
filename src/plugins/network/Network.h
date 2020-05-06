@@ -91,8 +91,7 @@ public:
     Network& operator=(Network&&) = delete;
 
     /** Check if the network interface whose name is "interfaceName" exists */
-    [[nodiscard]] bool
-        hasInterface(const std::string& interfaceName) const override;
+    [[nodiscard]] bool hasInterface(const std::string& interfaceName) const override;
 
     /**
      * @brief Apply "interface commands"

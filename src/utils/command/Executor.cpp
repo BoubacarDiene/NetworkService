@@ -56,8 +56,8 @@ struct Executor::Internal {
         struct timespec ts;
         clock_gettime(CLOCK_MONOTONIC, &ts);
 
-        auto intermediateResult = static_cast<unsigned>(ts.tv_sec ^ ts.tv_nsec
-                                                        ^ (ts.tv_nsec >> 31u));
+        auto intermediateResult
+            = static_cast<unsigned>(ts.tv_sec ^ ts.tv_nsec ^ (ts.tv_nsec >> 31u));
         unsigned seed
             = intermediateResult ^ ((static_cast<unsigned>(getpid())) << 16u);
 
@@ -88,9 +88,8 @@ struct Executor::Internal {
 
             /* Redirect the standard descriptor to /dev/null */
             if (!redirectStandardStream(fd, "/dev/null")) {
-                throw std::runtime_error(
-                    "Failed to reopen standard descriptor: "
-                    + std::to_string(fd));
+                throw std::runtime_error("Failed to reopen standard descriptor: "
+                                         + std::to_string(fd));
             }
         }
     }
@@ -137,8 +136,7 @@ struct Executor::Internal {
 private:
     /* Reopen the standard stream (stdin, stdout or stderr) and redirect it
      * to the the provided destination file */
-    static inline bool redirectStandardStream(int fd,
-                                              const char* const destPathname)
+    static inline bool redirectStandardStream(int fd, const char* const destPathname)
     {
         FILE* file = nullptr;
 

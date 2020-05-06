@@ -61,8 +61,8 @@ private:
         network->interfaceCommands.emplace_back(
             "/bin/echo \"[MOCK] Interface command 2\n\" >> " + configFile);
 
-        network->layerCommands.emplace_back(ConfigData::Network::LayerCommand {
-            configFile, "[MOCK] Layer: value\n"});
+        network->layerCommands.emplace_back(
+            ConfigData::Network::LayerCommand {configFile, "[MOCK] Layer: value\n"});
     }
 
     static inline void fillInRulesData(const std::string& configFile,

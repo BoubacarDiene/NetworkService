@@ -75,7 +75,8 @@ namespace service {
  * High level classes have been created to give the core service possibility
  * to depend on something "stable" i.e that is not supposed to change a lot.
  * By depending on these abstract classes, the core service can also easily
- * be extended by just adding new code thus keeping the already tested code unchanged.
+ * be extended by just adding new code thus keeping the already tested code
+ * unchanged.
  *
  * @{@}
  *

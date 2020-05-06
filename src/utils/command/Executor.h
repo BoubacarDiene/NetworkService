@@ -60,8 +60,8 @@ public:
      *        requests
      */
     enum Flags : unsigned int {
-        WAIT_COMMAND    = (1u << 0u), /**< Wait until command is completed */
-        RESEED_PRNG     = (1u << 1u), /**< Re-initialize the Random number
+        WAIT_COMMAND = (1u << 0u),    /**< Wait until command is completed */
+        RESEED_PRNG  = (1u << 1u),    /**< Re-initialize the Random number
                                        * Generator */
         SANITIZE_FILES  = (1u << 2u), /**< Closed file descriptors, ... */
         DROP_PRIVILEGES = (1u << 3u), /**< Drop the process's privileges */
@@ -102,7 +102,7 @@ public:
      * This function performs a fork+execve in a secure way (re-initialize
      * the random number generator, close file descriptors, ...). Except
      * "flags", all input parameters have the same meaning as in execve()
-     * manpage. 
+     * manpage.
      *
      * @param pathname Either a binary executable, or a script starting with a
      *                 line of the form: "#! interpreter [optional-arg]"

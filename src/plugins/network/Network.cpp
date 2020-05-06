@@ -100,8 +100,7 @@ void Network::applyInterfaceCommands(
     const std::vector<std::string>& interfaceCommands) const
 {
     for (const std::string& interfaceCommand : interfaceCommands) {
-        m_internal->logger.debug("Apply interface command: "
-                                 + interfaceCommand);
+        m_internal->logger.debug("Apply interface command: " + interfaceCommand);
         m_internal->interface->applyCommand(interfaceCommand);
     }
 }
@@ -110,9 +109,7 @@ void Network::applyLayerCommands(
     const std::vector<ConfigData::Network::LayerCommand>& layerCommands) const
 {
     for (const auto& layerCommand : layerCommands) {
-        m_internal->logger.debug("Apply layer command to: "
-                                 + layerCommand.pathname);
-        m_internal->layer->applyCommand(layerCommand.pathname,
-                                        layerCommand.value);
+        m_internal->logger.debug("Apply layer command to: " + layerCommand.pathname);
+        m_internal->layer->applyCommand(layerCommand.pathname, layerCommand.value);
     }
 }

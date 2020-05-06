@@ -47,14 +47,12 @@ struct Layer::Internal {
     {}
 };
 
-Layer::Layer(const ILogger& logger)
-    : m_internal(std::make_unique<Internal>(logger))
+Layer::Layer(const ILogger& logger) : m_internal(std::make_unique<Internal>(logger))
 {}
 
 Layer::~Layer() = default;
 
-void Layer::applyCommand(const std::string& pathname,
-                         const std::string& value) const
+void Layer::applyCommand(const std::string& pathname, const std::string& value) const
 {
     m_internal->logger.debug("Apply command: " + value + std::string(" > ")
                              + pathname);

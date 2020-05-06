@@ -68,12 +68,10 @@ Rule::~Rule() = default;
 void Rule::applyCommands() const
 {
     for (const std::string& command : m_internal->commands) {
-        const std::unique_ptr<Parser::Command, Parser::CommandDeleter>&
-            parsedCommand
+        const std::unique_ptr<Parser::Command, Parser::CommandDeleter>& parsedCommand
             = m_internal->parser->parse(command);
 
-        m_internal->logger.debug(m_internal->name
-                                 + " - Apply command: " + command);
+        m_internal->logger.debug(m_internal->name + " - Apply command: " + command);
         m_internal->executor->exec(
             parsedCommand->pathname, parsedCommand->argv, nullptr);
     }

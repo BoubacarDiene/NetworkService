@@ -88,8 +88,7 @@ public:
      * @param pathname Absolute path to the file to update
      * @param value    New content to write to file
      */
-    void applyCommand(const std::string& pathname,
-                      const std::string& value) const;
+    void applyCommand(const std::string& pathname, const std::string& value) const;
 
 private:
     struct Internal;
