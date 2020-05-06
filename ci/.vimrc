@@ -1,51 +1,6 @@
 " =================================================================================================
 "                            Boubacar DIENE<boubacar.diene@gmail.com>
 " =================================================================================================
-"                       Vim  + Ctags + CtrlP + NERDTree + Vim-Clang-Format
-" -------------------------------------------------------------------------------------------------
-"
-" 0- Install pathogen
-"    $ mkdir -p ~/.vim/autoload ~/.vim/bundle
-"    $ curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-"
-" 1- Install ctags
-"    $ sudo apt install ctags
-"
-"    $ git clone https://github.com/BoubacarDiene/mmstreamer.git
-"    $ cd mmstreamer/
-"    $ ctags -R .
-"    $ ctags -R --exclude=@.ctagsignore .
-"      (echo dirToExclude >> .ctagsignore)
-"    $ vim src/video/Video.c
-"
-" 2- Install CtrlP
-"    $ git clone https://github.com/kien/ctrlp.vim.git ~/.vim/bundle/ctrlp.vim
-"    $ echo "set runtimepath^=~/.vim/bundle/ctrlp.vim" >> ~/.vimrc
-"
-"    $ vim
-"    $ :helptags ~/.vim/bundle/ctrlp.vim/doc
-"    $ :q!
-"
-" 3- Install nerdtree
-"    $ git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
-"    $ :helptags ~/.vim/bundle/nerdtree/doc/
-"
-" 4- Install vim-qml
-"    $ git clone https://github.com/peterhoeg/vim-qml.git ~/.vim/bundle/vim-qml
-"
-" 5- Install vim-clang-format (https://github.com/rhysd/vim-clang-format)
-"
-"    5.1- Install clang-format
-"    $ sudo apt install clang-format
-"    $ clang-format -dump-config
-"
-"    5.2- Install vim-operator-user
-"    $ git clone https://github.com/kana/vim-operator-user.git ~/.vim/bundle/vim-operator-user
-"
-"    5.3- Install vim-clang-format
-"    $ git clone https://github.com/rhysd/vim-clang-format.git ~/.vim/bundle/vim-clang-format
-"
-" ------------------------------------------------------------------------------------------------
 "
 " - :sp                     --> Split horizontally
 " - :vsp                    --> Split vertically
@@ -89,12 +44,6 @@
 " - G                       --> Go to end of file (<N>G possible with N >= 1)
 " - gg                      --> Go to beginning of file
 " - $                       --> Go to end of line
-"
-" - :ClangFormat            --> In NORMAL mode: Format the whole code
-"                               In VISUAL mode: Format the selected code
-"
-" - :ClangFormatAutoEnable  --> Enable autoformat in current buffer
-" - :ClangFormatAutoDisable --> Disable autoformat in current buffer
 "
 " - :grep                   --> Search in all files (standard grep command)
 " - :cw                     --> Show the "location list" to see result

@@ -48,7 +48,7 @@ namespace service::plugins::config {
  * required:
  *
  * - From a JSON file (.json)
- * - From a YAML file (.yaml)
+ * - From a YAML file (.yml)
  * - From a XML file (.xml)
  * - From a Text file (.txt)
  * - From a database (sqlite, ...)
