@@ -26,16 +26,44 @@
 #                                                                                #
 ##################################################################################
 
+# Language C++
 language: cpp
+
+# Ubuntu 18.04
 dist: bionic
 
+# Using docker to build the project
 services:
   - docker
 
+# Generate docker image from ci/Dockerfile
 before_install:
   - docker build -t networkservice-image ci
 
 script:
-  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest -c "mkdir build && cd build; cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug; make && make install;"
-  
-  
+  # Build MOCK version (Debug build) + run executable
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "mkdir build && cd build;
+        cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=mock;
+        make && make install;
+        ./out/bin/networkservice -c /dev/null;"
+
+  # Build MOCK version (Release build) + run executable
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "mkdir build && cd build;
+        cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=mock;
+        make && make install;
+        ./out/bin/networkservice -c /dev/null;"
+
+  # Build JSON version (Debug build)
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build && rm -rf *;
+        cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=json;
+        make && make install;"
+
+  # Build JSON version (Release build)
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build && rm -rf *;
+        cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=json;
+        make && make install;"
+
+  # Run "analysis" target (=> doc, dependency graph, clang-format and clang-tidy)
+  - docker run -v $(pwd):/workdir networkservice-image:latest -c "cd build && rm -rf *;
+        cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DCONFIG_LOADER=json;
+        make analysis && make install;"

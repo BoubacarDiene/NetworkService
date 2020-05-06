@@ -38,7 +38,7 @@ cmake_minimum_required(VERSION 3.17.2)
 # - version = <year>.<month>.<patch>
 # - The project's name will be used to name the executable
 project(networkservice
-    VERSION 20.04.00
+    VERSION 20.05.00
     LANGUAGES CXX
     DESCRIPTION "A native service to allow performing network\
                  commands more securely by using related tools\
@@ -84,3 +84,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/tools/dependency-graph.cmake)
 
 # Git hooks
 include(${CMAKE_SOURCE_DIR}/cmake/git/pre-commit-hook.cmake)
+
+# All in one command
+add_custom_target(analysis
+    DEPENDS doc dependency-graph clang-format clang-tidy
+    COMMENT "A special command to avoid running these commands one by one")
