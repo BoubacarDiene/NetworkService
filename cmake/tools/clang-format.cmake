@@ -37,7 +37,7 @@ find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format)
 # Note:
 #   Stage your source files first (git add -A) if you need to see
 #   the changes
-if (CLANG_FORMAT_EXECUTABLE AND EXISTS ${CMAKE_SOURCE_DIR}/.clang-format)
+if (CLANG_FORMAT_EXECUTABLE)
     add_custom_target(clang-format
         COMMENT "Starting clang-format..."
         COMMAND ${CLANG_FORMAT_EXECUTABLE}
