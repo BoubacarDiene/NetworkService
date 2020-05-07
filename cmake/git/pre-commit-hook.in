@@ -29,6 +29,12 @@ function error()
     exit 1
 }
 
+# Git - Make sure there is no whitespace
+if [[ -n `git diff --check HEAD^` ]]; then
+    error "You must remove whitespace before submitting a pull request\n\n\
+          `git diff --check HEAD^`"
+fi
+
 # If neither clang-format 10 nor clang-tidy 10 are available then
 # there's nothing to do
 clangFormat10Found=`clang-format --version | grep 'clang-format version 10\.0'`
