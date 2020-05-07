@@ -56,10 +56,15 @@ struct Executor::Internal {
         struct timespec ts;
         clock_gettime(CLOCK_MONOTONIC, &ts);
 
-        auto intermediateResult
-            = static_cast<unsigned>(ts.tv_sec ^ ts.tv_nsec ^ (ts.tv_nsec >> 31u));
+        /* Following two variables are necessary to fix static analysis issue about
+         * magic numbers: [readability-magic-numbers] */
+        constexpr unsigned int shift31 = 31u;
+        constexpr unsigned int shift16 = 16u;
+
+        auto intermediateResult = static_cast<unsigned>(ts.tv_sec ^ ts.tv_nsec
+                                                        ^ (ts.tv_nsec >> shift31));
         unsigned seed
-            = intermediateResult ^ ((static_cast<unsigned>(getpid())) << 16u);
+            = intermediateResult ^ ((static_cast<unsigned>(getpid())) << shift16);
 
         srand(seed);
     }
