@@ -31,6 +31,16 @@
 
 #include "Config.h"
 
+#define JSON_ALIAS_NETWORK            "network"
+#define JSON_ALIAS_INTERFACE_NAMES    "interfaceNames"
+#define JSON_ALIAS_INTERFACE_COMMANDS "interfaceCommands"
+#define JSON_ALIAS_LAYER_COMMANDS     "layerCommands"
+#define JSON_ALIAS_PATHNAME           "pathname"
+#define JSON_ALIAS_VALUE              "value"
+#define JSON_ALIAS_COMMANDS           "commands"
+#define JSON_ALIAS_RULES              "rules"
+#define JSON_ALIAS_NAME               "name"
+
 using json = nlohmann::json;
 
 using namespace service::plugins::config;
@@ -44,30 +54,31 @@ namespace nlohmann {
 static void from_json(const json& jsonObject, ConfigData& config)
 {
     // Fill in network
-    const auto& network = jsonObject.at("network");
+    const auto& network = jsonObject.at(JSON_ALIAS_NETWORK);
 
-    for (const auto& interface : network.at("interfaceNames")) {
+    for (const auto& interface : network.at(JSON_ALIAS_INTERFACE_NAMES)) {
         config.network.interfaceNames.emplace_back(interface);
     }
 
-    for (const auto& interfaceCommand : network.at("interfaceCommands")) {
+    for (const auto& interfaceCommand : network.at(JSON_ALIAS_INTERFACE_COMMANDS)) {
         config.network.interfaceCommands.emplace_back(interfaceCommand);
     }
 
-    for (const auto& layerCommand : network.at("layerCommands")) {
-        config.network.layerCommands.emplace_back(ConfigData::Network::LayerCommand {
-            layerCommand.at("pathname"), layerCommand.at("value")});
+    for (const auto& layerCommand : network.at(JSON_ALIAS_LAYER_COMMANDS)) {
+        config.network.layerCommands.emplace_back(
+            ConfigData::Network::LayerCommand {layerCommand.at(JSON_ALIAS_PATHNAME),
+                                               layerCommand.at(JSON_ALIAS_VALUE)});
     }
 
     // Fill in rules
-    const auto& rules = jsonObject.at("rules");
+    const auto& rules = jsonObject.at(JSON_ALIAS_RULES);
 
     for (const auto& rule : rules) {
         ConfigData::Rule tempRule;
-        for (const auto& command : rule.at("commands")) {
+        for (const auto& command : rule.at(JSON_ALIAS_COMMANDS)) {
             tempRule.commands.emplace_back(command);
         }
-        rule.at("name").get_to(tempRule.name);
+        rule.at(JSON_ALIAS_NAME).get_to(tempRule.name);
         config.rules.emplace_back(tempRule);
     }
 }
