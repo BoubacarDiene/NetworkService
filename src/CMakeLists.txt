@@ -23,7 +23,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/tools/macros.cmake)
 # Object libraries are not handled the same way as for other libs
 # because when defined closer to the related component (command,
 # file or helper), referencing the objects fails.
-# 
+#
 # Example: For $<TARGET_OBJECTS:${TARGET_UTILS_COMMAND}>, instead
 #          of $<TARGET_OBJECTS:xxx-utils-command>, the following
 #          error is returned:

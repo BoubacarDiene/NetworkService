@@ -24,5 +24,6 @@ performance-*,\
 readability-*,\
 -readability-uppercase-literal-suffix,\
 "
+HeaderFilterRegex: ''
+WarningsAsErrors: ''
 ...
-
