@@ -50,10 +50,10 @@ public:
      * @brief A static member function which converts the given error
      *        to string
      *
-     * @param whichCall The name of the function that has failed
-     * @param error     The errno
+     * @param functionName The name of the function that has failed
+     * @param error        The errno
      */
-    static std::string toString(const char* whichCall, int error);
+    static std::string toString(const std::string& functionName, int error);
 };
 
 }

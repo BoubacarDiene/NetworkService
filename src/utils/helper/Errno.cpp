@@ -27,12 +27,21 @@
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
 #include <cstring>
+#include <sstream>
 
 #include "Errno.h"
 
 using namespace utils::helper;
 
-std::string Errno::toString(const char* whichCall, int error)
+std::string Errno::toString(const std::string& functionName, int error)
 {
-    return std::string(whichCall) + ": " + std::strerror(error);
+    std::stringstream result;
+
+    if (!functionName.empty()) {
+        result << functionName + ": ";
+    }
+
+    result << std::strerror(error);
+
+    return result.str();
 }
