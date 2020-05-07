@@ -37,7 +37,7 @@
 namespace service::plugins::network::layer {
 
 /**
- * @class Layer Layer.h "plugins/network/Layer.h"
+ * @class Layer Setup.h "plugins/network/Setup.h"
  * @ingroup Implementation
  *
  * @brief Helper class to handle "layer commands"

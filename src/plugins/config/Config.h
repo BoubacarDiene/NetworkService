@@ -91,7 +91,7 @@ public:
     Config& operator=(Config&&) = delete;
 
     /**
-     * @brief Load the configuration file into @ref @ConfigData
+     * @brief Load the configuration file into @ref ConfigData
      *
      * @param configFile Configuration file to load
      *

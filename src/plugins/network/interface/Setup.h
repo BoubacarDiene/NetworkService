@@ -37,7 +37,7 @@
 namespace service::plugins::network::interface {
 
 /**
- * @class Interface Interface.h "plugins/network/Interface.h"
+ * @class Interface Setup.h "plugins/network/Setup.h"
  * @ingroup Implementation
  *
  * @brief Helper class to handle "interface commands"

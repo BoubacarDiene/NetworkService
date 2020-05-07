@@ -41,7 +41,7 @@ namespace service::plugins::config {
  */
 
 /**
- * @struct ConfigData ConfigData.h "service/plugins/IConfigData.h"
+ * @struct ConfigData IConfigData.h "service/plugins/IConfigData.h"
  *
  * @brief A data structure into which the whole configuration is loaded
  *

@@ -85,7 +85,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/tools/dependency-graph.cmake)
 # Git hooks
 include(${CMAKE_SOURCE_DIR}/cmake/git/pre-commit-hook.cmake)
 
-# All in one command
+# Create a command to avoid running doc, dependency-graph, clang-format
+# and clang-tidy commands one by one
 add_custom_target(analysis
-    DEPENDS doc dependency-graph clang-format clang-tidy
-    COMMENT "A special command to avoid running these commands one by one")
+    DEPENDS doc dependency-graph clang-format clang-tidy)

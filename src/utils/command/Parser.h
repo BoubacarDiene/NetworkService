@@ -111,7 +111,7 @@ public:
      * @param delimiter      The delimiter that shows how to split the input
      *                       string into substrings
      *
-     * @return A command that can be provided to @Executor
+     * @return A command that can be provided to @ref Executor
      *
      * @see Command
      */

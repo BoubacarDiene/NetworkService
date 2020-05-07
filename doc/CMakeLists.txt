@@ -10,7 +10,31 @@
 # \note   Doxyfile.in file has been generated using command:
 #         $ doxygen -g doc/Doxyfile.in
 #
+#         By default, the build will fail if there are mistakes
+#         in doxygen comments. To change this behaviour, use
+#         -DDOXYGEN_WARN_AS_ERROR=NO
+#
 ##
+
+#################################################################
+#                         Variables                             #
+#################################################################
+
+# Path to Doxyfile to be generated
+set(DOXYGEN_INPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+# Allow to stop build when there are mistakes in doxygen comments
+set(DOXYGEN_WARN_AS_ERROR "YES"
+    CACHE STRING "Immediately stop when a warning is encountered")
+
+# File to which warning and error messages will be written by
+# doxygen. All reported warnings/errors must be fixed to have
+# correct doxygen comments
+#
+# WARN_AS_ERROR=YES i n Doxyfile => doxygen will immediately stop
+#                                   when a warning is encountered
+# doxygen_warnings.txt contains the description of the error
+set(DOXYGEN_WARN_LOGFILE ${CMAKE_CURRENT_BINARY_DIR}/doxygen_warnings.txt)
 
 #################################################################
 #                        Dependencies                           #
@@ -21,12 +45,6 @@ find_package(Doxygen)
 
 # Replace cmake's variables in Doxyfile.in
 configure_file(Doxyfile.in Doxyfile)
-
-#################################################################
-#                         Variables                             #
-#################################################################
-
-set(DOXYGEN_INPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
 #################################################################
 #                          Targets                              #
