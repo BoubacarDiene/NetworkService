@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gnupg2 \
         graphviz \
         iptables \
+        lcov \
         net-tools \
         python-pip \
         python3-pip \
@@ -41,9 +42,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 USER root
 
 RUN wget --no-check-certificate -O - https://apt.llvm.org/llvm-snapshot.gpg.key|apt-key add - && \
-    wget --no-check-certificate -O - https://apt.kitware.com/keys/kitware-archive-latest.asc|apt-key add - && \
     echo deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main >> /etc/apt/sources.list && \
     echo deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main >> /etc/apt/sources.list && \
+    wget --no-check-certificate -O - https://apt.kitware.com/keys/kitware-archive-latest.asc|apt-key add - && \
     echo deb https://apt.kitware.com/ubuntu/ bionic main >> /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
