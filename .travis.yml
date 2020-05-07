@@ -40,6 +40,56 @@ services:
 before_install:
   - docker build -t networkservice-image ci
 
+# Checks to ensure that the commit/pull passed basic tests
+before_script:
+  # Git - Make sure there is no whitespace
+  - |
+    if [[ -n $(git diff --check HEAD^) ]]; then
+        echo "Please, fix whitespaces (see below)"
+        echo ""
+        git diff --check HEAD^
+        exit -1
+    fi
+
+  # Make sure doxygen comments are correctly witten
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DDOXYGEN_WARN_AS_ERROR=NO;
+          make doc;"
+  - |
+    if [[ -s build/doc/doxygen_warnings.txt ]]; then
+        echo "Please, fix doxygen comments (see below)"
+        echo ""
+        cat build/doc/doxygen_warnings.txt
+        exit -1
+    fi
+
+  # Make sure code formatting is correct
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out; make clang-format;"
+  - |
+    if [[ -n $(git diff) ]]; then
+        echo "Please, fix code formatting (see below)"
+        echo ""
+        git diff
+        exit -1
+    fi
+
+  # Make sure static analysis/linting see no error
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out; make clang-tidy;"
+  - |
+    if [[ -n $(grep "warning: " build/clang_tidy_output.txt) ]] \
+        || [[ -n $(grep "error: " build/clang_tidy_output.txt) ]]; then
+        echo "Please, fix programming issues (see below)"
+        echo ""
+        grep --color -E '^|warning: |error: ' build/clang_tidy_output.txt
+        exit -1;
+    fi
+
+# Checks to ensure that the software compiles in all configurations
 script:
   # Build MOCK version (Debug build)
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
