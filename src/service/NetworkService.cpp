@@ -47,14 +47,11 @@ using namespace service::plugins::network;
 //
 // For others (unique_ptr), std::move is required because the constructor
 // does not just use provided objects. It also keeps copies.
-NetworkService::NetworkService(std::shared_ptr<ILogger> logger,
-                               std::unique_ptr<IConfig> config,
-                               std::unique_ptr<INetwork> network,
-                               std::unique_ptr<IRuleFactory> ruleFactory)
-    : m_logger(std::move(logger)),
-      m_config(std::move(config)),
-      m_network(std::move(network)),
-      m_ruleFactory(std::move(ruleFactory))
+NetworkService::NetworkService(NetworkServiceParams params)
+    : m_logger(std::move(params.logger)),
+      m_config(std::move(params.config)),
+      m_network(std::move(params.network)),
+      m_ruleFactory(std::move(params.ruleFactory))
 {}
 
 int NetworkService::applyConfig(const std::string& configFile) const

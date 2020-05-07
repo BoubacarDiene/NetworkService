@@ -52,7 +52,7 @@ namespace service {
  *
  * @{
  *
- * @defgroup Plugins
+ * @defgroup Plugins Plugins
  *
  * Plugins are a set of components that concretize those "stable" abstractions
  * on which depends the core service. They implement the interfaces managed by
@@ -69,7 +69,7 @@ namespace service {
  *
  * @{
  *
- * @defgroup Abstraction
+ * @defgroup Abstraction Abstraction
  *
  * This group is composed of abstract/high level classes.
  * High level classes have been created to give the core service possibility
@@ -80,7 +80,7 @@ namespace service {
  *
  * @{@}
  *
- * @defgroup Implementation
+ * @defgroup Implementation Implementation
  *
  * This group is composed of low level details the core service should not
  * be aware of. Indeed, here are implemented all abstract classes described
@@ -88,7 +88,7 @@ namespace service {
  *
  * @{
  *
- * @defgroup Helper
+ * @defgroup Helper Helper
  *
  * This group is composed of a set of helper classes needed by plugins to
  * handle tasks more easily.
@@ -120,16 +120,37 @@ class NetworkService {
 
 public:
     /**
+     * @struct NetworkServiceParams
+     *
+     * @brief A data structure containing all input parameters expected by the
+     *        construtor.
+     *
+     * One reason that explains why a structure is preferred over a long list of
+     * input parameters (>=4) is that this way it is easier to add new parameters
+     * without impacting the readability.
+     */
+    struct NetworkServiceParams {
+        /** An object to use the logger plugin */
+        std::shared_ptr<service::plugins::logger::ILogger> logger;
+
+        /** An object to use the config plugin */
+        std::unique_ptr<service::plugins::config::IConfig> config;
+
+        /** An object to use the network plugin */
+        std::unique_ptr<service::plugins::network::INetwork> network;
+
+        /** An object to use the firewall plugin */
+        std::unique_ptr<service::plugins::firewall::IRuleFactory> ruleFactory;
+    };
+
+    /**
      * @brief Create a NetworkService object
      *
-     * @param logger      An object to use the logger plugin
-     * @param config      An object to use the config plugin
-     * @param network     An object to use the network plugin
-     * @param ruleFactory An object to use the firewall plugin
+     * @param params A structure of type @ref NetworkServiceParams with all expected
+     *               parameters
      *
      * @note
-     * Passed-by-value smart pointers are used here. This choice is well
-     * explained below:
+     * Passed-by-value method is used here. This choice is well explained below:
      *
      * From
      * https://www.modernescpp.com/index.php/c-core-guidelines-passing-smart-pointer
@@ -178,11 +199,7 @@ public:
      *   is not useful hence the choice of R.32 (by copy) which force the
      *   caller to transfer the ownership to NetworkService using std::move.
      */
-    explicit NetworkService(
-        std::shared_ptr<service::plugins::logger::ILogger> logger,
-        std::unique_ptr<service::plugins::config::IConfig> config,
-        std::unique_ptr<service::plugins::network::INetwork> network,
-        std::unique_ptr<service::plugins::firewall::IRuleFactory> ruleFactory);
+    explicit NetworkService(NetworkServiceParams params);
 
     /**
      * @brief Apply the network configuration given in provided file

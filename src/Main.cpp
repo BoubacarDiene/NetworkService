@@ -46,7 +46,7 @@ static inline std::string parseCommandLine(int argc, char** argv)
 {
     CLI::App app(" ");
 
-    constexpr unsigned int columnWidth = 68;
+    constexpr unsigned int columnWidth = 68u;
     app.get_formatter()->column_width(columnWidth);
     app.get_formatter()->label("REQUIRED", "(REQUIRED)");
 
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
         = std::make_unique<RuleFactory>(*logger);
 
     NetworkService networkService(
-        logger, std::move(config), std::move(network), std::move(ruleFactory));
+        {logger, std::move(config), std::move(network), std::move(ruleFactory)});
 
     /* Set up the network and firewall based on provided file */
     return networkService.applyConfig(configFile);
