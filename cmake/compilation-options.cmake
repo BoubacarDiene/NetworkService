@@ -127,13 +127,17 @@ endif()
 
 # Add logic to generate output files that can be processed by the gcov command.
 #
-# Note:
+# Notes:
 # Optimization is disabled (-O0) because it may combine lines of code and
 # otherwise change the flow of execution in the program.
+# With optimization enabled, the compiler can decide to inline a function,
+# etc.
 #
-# See https://gcovr.com/en/stable/guide.html
+# See
+# - https://gcovr.com/en/stable/guide.html
+# - https://gcc.gnu.org/onlinedocs/gcc/Gcov.html#Gcov
 if (ENABLE_COVERAGE)
-    list(APPEND CFLAGS_OPTIONS -fprofile-arcs -ftest-coverage -fPIC -O0)
+    list(APPEND CFLAGS_OPTIONS --coverage -O0)
     list(APPEND LDFLAGS_OPTIONS --coverage)
 endif()
 
