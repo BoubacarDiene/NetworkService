@@ -15,3 +15,4 @@
 
 add_subdirectory(helper)
 add_subdirectory(file)
+add_subdirectory(command)

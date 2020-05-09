@@ -26,24 +26,22 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <fstream>
-
 #include "gtest/gtest.h"
 
 #include "mocks/MockLogger.h"
-#include "utils/file/Writer.h"
+#include "utils/command/Parser.h"
 
 using ::testing::AtLeast;
 
 using namespace service::plugins::logger;
-using namespace utils::file;
+using namespace utils::command;
 
 namespace {
 
-class WriterTestFixture : public ::testing::Test {
+class ParserTestFixture : public ::testing::Test {
 
 protected:
-    WriterTestFixture() : m_writer(m_mockLogger)
+    ParserTestFixture() : m_parser(m_mockLogger)
     {
         EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
         EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
@@ -51,40 +49,35 @@ protected:
         EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
     }
 
-    Writer m_writer;
+    Parser m_parser;
 
 private:
     MockLogger m_mockLogger;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, raiseExceptionIfInvalidPathname)
+TEST_F(ParserTestFixture, returnTheSameStringIfInvalidDelimiter)
 {
-    try {
-        m_writer.exec("aPathThatDoesNotExist", "0");
-        FAIL() << "Should fail because path does not exist";
-    }
-    catch (const std::invalid_argument& e) {
-        // Expected!
-    }
+    const std::string command("/sbin/iptables -P OUTPUT ACCEPT");
+    auto result = m_parser.parse(command, ';');
+
+    ASSERT_STREQ(result->pathname, command.c_str());
+    ASSERT_EQ(result->argc, 1);
+    ASSERT_STREQ(result->argv[0], command.c_str());
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, replaceContentIfValidPathname)
+TEST_F(ParserTestFixture, returnSplittedStringIfValidDelimiter)
 {
-    // Create file
-    const std::string pathname("/tmp/toTestWriter.txt");
-    {
-        std::ofstream(pathname) << "oldValue";
-    }
+    const std::string command("/sbin/iptables -P OUTPUT ACCEPT");
+    auto result = m_parser.parse(command);
 
-    // Call writer to replace content
-    m_writer.exec(pathname, "newValue");
-
-    // Check content
-    std::string content;
-    std::ifstream(pathname) >> content;
-    ASSERT_EQ(content, "newValue");
+    ASSERT_STREQ(result->pathname, "/sbin/iptables");
+    ASSERT_EQ(result->argc, 4);
+    ASSERT_STREQ(result->argv[0], "/sbin/iptables");
+    ASSERT_STREQ(result->argv[1], "-P");
+    ASSERT_STREQ(result->argv[2], "OUTPUT");
+    ASSERT_STREQ(result->argv[3], "ACCEPT");
 }
 
 }
