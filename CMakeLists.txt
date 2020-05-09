@@ -15,6 +15,8 @@
 #          -DCMAKE_BUILD_TYPE=<Debug = default | Release>
 #          -DCONFIG_LOADER=<json = default | mock>
 #          -DLOGS_OUTPUT=<std = default>
+#          -DENABLE_UNIT_TESTING=<ON | OFF = default>
+#          -DENABLE_COVERAGE=<ON | OFF = default>
 # make && make install
 #
 #
@@ -25,6 +27,8 @@
 #
 #     -DLOGS_OUTPUT=std can be used to output logs messages to
 #     the standard output. It's the default value
+#
+#     -DENABLE_COVERAGE=ON will set coverage flags for the compiler
 ##
 
 cmake_minimum_required(VERSION 3.17.2)
@@ -46,6 +50,10 @@ project(networkservice
     HOMEPAGE_URL "https://github.com/BoubacarDiene/NetworkService"
 )
 
+# Options
+# Allow to enable/disable unit testing
+option(ENABLE_UNIT_TESTING "Build unit tests" OFF)
+
 # A name for the generated executable file
 set(EXECUTABLE_NAME ${CMAKE_PROJECT_NAME})
 
@@ -61,31 +69,23 @@ include(${CMAKE_SOURCE_DIR}/cmake/compilation-options.cmake)
 #                       Subdirectories                          #
 #################################################################
 
-# Directory containing source code and everything necessary to
-# build it
+# Add directory containing source code and everything necessary
+# to build list; and to include files search paths
+include_directories(src)
 add_subdirectory(src)
 
-# Directory containing Doxyfile.in and everything necessary to
-# generate and install documentation
+# Add directory containing Doxyfile.in and everything necessary
+# to generate and install documentation
 add_subdirectory(doc)
+
+# Enable testing and add directory containing unit tests
+if (ENABLE_UNIT_TESTING)
+    enable_testing()
+    add_subdirectory(test)
+endif()
 
 #################################################################
 #                         Code quality                          #
 #################################################################
 
-# Clang: Code formatting
-include(${CMAKE_SOURCE_DIR}/cmake/tools/clang-format.cmake)
-
-# Clang: Static analysis and linting
-include(${CMAKE_SOURCE_DIR}/cmake/tools/clang-tidy.cmake)
-
-# Graphviz: Dependency graph
-include(${CMAKE_SOURCE_DIR}/cmake/tools/dependency-graph.cmake)
-
-# Git hooks
-include(${CMAKE_SOURCE_DIR}/cmake/git/pre-commit-hook.cmake)
-
-# Create a command to avoid running doc, dependency-graph, clang-format
-# and clang-tidy commands one by one
-add_custom_target(analysis
-    DEPENDS doc dependency-graph clang-format clang-tidy)
+include(${CMAKE_SOURCE_DIR}/cmake/code-quality.cmake)

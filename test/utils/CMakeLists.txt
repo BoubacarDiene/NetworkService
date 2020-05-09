@@ -3,9 +3,9 @@
 # \file CMakeLists.txt
 #
 # \author Boubacar DIENE <boubacar.diene@gmail.com>
-# \date   April 2020
+# \date   May 2020
 #
-# \brief  CMakeLists.txt to add all plugins into build list
+# \brief  CMakeLists.txt to build tests under utils directory
 #
 ##
 
@@ -13,7 +13,4 @@
 #                       Subdirectories                          #
 #################################################################
 
-add_subdirectory(config)
-add_subdirectory(firewall)
-add_subdirectory(logger)
-add_subdirectory(network)
+add_subdirectory(helper)

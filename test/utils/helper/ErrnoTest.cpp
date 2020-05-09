@@ -26,36 +26,43 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __UTILS_HELPER_ERRNO_H__
-#define __UTILS_HELPER_ERRNO_H__
+#include <cstring>
+#include <gtest/gtest.h>
 
-#include <string>
+#include "utils/helper/Errno.h"
 
-namespace utils::helper {
+using namespace utils::helper;
 
-/**
- * @class Errno Errno.h "utils/helper/Errno.h"
- * @ingroup Helper
- *
- * @brief A helper class to convert errno to string with additional
- *        informations
- *
- * @author Boubacar DIENE <boubacar.diene@gmail.com>
- * @date April 2020
- */
-class Errno {
+namespace {
 
-public:
-    /**
-     * @brief A static member function which converts the given error
-     *        to string
-     *
-     * @param functionName The name of the function that has failed
-     * @param errorCode    The errno
-     */
-    static std::string toString(const std::string& functionName, int errorCode);
-};
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST(ErrnoTestSuite, EmptyFunctionName)
+{
+    EXPECT_EQ(Errno::toString("", EACCES), std::strerror(EACCES));
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST(ErrnoTestSuite, InvalidErrorCode)
+{
+    EXPECT_EQ(Errno::toString("NAME", -1),
+              std::string("NAME: ") + std::strerror(-1));
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST(ErrnoTestSuite, ValidErrorCode)
+{
+    std::array errnoValues = {EACCES, EAGAIN, EBUSY};
+
+    for (const auto& errnoValue : errnoValues) {
+        EXPECT_EQ(Errno::toString("NAME", errnoValue),
+                  std::string("NAME: ") + std::strerror(errnoValue));
+    }
+}
 
 }
 
-#endif
+int main(int argc, char** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

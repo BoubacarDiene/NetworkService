@@ -137,6 +137,7 @@ endif()
 # - https://gcovr.com/en/stable/guide.html
 # - https://gcc.gnu.org/onlinedocs/gcc/Gcov.html#Gcov
 if (ENABLE_COVERAGE)
+    message(STATUS "Add coverage flags")
     list(APPEND CFLAGS_OPTIONS --coverage -O0)
     list(APPEND LDFLAGS_OPTIONS --coverage)
 endif()
@@ -150,7 +151,7 @@ endif()
 #   and will only work when ld and ldd accept the flags used
 # - See https://linux.die.net/man/1/ld
 if (ENABLE_LWYU)
-    message(STATUS "Enable Include What You Use")
+    message(STATUS "Enable Link What You Use")
     set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 endif()
 
@@ -165,7 +166,7 @@ endif()
 if (ENABLE_IWYU)
     find_program(IWYU_EXECUTABLE NAMES iwyu)
     if (IWYU_EXECUTABLE)
-        message(STATUS "Enable Link What You Use")
+        message(STATUS "Enable Include What You Use")
         set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXECUTABLE}
             -Xiwyu --no_fwd_decls -Xiwyu --cxx17ns)
     endif()

@@ -33,7 +33,7 @@
 
 using namespace utils::helper;
 
-std::string Errno::toString(const std::string& functionName, int error)
+std::string Errno::toString(const std::string& functionName, int errorCode)
 {
     std::stringstream result;
 
@@ -41,7 +41,7 @@ std::string Errno::toString(const std::string& functionName, int error)
         result << functionName + ": ";
     }
 
-    result << std::strerror(error);
+    result << std::strerror(errorCode);
 
     return result.str();
 }

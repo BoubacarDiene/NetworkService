@@ -11,12 +11,6 @@
 ##
 
 #################################################################
-#                           Macros                              #
-#################################################################
-
-include(${CMAKE_SOURCE_DIR}/cmake/tools/macros.cmake)
-
-#################################################################
 #                      Object libraries                         #
 #################################################################
 
@@ -52,37 +46,12 @@ set(TARGET_UTILS_HELPER ${CMAKE_PROJECT_NAME}-utils-helper
 add_library(${TARGET_UTILS_HELPER} OBJECT "")
 
 #################################################################
-#                     Search directories                        #
-#################################################################
-
-# Make source files' list globally available for tools such as
-# clang-format, clang-tidy, ...
-file(GLOB_RECURSE CXX_SOURCE_FILES *.[ch]pp *.h)
-
-set(ALL_CXX_SOURCE_FILES "${CXX_SOURCE_FILES}"
-    CACHE INTERNAL "All *.cpp, *.h and *.hpp files of the project"
-    FORCE)
-
-# Add the given directories to those the compiler uses to search
-# for include files. Relative paths are interpreted as relative
-# to the current source directory
-#
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-#################################################################
 #                       Subdirectories                          #
 #################################################################
 
-# Get list of directories inside src/ directory
-list_subdirectories(subdirectories ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Add all subdirectories that contain a CMakeLists.txt file
-foreach (subdirectory ${subdirectories})
-    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdirectory}/CMakeLists.txt)
-        message(STATUS "Add source directory: ${subdirectory}")
-        add_subdirectory(${subdirectory})
-    endif()
-endforeach()
+add_subdirectory(plugins)
+add_subdirectory(service)
+add_subdirectory(utils)
 
 #################################################################
 #                         Executable                            #

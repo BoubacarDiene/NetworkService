@@ -51,7 +51,7 @@ before_script:
         exit -1
     fi
 
-  # Make sure doxygen comments are correctly witten
+  # Make sure doxygen comments are correctly written
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
       -c "mkdir -p build && cd build;
           cmake .. -DCMAKE_INSTALL_PREFIX=./out -DDOXYGEN_WARN_AS_ERROR=NO;
@@ -115,11 +115,23 @@ script:
           cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=json;
           make && make install;"
 
-  # Run "analysis" target (=> doc, dependency graph, clang-format and clang-tidy)
+  # Run "analysis" target (=> dependency graph, clang-format and clang-tidy)
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
       -c "mkdir -p build && cd build;
           cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DCONFIG_LOADER=json;
           make analysis && make install;"
+
+  # Buiild and run unit tests
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p build && cd build;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DENABLE_UNIT_TESTING=ON -DENABLE_COVERAGE=ON;
+          make && ctest;"
+
+# Code coverage
+after_success:
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" networkservice-image:latest
+      -c "cd build;
+          coveralls -r .. -i src -i test --exclude build/_deps --exclude build/CMakeFiles --gcov-options '\-lp' --verbose"
 
 # Deploy documentation
 # See https://docs.travis-ci.com/user/deployment/pages/
