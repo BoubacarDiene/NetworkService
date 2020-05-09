@@ -46,6 +46,23 @@ set(TARGET_UTILS_HELPER ${CMAKE_PROJECT_NAME}-utils-helper
 add_library(${TARGET_UTILS_HELPER} OBJECT "")
 
 #################################################################
+#                          Source files                         #
+#################################################################
+
+# Make source files list globally available for clang-format and
+# clang-tidy tools
+execute_process(
+    COMMAND find ${CMAKE_SOURCE_DIR}/src
+            -iname "*.h" -o -iname "*.hpp" -o -iname "*.cpp"
+    OUTPUT_VARIABLE CXX_SOURCE_FILES)
+
+string(REPLACE "\n" ";" CXX_SOURCE_FILES ${CXX_SOURCE_FILES})
+
+set(ALL_CXX_SOURCE_FILES "${CXX_SOURCE_FILES}"
+    CACHE INTERNAL "All *.cpp, *.h and *.hpp files of the project"
+    FORCE)
+
+#################################################################
 #                       Subdirectories                          #
 #################################################################
 

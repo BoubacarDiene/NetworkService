@@ -17,7 +17,9 @@
 #
 # IMPORTANT: Before including this script, make sure the variable
 #            ALL_CXX_SOURCE_FILES is set. As the name suggests, it
-#            contains the full list of source files
+#            contains the full list of source files.
+#            Also, ALL_CXX_TEST_FILES has to be set in case unit
+#            testing is enabled.
 #
 ##
 
@@ -31,6 +33,10 @@ find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format)
 #################################################################
 #                          Targets                              #
 #################################################################
+
+# Prepare the complete list of files to take into account
+# ALL_CXX_TEST_FILES is empty when unit testing is not enabled
+list(APPEND ALL_CXX_SOURCE_FILES ${ALL_CXX_TEST_FILES})
 
 # Define "clang-format" target
 # "make clang-format" has to be used to format the source code

@@ -13,19 +13,6 @@
 ##
 
 #################################################################
-#                          Source files                         #
-#################################################################
-
-# Make source files list globally available for clang-format and
-# clang-tidy tools
-execute_process(
-    COMMAND find ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/test
-            -iname "*.h" -o -iname "*.hpp" -o -iname "*.cpp"
-    OUTPUT_VARIABLE ALL_CXX_SOURCE_FILES)
-
-string(REPLACE "\n" ";" ALL_CXX_SOURCE_FILES ${ALL_CXX_SOURCE_FILES})
-
-#################################################################
 #                        CMake scripts                          #
 #################################################################
 

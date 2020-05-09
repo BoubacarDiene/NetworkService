@@ -14,7 +14,8 @@
 # IMPORTANT: Before including this script, make sure the variable
 #            ALL_CXX_SOURCE_FILES is set. As the name suggests, it
 #            contains the complete list of source files (*.cpp,
-#            *.hpp, *.h)
+#            *.hpp, *.h). Also, ALL_CXX_TEST_FILES has to be set
+#            in case unit testing is enabled.
 #
 ##
 
@@ -28,6 +29,10 @@ find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy)
 #################################################################
 #                          Targets                              #
 #################################################################
+
+# Prepare the complete list of files to take into account
+# ALL_CXX_TEST_FILES is empty when unit testing is not enabled
+list(APPEND ALL_CXX_SOURCE_FILES ${ALL_CXX_TEST_FILES})
 
 # Define "clang-tidy" target
 # "make clang-tidy" has to be used to "lint" the source code
