@@ -57,7 +57,7 @@ NetworkService::NetworkService(NetworkServiceParams params)
 int NetworkService::applyConfig(const std::string& configFile) const
 {
     try {
-        m_logger->debug("Load config: " + configFile);
+        m_logger->info("Load config: " + configFile);
         const std::unique_ptr<ConfigData>& configData = m_config->load(configFile);
 
         m_logger->debug("Make sure specified interfaces are valid");

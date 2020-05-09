@@ -25,7 +25,7 @@ set(CMAKE_CXX_FLAGS -Wno-error=sign-conversion)
 include(${CMAKE_SOURCE_DIR}/cmake/frameworks/googletest.cmake)
 
 #################################################################
-#                           Test files                          #
+#                          Test files                           #
 #################################################################
 
 # Make test files list globally available for clang-format and
@@ -40,6 +40,12 @@ string(REPLACE "\n" ";" CXX_TEST_FILES ${CXX_TEST_FILES})
 set(ALL_CXX_TEST_FILES "${CXX_TEST_FILES}"
     CACHE INTERNAL "All *.cpp, *.h and *.hpp files of the project"
     FORCE)
+
+#################################################################
+#                       Search directories                      #
+#################################################################
+
+include_directories(.)
 
 #################################################################
 #                       Subdirectories                          #

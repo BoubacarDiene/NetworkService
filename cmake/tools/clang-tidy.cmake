@@ -32,7 +32,8 @@ find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy)
 
 # Prepare the complete list of files to take into account
 # ALL_CXX_TEST_FILES is empty when unit testing is not enabled
-list(APPEND ALL_CXX_SOURCE_FILES ${ALL_CXX_TEST_FILES})
+set(CXX_FILES ${ALL_CXX_SOURCE_FILES})
+list(APPEND CXX_FILES ${ALL_CXX_TEST_FILES})
 
 # Define "clang-tidy" target
 # "make clang-tidy" has to be used to "lint" the source code
@@ -50,7 +51,7 @@ if (CLANG_TIDY_EXECUTABLE)
     add_custom_target(clang-tidy
         COMMENT "Starting clang-tidy..."
         COMMAND ${CLANG_TIDY_EXECUTABLE}
-            ${ALL_CXX_SOURCE_FILES}
+            ${CXX_FILES}
             -p ${CMAKE_BINARY_DIR} > ${CMAKE_BINARY_DIR}/clang_tidy_output.txt
         COMMAND cat ${CMAKE_BINARY_DIR}/clang_tidy_output.txt
     )

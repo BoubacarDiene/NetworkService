@@ -26,43 +26,24 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <cstring>
+#ifndef __TEST_MOCKS_MOCK_LOGGER_H__
+#define __TEST_MOCKS_MOCK_LOGGER_H__
 
-#include "utils/helper/Errno.h"
-#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
-using namespace utils::helper;
+#include "service/plugins/ILogger.h"
 
-namespace {
+namespace service::plugins::logger {
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST(ErrnoTestSuite, returnStrerrorForEmptyFunctionName)
-{
-    EXPECT_EQ(Errno::toString("", EACCES), std::strerror(EACCES));
-}
+class MockLogger : public ILogger {
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST(ErrnoTestSuite, workEvenForInvalidErrorCode)
-{
-    EXPECT_EQ(Errno::toString("NAME", -1),
-              std::string("NAME: ") + std::strerror(-1));
-}
-
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST(ErrnoTestSuite, concatenateStrerrorAndFunctionName)
-{
-    std::array errnoValues = {EACCES, EAGAIN, EBUSY};
-
-    for (const auto& errnoValue : errnoValues) {
-        EXPECT_EQ(Errno::toString("NAME", errnoValue),
-                  std::string("NAME: ") + std::strerror(errnoValue));
-    }
-}
+public:
+    MOCK_METHOD(void, debug, (const std::string& message), (const, override));
+    MOCK_METHOD(void, info, (const std::string& message), (const, override));
+    MOCK_METHOD(void, warn, (const std::string& message), (const, override));
+    MOCK_METHOD(void, error, (const std::string& message), (const, override));
+};
 
 }
 
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif

@@ -26,37 +26,65 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <cstring>
+#include <fstream>
 
-#include "utils/helper/Errno.h"
 #include "gtest/gtest.h"
 
-using namespace utils::helper;
+#include "mocks/MockLogger.h"
+#include "utils/file/Writer.h"
+
+using ::testing::AtLeast;
+
+using namespace service::plugins::logger;
+using namespace utils::file;
 
 namespace {
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST(ErrnoTestSuite, returnStrerrorForEmptyFunctionName)
-{
-    EXPECT_EQ(Errno::toString("", EACCES), std::strerror(EACCES));
-}
+class WriterTestFixture : public ::testing::Test {
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST(ErrnoTestSuite, workEvenForInvalidErrorCode)
-{
-    EXPECT_EQ(Errno::toString("NAME", -1),
-              std::string("NAME: ") + std::strerror(-1));
-}
-
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST(ErrnoTestSuite, concatenateStrerrorAndFunctionName)
-{
-    std::array errnoValues = {EACCES, EAGAIN, EBUSY};
-
-    for (const auto& errnoValue : errnoValues) {
-        EXPECT_EQ(Errno::toString("NAME", errnoValue),
-                  std::string("NAME: ") + std::strerror(errnoValue));
+protected:
+    WriterTestFixture() : m_writer(m_mockLogger)
+    {
+        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
+        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
+        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
+        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
     }
+
+    Writer m_writer;
+
+private:
+    MockLogger m_mockLogger;
+};
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(WriterTestFixture, raiseExceptionIfInvalidPathname)
+{
+    try {
+        m_writer.exec("aPathThatDoesNotExist", "0");
+        FAIL() << "Should fail because path does not exist";
+    }
+    catch (const std::invalid_argument& e) {
+        // Expected!
+    }
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(WriterTestFixture, replaceContentIfValidPathname)
+{
+    // Create file
+    std::string pathname("/tmp/toTestWriter.txt");
+    {
+        std::ofstream(pathname) << "oldValue";
+    }
+
+    // Call writer to relace content
+    m_writer.exec(pathname, "newValue");
+
+    // Check content
+    std::string content;
+    std::ifstream(pathname) >> content;
+    ASSERT_EQ(content, "newValue");
 }
 
 }

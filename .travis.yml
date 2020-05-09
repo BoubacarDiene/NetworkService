@@ -131,7 +131,7 @@ script:
 after_success:
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" networkservice-image:latest
       -c "cd build;
-          coveralls -r .. -i src -i test --exclude build/_deps --exclude build/CMakeFiles --gcov-options '\-lp' --verbose"
+          coveralls -r .. -i src --exclude build/_deps --exclude build/CMakeFiles --gcov-options '\-lp' --verbose"
 
 # Deploy documentation
 # See https://docs.travis-ci.com/user/deployment/pages/

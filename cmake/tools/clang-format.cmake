@@ -36,7 +36,8 @@ find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format)
 
 # Prepare the complete list of files to take into account
 # ALL_CXX_TEST_FILES is empty when unit testing is not enabled
-list(APPEND ALL_CXX_SOURCE_FILES ${ALL_CXX_TEST_FILES})
+set(CXX_FILES ${ALL_CXX_SOURCE_FILES})
+list(APPEND CXX_FILES ${ALL_CXX_TEST_FILES})
 
 # Define "clang-format" target
 # "make clang-format" has to be used to format the source code
@@ -50,6 +51,6 @@ if (CLANG_FORMAT_EXECUTABLE)
             -i
             -style=file
             -fallback-style=none
-            ${ALL_CXX_SOURCE_FILES}
+            ${CXX_FILES}
     )
 endif()
