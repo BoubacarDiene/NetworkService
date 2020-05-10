@@ -26,21 +26,21 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __UTILS_FILE_WRITER_H__
-#define __UTILS_FILE_WRITER_H__
+#ifndef __UTILS_FILE_IWRITER_H__
+#define __UTILS_FILE_IWRITER_H__
 
-#include <memory>
+#include <fstream>
 #include <string>
-
-#include "service/plugins/ILogger.h"
 
 namespace utils::file {
 
 /**
- * @class Writer Writer.h "utils/file/Writer.h"
+ * @interface IWriter IWriter.h "utils/file/IWriter.h"
  * @ingroup Helper
  *
- * @brief A helper class to write a given value to a specified file
+ * @brief A helper class to write a given value to a specified output stream.
+ *        This class is a high level interface added to ease testability of
+ *        component that use it.
  *
  * @note Copy contructor, copy-assignment operator, move constructor and
  *       move-assignment operator are defined to be compliant with the
@@ -49,50 +49,42 @@ namespace utils::file {
  * @see https://en.cppreference.com/w/cpp/language/rule_of_three
  *
  * @author Boubacar DIENE <boubacar.diene@gmail.com>
- * @date April 2020
+ * @date May 2020
  */
-class Writer {
+class IWriter {
 
 public:
-    /**
-     * Class constructor
-     *
-     * @param logger Logger object to print some useful logs
-     *
-     * @note Instead of allowing this class to have its own copy of the logger
-     *       object (shared_ptr), logger is made a non-const reference to a
-     *       const object for better performances. The counterpart is that the
-     *       logger object must (obviously) be kept valid by Main.cpp where it
-     *       is created until this class is no longer used.
-     */
-    explicit Writer(const service::plugins::logger::ILogger& logger);
+    /** Class constructor */
+    IWriter() = default;
 
     /** Class destructor */
-    ~Writer();
+    virtual ~IWriter() = default;
 
     /** Class copy constructor */
-    Writer(const Writer&) = delete;
+    IWriter(const IWriter&) = delete;
 
     /** Class copy-assignment operator */
-    Writer& operator=(const Writer&) = delete;
+    IWriter& operator=(const IWriter&) = delete;
 
     /** Class move constructor */
-    Writer(Writer&&) = delete;
+    IWriter(IWriter&&) = delete;
 
     /** Class move-assignment operator */
-    Writer& operator=(Writer&&) = delete;
+    IWriter& operator=(IWriter&&) = delete;
 
     /**
-     * @brief Parse the given string to create a command
+     * @brief Write the given value to the provided output stream and check
+     *        errors
      *
-     * @param pathname Absolute path to the file to update
-     * @param value    The new content to write to pathname
+     * Note that the stream must be opened before calling this method otherwise
+     * an exception should be raised. Also, a path to a file (for example) is not
+     * used in place of stream parameter to make possible unit testing without
+     * writing to the filesystem.
+     *
+     * @param stream The output stream where to write the value
+     * @param value  The new value that will replace the currrent content
      */
-    void exec(const std::string& pathname, const std::string& value) const;
-
-private:
-    struct Internal;
-    std::unique_ptr<Internal> m_internal;
+    virtual void exec(std::ostream& stream, const std::string& value) const = 0;
 };
 
 }

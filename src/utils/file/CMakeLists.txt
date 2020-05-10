@@ -15,7 +15,8 @@
 
 target_sources(${TARGET_UTILS_FILE}
     PRIVATE
-        Writer.cpp
-    PUBLIC
-        Writer.h
+        writer/Writer.cpp
+        writer/Writer.h
+    INTERFACE
+        writer/IWriter.h
 )

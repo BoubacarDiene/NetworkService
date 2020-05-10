@@ -26,12 +26,12 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <fstream>
+#include <sstream>
 
 #include "gtest/gtest.h"
 
 #include "mocks/MockLogger.h"
-#include "utils/file/Writer.h"
+#include "utils/file/writer/Writer.h"
 
 using ::testing::AtLeast;
 
@@ -58,33 +58,29 @@ private:
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, raiseExceptionIfInvalidPathname)
+TEST_F(WriterTestFixture, raiseExceptionIfInvalidStream)
 {
     try {
-        m_writer.exec("aPathThatDoesNotExist", "0");
-        FAIL() << "Should fail because path does not exist";
+        std::ostringstream stream;
+        stream.setstate(std::ios::failbit);
+        m_writer.exec(stream, "0");
+        FAIL() << "Should fail because the stream is not valid";
     }
-    catch (const std::invalid_argument& e) {
+    catch (const std::runtime_error& e) {
         // Expected!
     }
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, replaceContentIfValidPathname)
+TEST_F(WriterTestFixture, replaceContentIfValidStream)
 {
-    // Create file
-    const std::string pathname("/tmp/toTestWriter.txt");
-    {
-        std::ofstream(pathname) << "oldValue";
-    }
-
-    // Call writer to replace content
-    m_writer.exec(pathname, "newValue");
+    // Use ostringstream because it does not require interaction
+    // with the filesystem
+    std::ostringstream stream;
+    m_writer.exec(stream, "value");
 
     // Check content
-    std::string content;
-    std::ifstream(pathname) >> content;
-    ASSERT_EQ(content, "newValue");
+    ASSERT_EQ(stream.str(), "value");
 }
 
 }

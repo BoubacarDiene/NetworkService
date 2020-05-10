@@ -26,37 +26,79 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/file/writer/Writer.h"
+#ifndef __UTILS_FILE_WRITER_H__
+#define __UTILS_FILE_WRITER_H__
 
-#include "Setup.h"
+#include <memory>
 
-using namespace service::plugins::network::layer;
-using namespace service::plugins::logger;
-using namespace utils::file;
+#include "service/plugins/ILogger.h"
 
-struct Layer::Internal {
-    const ILogger& logger;
+#include "IWriter.h"
 
-    /* const to make the object non-copyable, non-movable and
-     * non-resettable */
-    const std::unique_ptr<Writer> writer;
+namespace utils::file {
 
-    explicit Internal(const ILogger& providedLogger)
-        : logger(providedLogger),
-          writer(std::make_unique<Writer>(providedLogger))
-    {}
+/**
+ * @class Writer Writer.h "utils/file/Writer.h"
+ * @ingroup Helper
+ *
+ * @brief A helper class to write a given value to a specified file
+ *
+ * This class is the "low level class" that implements @ref IWriter.h
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
+class Writer : public IWriter {
+
+public:
+    /**
+     * Class constructor
+     *
+     * @param logger Logger object to print some useful logs
+     *
+     * @note Instead of allowing this class to have its own copy of the logger
+     *       object (shared_ptr), logger is made a non-const reference to a
+     *       const object for better performances. The counterpart is that the
+     *       logger object must (obviously) be kept valid by Main.cpp where it
+     *       is created until this class is no longer used.
+     */
+    explicit Writer(const service::plugins::logger::ILogger& logger);
+
+    /** Class destructor */
+    ~Writer() override;
+
+    /** Class copy constructor */
+    Writer(const Writer&) = delete;
+
+    /** Class copy-assignment operator */
+    Writer& operator=(const Writer&) = delete;
+
+    /** Class move constructor */
+    Writer(Writer&&) = delete;
+
+    /** Class move-assignment operator */
+    Writer& operator=(Writer&&) = delete;
+
+    /**
+     * @brief Write the given value to the provided output stream and check
+     *        errors
+     *
+     * @param stream The output stream where to write the value
+     * @param value  The new value that will replace the currrent content
+     */
+    void exec(std::ostream& stream, const std::string& value) const override;
+
+private:
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 };
 
-Layer::Layer(const ILogger& logger) : m_internal(std::make_unique<Internal>(logger))
-{}
-
-Layer::~Layer() = default;
-
-void Layer::applyCommand(const std::string& pathname, const std::string& value) const
-{
-    m_internal->logger.debug("Apply command: " + value + std::string(" > ")
-                             + pathname);
-
-    std::ofstream stream(pathname);
-    m_internal->writer->exec(stream, value);
 }
+
+#endif

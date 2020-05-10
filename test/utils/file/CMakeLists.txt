@@ -23,7 +23,7 @@ set(TEST_EXECUTABLE_NAME WriterTest)
 # Add test executable to the project
 add_executable(${TEST_EXECUTABLE_NAME}
     WriterTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/file/Writer.cpp)
+    ${CMAKE_SOURCE_DIR}/src/utils/file/writer/Writer.cpp)
 
 # Link with required frameworks
 target_link_libraries(${TEST_EXECUTABLE_NAME} PRIVATE gtest gmock)
