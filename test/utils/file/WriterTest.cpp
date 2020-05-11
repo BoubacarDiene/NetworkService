@@ -64,7 +64,7 @@ TEST_F(WriterTestFixture, raiseExceptionIfInvalidStream)
         std::ostringstream stream;
         stream.setstate(std::ios::failbit);
 
-        m_writer.exec(stream, "0");
+        m_writer.writeToStream(stream, "0");
         FAIL() << "Should fail because the stream is not valid";
     }
     catch (const std::runtime_error& e) {
@@ -78,7 +78,7 @@ TEST_F(WriterTestFixture, replaceContentIfValidStream)
     // Use ostringstream because it does not require interaction
     // with the filesystem
     std::ostringstream stream;
-    m_writer.exec(stream, "value");
+    m_writer.writeToStream(stream, "value");
 
     // Check content
     ASSERT_EQ(stream.str(), "value");

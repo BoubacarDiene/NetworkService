@@ -78,10 +78,10 @@ set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/service/plugins/IRuleFactory.h
         ${CMAKE_CURRENT_SOURCE_DIR}/service/NetworkService.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/service/NetworkService.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/Executor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/Executor.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/Parser.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/Parser.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/Executor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/Executor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/parser/Parser.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/parser/Parser.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/writer/IWriter.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/writer/Writer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/writer/Writer.h

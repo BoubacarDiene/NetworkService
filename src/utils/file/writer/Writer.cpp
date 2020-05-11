@@ -45,7 +45,7 @@ Writer::Writer(const ILogger& logger)
 
 Writer::~Writer() = default;
 
-void Writer::exec(std::ostream& stream, const std::string& value) const
+void Writer::writeToStream(std::ostream& stream, const std::string& value) const
 {
     m_internal->logger.error("Write value: " + value);
 

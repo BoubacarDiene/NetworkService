@@ -45,7 +45,7 @@ Reader::Reader(const ILogger& logger)
 
 Reader::~Reader() = default;
 
-void Reader::exec(std::istream& stream, std::string& result) const
+void Reader::readFromStream(std::istream& stream, std::string& result) const
 {
     stream >> result;
 

@@ -92,7 +92,7 @@ public:
      * @param stream The output stream where to write the value
      * @param value  The new value that will replace the currrent content
      */
-    void exec(std::ostream& stream, const std::string& value) const override;
+    void writeToStream(std::ostream& stream, const std::string& value) const override;
 
 private:
     struct Internal;

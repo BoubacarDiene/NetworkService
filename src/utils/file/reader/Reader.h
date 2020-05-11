@@ -86,13 +86,12 @@ public:
     Reader& operator=(Reader&&) = delete;
 
     /**
-     * @brief Write the given value to the provided output stream and check
-     *        errors
+     * @brief Read content of provided input stream and check errors
      *
-     * @param stream The output stream where to write the value
-     * @param value  The new value that will replace the currrent content
+     * @param stream The input stream where to get data from
+     * @param result The output variable into which store data
      */
-    void exec(std::istream& stream, std::string& result) const override;
+    void readFromStream(std::istream& stream, std::string& result) const override;
 
 private:
     struct Internal;

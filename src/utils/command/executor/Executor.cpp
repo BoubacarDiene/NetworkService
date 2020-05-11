@@ -172,7 +172,7 @@ Executor::Executor(const ILogger& logger)
 
 Executor::~Executor() = default;
 
-void Executor::exec(const char* const pathname,
+void Executor::executeProgram(const char* const pathname,
                     char* const argv[],
                     char* const envp[],
                     Flags flags) const

@@ -83,7 +83,7 @@ public:
      * @param stream The input stream where to read data from
      * @param result The output variable into which the read data is stored
      */
-    virtual void exec(std::istream& stream, std::string& result) const = 0;
+    virtual void readFromStream(std::istream& stream, std::string& result) const = 0;
 };
 
 }

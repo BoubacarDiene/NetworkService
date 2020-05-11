@@ -29,7 +29,7 @@
 #include "gtest/gtest.h"
 
 #include "mocks/MockLogger.h"
-#include "utils/command/Parser.h"
+#include "utils/command/parser/Parser.h"
 
 using ::testing::AtLeast;
 

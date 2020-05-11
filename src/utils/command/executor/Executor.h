@@ -115,7 +115,7 @@ public:
      *
      * @see http://man7.org/linux/man-pages/man2/execve.2.html
      */
-    void exec(const char* pathname,
+    void executeProgram(const char* pathname,
               char* const argv[],
               char* const envp[],
               Flags flags = Flags::ALL) const;

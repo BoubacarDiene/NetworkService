@@ -15,9 +15,9 @@
 
 target_sources(${TARGET_UTILS_COMMAND}
     PRIVATE
-        Executor.cpp
-        Parser.cpp
+        executor/Executor.cpp
+        parser/Parser.cpp
     PUBLIC
-        Executor.h
-        Parser.h
+        executor/Executor.h
+        parser/Parser.h
 )

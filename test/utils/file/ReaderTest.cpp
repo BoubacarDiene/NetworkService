@@ -66,7 +66,7 @@ TEST_F(ReaderTestFixture, raiseExceptionIfInvalidStream)
 
         stream.setstate(std::ios::failbit);
 
-        m_reader.exec(stream, result);
+        m_reader.readFromStream(stream, result);
         FAIL() << "Should fail because the stream is not valid";
     }
     catch (const std::runtime_error& e) {
@@ -82,7 +82,7 @@ TEST_F(ReaderTestFixture, readContentIfValidStream)
     std::istringstream stream("value");
 
     std::string result;
-    m_reader.exec(stream, result);
+    m_reader.readFromStream(stream, result);
 
     ASSERT_EQ(result, "value");
 }

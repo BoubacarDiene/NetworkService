@@ -84,7 +84,7 @@ public:
      * @param stream The output stream where to write the value
      * @param value  The new value that will replace the currrent content
      */
-    virtual void exec(std::ostream& stream, const std::string& value) const = 0;
+    virtual void writeToStream(std::ostream& stream, const std::string& value) const = 0;
 };
 
 }

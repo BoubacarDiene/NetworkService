@@ -26,8 +26,8 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/command/Executor.h"
-#include "utils/command/Parser.h"
+#include "utils/command/executor/Executor.h"
+#include "utils/command/parser/Parser.h"
 
 #include "Rule.h"
 
@@ -72,7 +72,7 @@ void Rule::applyCommands() const
             = m_internal->parser->parse(command);
 
         m_internal->logger.debug(m_internal->name + " - Apply command: " + command);
-        m_internal->executor->exec(
+        m_internal->executor->executeProgram(
             parsedCommand->pathname, parsedCommand->argv, nullptr);
     }
 }

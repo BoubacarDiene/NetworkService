@@ -58,5 +58,5 @@ void Layer::applyCommand(const std::string& pathname, const std::string& value) 
                              + pathname);
 
     std::ofstream stream(pathname);
-    m_internal->writer->exec(stream, value);
+    m_internal->writer->writeToStream(stream, value);
 }

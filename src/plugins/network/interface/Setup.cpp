@@ -26,8 +26,8 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/command/Executor.h"
-#include "utils/command/Parser.h"
+#include "utils/command/executor/Executor.h"
+#include "utils/command/parser/Parser.h"
 
 #include "Setup.h"
 
@@ -61,6 +61,6 @@ void Interface::applyCommand(const std::string& command) const
     const auto& parsedCommand = m_internal->parser->parse(command);
 
     m_internal->logger.debug("Apply command: " + command);
-    m_internal->executor->exec(
+    m_internal->executor->executeProgram(
         parsedCommand->pathname, parsedCommand->argv, nullptr);
 }
