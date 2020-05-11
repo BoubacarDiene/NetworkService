@@ -26,7 +26,8 @@ add_executable(${TEST_EXECUTABLE_NAME}
     ${CMAKE_SOURCE_DIR}/src/utils/helper/Errno.cpp)
 
 # Link with required frameworks
-target_link_libraries(${TEST_EXECUTABLE_NAME} PRIVATE gtest)
+target_link_libraries(${TEST_EXECUTABLE_NAME}
+    PRIVATE gtest gmock)
 
 # Add the test to the project to be run by ctest
 add_test(${TEST_EXECUTABLE_NAME} ${TEST_EXECUTABLE_NAME})

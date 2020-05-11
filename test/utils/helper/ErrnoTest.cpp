@@ -28,8 +28,12 @@
 
 #include <cstring>
 
-#include "utils/helper/Errno.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
+#include "utils/helper/Errno.h"
+
+using ::testing::HasSubstr;
 
 using namespace utils::helper;
 
@@ -44,18 +48,23 @@ TEST(ErrnoTestSuite, returnStrerrorForEmptyFunctionName)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST(ErrnoTestSuite, workEvenForInvalidErrorCode)
 {
-    EXPECT_EQ(Errno::toString("NAME", -1),
-              std::string("NAME: ") + std::strerror(-1));
+    std::string result = Errno::toString("NAME", -1);
+
+    EXPECT_THAT(result, HasSubstr(std::string("NAME")));
+    EXPECT_THAT(result, HasSubstr(std::strerror(-1)));
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST(ErrnoTestSuite, concatenateStrerrorAndFunctionName)
 {
     std::array errnoValues = {EACCES, EAGAIN, EBUSY};
+    std::string result;
 
     for (const auto& errnoValue : errnoValues) {
-        EXPECT_EQ(Errno::toString("NAME", errnoValue),
-                  std::string("NAME: ") + std::strerror(errnoValue));
+        result = Errno::toString("NAME", errnoValue);
+
+        EXPECT_THAT(result, HasSubstr(std::string("NAME")));
+        EXPECT_THAT(result, HasSubstr(std::strerror(errnoValue)));
     }
 }
 
