@@ -31,7 +31,7 @@
 #include "gtest/gtest.h"
 
 #include "mocks/MockLogger.h"
-#include "utils/file/writer/Writer.h"
+#include "utils/file/reader/Reader.h"
 
 using ::testing::AtLeast;
 
@@ -40,10 +40,10 @@ using namespace utils::file;
 
 namespace {
 
-class WriterTestFixture : public ::testing::Test {
+class ReaderTestFixture : public ::testing::Test {
 
 protected:
-    WriterTestFixture() : m_writer(m_mockLogger)
+    ReaderTestFixture() : m_reader(m_mockLogger)
     {
         EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
         EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
@@ -51,20 +51,22 @@ protected:
         EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
     }
 
-    Writer m_writer;
+    Reader m_reader;
 
 private:
     MockLogger m_mockLogger;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, raiseExceptionIfInvalidStream)
+TEST_F(ReaderTestFixture, raiseExceptionIfInvalidStream)
 {
     try {
-        std::ostringstream stream;
+        std::string result;
+        std::istringstream stream;
+
         stream.setstate(std::ios::failbit);
 
-        m_writer.exec(stream, "0");
+        m_reader.exec(stream, result);
         FAIL() << "Should fail because the stream is not valid";
     }
     catch (const std::runtime_error& e) {
@@ -73,15 +75,16 @@ TEST_F(WriterTestFixture, raiseExceptionIfInvalidStream)
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, replaceContentIfValidStream)
+TEST_F(ReaderTestFixture, readContentIfValidStream)
 {
     // Use ostringstream because it does not require interaction
     // with the filesystem
-    std::ostringstream stream;
-    m_writer.exec(stream, "value");
+    std::istringstream stream("value");
 
-    // Check content
-    ASSERT_EQ(stream.str(), "value");
+    std::string result;
+    m_reader.exec(stream, result);
+
+    ASSERT_EQ(result, "value");
 }
 
 }

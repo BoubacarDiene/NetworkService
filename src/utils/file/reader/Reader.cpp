@@ -26,68 +26,32 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <sstream>
+#include <stdexcept>
 
-#include "gtest/gtest.h"
-
-#include "mocks/MockLogger.h"
-#include "utils/file/writer/Writer.h"
-
-using ::testing::AtLeast;
+#include "Reader.h"
 
 using namespace service::plugins::logger;
 using namespace utils::file;
 
-namespace {
+struct Reader::Internal {
+    const ILogger& logger;
 
-class WriterTestFixture : public ::testing::Test {
-
-protected:
-    WriterTestFixture() : m_writer(m_mockLogger)
-    {
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
-
-    Writer m_writer;
-
-private:
-    MockLogger m_mockLogger;
+    explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
 };
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, raiseExceptionIfInvalidStream)
-{
-    try {
-        std::ostringstream stream;
-        stream.setstate(std::ios::failbit);
+Reader::Reader(const ILogger& logger)
+    : m_internal(std::make_unique<Internal>(logger))
+{}
 
-        m_writer.exec(stream, "0");
-        FAIL() << "Should fail because the stream is not valid";
+Reader::~Reader() = default;
+
+void Reader::exec(std::istream& stream, std::string& result) const
+{
+    stream >> result;
+
+    if (stream.fail()) {
+        throw std::runtime_error("Reading from the given stream failed");
     }
-    catch (const std::runtime_error& e) {
-        // Expected!
-    }
-}
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, replaceContentIfValidStream)
-{
-    // Use ostringstream because it does not require interaction
-    // with the filesystem
-    std::ostringstream stream;
-    m_writer.exec(stream, "value");
-
-    // Check content
-    ASSERT_EQ(stream.str(), "value");
-}
-
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    m_internal->logger.debug("Read: " + result);
 }

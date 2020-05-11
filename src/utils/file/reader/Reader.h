@@ -26,68 +26,79 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <sstream>
+#ifndef __UTILS_FILE_READER_H__
+#define __UTILS_FILE_READER_H__
 
-#include "gtest/gtest.h"
+#include <memory>
 
-#include "mocks/MockLogger.h"
-#include "utils/file/writer/Writer.h"
+#include "service/plugins/ILogger.h"
 
-using ::testing::AtLeast;
+#include "IReader.h"
 
-using namespace service::plugins::logger;
-using namespace utils::file;
+namespace utils::file {
 
-namespace {
+/**
+ * @class Reader Reader.h "utils/file/Reader.h"
+ * @ingroup Helper
+ *
+ * @brief A helper class to read content from a specified input stream
+ *
+ * This class is the "low level class" that implements @ref IReader.h
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date May 2020
+ */
+class Reader : public IReader {
 
-class WriterTestFixture : public ::testing::Test {
+public:
+    /**
+     * Class constructor
+     *
+     * @param logger Logger object to print some useful logs
+     *
+     * @note Instead of allowing this class to have its own copy of the logger
+     *       object (shared_ptr), logger is made a non-const reference to a
+     *       const object for better performances. The counterpart is that the
+     *       logger object must (obviously) be kept valid by Main.cpp where it
+     *       is created until this class is no longer used.
+     */
+    explicit Reader(const service::plugins::logger::ILogger& logger);
 
-protected:
-    WriterTestFixture() : m_writer(m_mockLogger)
-    {
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
+    /** Class destructor */
+    ~Reader() override;
 
-    Writer m_writer;
+    /** Class copy constructor */
+    Reader(const Reader&) = delete;
+
+    /** Class copy-assignment operator */
+    Reader& operator=(const Reader&) = delete;
+
+    /** Class move constructor */
+    Reader(Reader&&) = delete;
+
+    /** Class move-assignment operator */
+    Reader& operator=(Reader&&) = delete;
+
+    /**
+     * @brief Write the given value to the provided output stream and check
+     *        errors
+     *
+     * @param stream The output stream where to write the value
+     * @param value  The new value that will replace the currrent content
+     */
+    void exec(std::istream& stream, std::string& result) const override;
 
 private:
-    MockLogger m_mockLogger;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 };
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, raiseExceptionIfInvalidStream)
-{
-    try {
-        std::ostringstream stream;
-        stream.setstate(std::ios::failbit);
-
-        m_writer.exec(stream, "0");
-        FAIL() << "Should fail because the stream is not valid";
-    }
-    catch (const std::runtime_error& e) {
-        // Expected!
-    }
 }
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, replaceContentIfValidStream)
-{
-    // Use ostringstream because it does not require interaction
-    // with the filesystem
-    std::ostringstream stream;
-    m_writer.exec(stream, "value");
-
-    // Check content
-    ASSERT_EQ(stream.str(), "value");
-}
-
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif

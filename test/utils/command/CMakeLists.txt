@@ -38,4 +38,4 @@ add_test(${PARSER_TEST_EXECUTABLE_NAME}
 #################################################################
 
 install(TARGETS ${PARSER_TEST_EXECUTABLE_NAME}
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
+        DESTINATION ${TESTS_INSTALL_DIR})

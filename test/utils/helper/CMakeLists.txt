@@ -36,4 +36,4 @@ add_test(${TEST_EXECUTABLE_NAME} ${TEST_EXECUTABLE_NAME})
 #################################################################
 
 install(TARGETS ${TEST_EXECUTABLE_NAME}
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
+        DESTINATION ${TESTS_INSTALL_DIR})

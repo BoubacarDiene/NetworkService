@@ -26,68 +26,66 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <sstream>
+#ifndef __UTILS_FILE_IREADER_H__
+#define __UTILS_FILE_IREADER_H__
 
-#include "gtest/gtest.h"
+#include <fstream>
+#include <string>
 
-#include "mocks/MockLogger.h"
-#include "utils/file/writer/Writer.h"
+namespace utils::file {
 
-using ::testing::AtLeast;
+/**
+ * @interface IReader IReader.h "utils/file/IReader.h"
+ * @ingroup Helper
+ *
+ * @brief A helper class to read content from a specified input stream.
+ *        This class is a high level interface added to ease testability
+ *        of component that use it.
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date May 2020
+ */
+class IReader {
 
-using namespace service::plugins::logger;
-using namespace utils::file;
+public:
+    /** Class constructor */
+    IReader() = default;
 
-namespace {
+    /** Class destructor */
+    virtual ~IReader() = default;
 
-class WriterTestFixture : public ::testing::Test {
+    /** Class copy constructor */
+    IReader(const IReader&) = delete;
 
-protected:
-    WriterTestFixture() : m_writer(m_mockLogger)
-    {
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
+    /** Class copy-assignment operator */
+    IReader& operator=(const IReader&) = delete;
 
-    Writer m_writer;
+    /** Class move constructor */
+    IReader(IReader&&) = delete;
 
-private:
-    MockLogger m_mockLogger;
+    /** Class move-assignment operator */
+    IReader& operator=(IReader&&) = delete;
+
+    /**
+     * @brief Read the content of the provided input stream and check errors
+     *
+     * Note that the stream must be opened before calling this method otherwise
+     * an exception should be raised. Also, a path to a file (for example) is not
+     * used in place of stream parameter to make possible unit testing without
+     * reading from the filesystem.
+     *
+     * @param stream The input stream where to read data from
+     * @param result The output variable into which the read data is stored
+     */
+    virtual void exec(std::istream& stream, std::string& result) const = 0;
 };
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, raiseExceptionIfInvalidStream)
-{
-    try {
-        std::ostringstream stream;
-        stream.setstate(std::ios::failbit);
-
-        m_writer.exec(stream, "0");
-        FAIL() << "Should fail because the stream is not valid";
-    }
-    catch (const std::runtime_error& e) {
-        // Expected!
-    }
 }
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(WriterTestFixture, replaceContentIfValidStream)
-{
-    // Use ostringstream because it does not require interaction
-    // with the filesystem
-    std::ostringstream stream;
-    m_writer.exec(stream, "value");
-
-    // Check content
-    ASSERT_EQ(stream.str(), "value");
-}
-
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif
