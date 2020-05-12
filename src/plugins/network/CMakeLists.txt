@@ -22,7 +22,7 @@ set(TARGET_PLUGINS_NETWORK ${CMAKE_PROJECT_NAME}-plugins-network
 add_library(${TARGET_PLUGINS_NETWORK}
     STATIC
         $<TARGET_OBJECTS:${TARGET_UTILS_COMMAND}>
-        $<TARGET_OBJECTS:${TARGET_UTILS_FILE}>
+        $<TARGET_OBJECTS:${TARGET_UTILS_FILE_WRITER}>
         $<TARGET_OBJECTS:${TARGET_UTILS_HELPER}>)
 
 #################################################################

@@ -47,11 +47,29 @@ Reader::~Reader() = default;
 
 void Reader::readFromStream(std::istream& stream, std::string& result) const
 {
-    stream >> result;
+    if (!stream.good()) {
+        throw std::runtime_error("Invalid input stream");
+    }
+
+    // Get length of file
+    stream.seekg(0, stream.end);
+    std::streamoff length = stream.tellg();
+    stream.seekg(0, stream.beg);
+
+    char* buffer = new char[length];
+
+    // Read data as a block
+    // Note: operator>> is not used because it stops reading at first whitespace
+    stream.read(buffer, length);
 
     if (stream.fail()) {
-        throw std::runtime_error("Reading from the given stream failed");
+        delete[] buffer;
+        std::string readCharacters(stream.gcount() + "/" + length);
+        throw std::runtime_error("Could not read all characters: " + readCharacters);
     }
+
+    result.assign(buffer, static_cast<std::size_t>(length));
+    delete[] buffer;
 
     m_internal->logger.debug("Read: " + result);
 }

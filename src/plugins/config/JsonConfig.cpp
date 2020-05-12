@@ -29,6 +29,8 @@
 #include <fstream>
 #include <json.hpp>
 
+#include "utils/file/reader/Reader.h"
+
 #include "Config.h"
 
 #define JSON_ALIAS_NETWORK            "network"
@@ -45,6 +47,7 @@ using json = nlohmann::json;
 
 using namespace service::plugins::config;
 using namespace service::plugins::logger;
+using namespace utils::file;
 
 // See https://github.com/nlohmann/json#conversion-from-stl-containers
 // to understand a function named from_json has to be defined in this
@@ -90,12 +93,14 @@ struct Config::Internal {
 
     explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
 
-    static std::unique_ptr<ConfigData>
-        getConfigDataFrom(const std::string& configFile)
+    std::unique_ptr<ConfigData>
+        getConfigDataFrom(const std::string& configFile) const
     {
-        json jsonObject;
-        std::ifstream(configFile) >> jsonObject;
+        std::string result;
+        std::ifstream stream(configFile);
+        Reader(logger).readFromStream(stream, result);
 
+        json jsonObject = json::parse(result);
         return std::make_unique<ConfigData>(jsonObject.get<ConfigData>());
     }
 };
@@ -109,5 +114,5 @@ Config::~Config() = default;
 std::unique_ptr<ConfigData> Config::load(const std::string& configFile) const
 {
     m_internal->logger.debug("Read config from: " + configFile);
-    return Internal::getConfigDataFrom(configFile);
+    return m_internal->getConfigDataFrom(configFile);
 }

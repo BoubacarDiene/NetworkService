@@ -10,7 +10,7 @@
 ##
 
 #################################################################
-#                           Target                              #
+#                          Variables                            #
 #################################################################
 
 # Make target name globally available for dependencies
@@ -18,17 +18,17 @@ set(TARGET_PLUGINS_CONFIG ${CMAKE_PROJECT_NAME}-plugins-config
     CACHE STRING "Name of target to build the config plugin"
     FORCE)
 
-# Build the config plugin as a static library
-add_library(${TARGET_PLUGINS_CONFIG} STATIC "")
-
 #################################################################
 #                    Conditional compilation                    #
 #################################################################
 
 if (CONFIG_LOADER MATCHES fake)
+    add_library(${TARGET_PLUGINS_CONFIG} STATIC "")
     target_sources(${TARGET_PLUGINS_CONFIG}
         PRIVATE FakeConfig.cpp PUBLIC Config.h)
 else()
+    add_library(${TARGET_PLUGINS_CONFIG}
+        STATIC $<TARGET_OBJECTS:${TARGET_UTILS_FILE_READER}>)
     target_sources(${TARGET_PLUGINS_CONFIG}
         PRIVATE JsonConfig.cpp PUBLIC Config.h)
 endif()

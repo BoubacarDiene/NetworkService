@@ -5,8 +5,7 @@
 # \author Boubacar DIENE <boubacar.diene@gmail.com>
 # \date   April 2020
 #
-# \brief  CMakeLists.txt to add reader and writer subdirectories
-#         in utils target
+# \brief  CMakeLists.txt to add writer in utils target
 #
 ##
 
@@ -14,5 +13,11 @@
 #                           Sources                             #
 #################################################################
 
-add_subdirectory(reader)
-add_subdirectory(writer)
+target_sources(${TARGET_UTILS_FILE_WRITER}
+    PRIVATE
+        Writer.cpp
+    PUBLIC
+        Writer.h
+    INTERFACE
+        IWriter.h
+)

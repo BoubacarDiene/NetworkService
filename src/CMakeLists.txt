@@ -36,9 +36,13 @@ set(TARGET_UTILS_COMMAND ${CMAKE_PROJECT_NAME}-utils-command
 add_library(${TARGET_UTILS_COMMAND} OBJECT "")
 
 # File
-set(TARGET_UTILS_FILE ${CMAKE_PROJECT_NAME}-utils-file
-    CACHE INTERNAL "Name of target to build utils/file" FORCE)
-add_library(${TARGET_UTILS_FILE} OBJECT "")
+set(TARGET_UTILS_FILE_READER ${CMAKE_PROJECT_NAME}-utils-file-reader
+    CACHE INTERNAL "Name of target to build utils/file/reader" FORCE)
+add_library(${TARGET_UTILS_FILE_READER} OBJECT "")
+
+set(TARGET_UTILS_FILE_WRITER ${CMAKE_PROJECT_NAME}-utils-file-writer
+    CACHE INTERNAL "Name of target to build utils/file/writer" FORCE)
+add_library(${TARGET_UTILS_FILE_WRITER} OBJECT "")
 
 # Helper
 set(TARGET_UTILS_HELPER ${CMAKE_PROJECT_NAME}-utils-helper

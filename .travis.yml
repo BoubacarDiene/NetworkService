@@ -125,7 +125,7 @@ script:
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
       -c "mkdir -p build && cd build;
           cmake .. -DCMAKE_INSTALL_PREFIX=./out -DENABLE_UNIT_TESTING=ON -DENABLE_COVERAGE=ON;
-          make && ctest;"
+          make && ctest -V;"
 
 # Code coverage
 after_success:
