@@ -38,7 +38,7 @@
 namespace utils::file {
 
 /**
- * @class Reader Reader.h "utils/file/Reader.h"
+ * @class Reader Reader.h "utils/file/reader/Reader.h"
  * @ingroup Helper
  *
  * @brief A helper class to read content from a specified input stream

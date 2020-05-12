@@ -26,22 +26,21 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __UTILS_COMMAND_EXECUTOR_H__
-#define __UTILS_COMMAND_EXECUTOR_H__
+#ifndef __UTILS_COMMAND_LINUX_H__
+#define __UTILS_COMMAND_LINUX_H__
 
 #include <memory>
 
 #include "service/plugins/ILogger.h"
-
-#include "IOsal.h"
+#include "utils/command/executor/IOsal.h"
 
 namespace utils::command {
 
 /**
- * @class Executor Executor.h "utils/command/executor/Executor.h"
+ * @class Linux Linux.h "utils/command/executor/osal/Linux.h"
  * @ingroup Helper
  *
- * @brief A helper class to execute shell commands securely.
+ * @brief This class is the "low level class" that implements @ref IOsal.h
  *
  * @note Copy contructor, copy-assignment operator, move constructor and
  *       move-assignment operator are defined to be compliant with the
@@ -50,57 +49,15 @@ namespace utils::command {
  * @see https://en.cppreference.com/w/cpp/language/rule_of_three
  *
  * @author Boubacar DIENE <boubacar.diene@gmail.com>
- * @date April 2020
+ * @date May 2020
  */
-class Executor {
+class Linux : public IOsal {
 
 public:
-    /**
-     * @enum Flags
-     *
-     * @brief Bitmasks to give control on how this class is handling
-     *        requests
-     */
-    enum Flags : unsigned int {
-        WAIT_COMMAND = (1u << 0u),    /**< Wait until command is completed */
-        RESEED_PRNG  = (1u << 1u),    /**< Re-initialize the Random number
-                                       * Generator */
-        SANITIZE_FILES  = (1u << 2u), /**< Closed file descriptors, ... */
-        DROP_PRIVILEGES = (1u << 3u), /**< Drop the process's privileges */
-        ALL = (WAIT_COMMAND | RESEED_PRNG | SANITIZE_FILES | DROP_PRIVILEGES)
-    };
-
-    /**
-     * @struct ProgramParams
-     *
-     * @brief A data structure containing all input parameters expected by
-     *        execProgram() method.
-     *
-     * One reason that explains why a structure is preferred over a long list of
-     * input parameters (>=4) is that this way it is easier to add new parameters
-     * without impacting the readability.
-     */
-    struct ProgramParams {
-        /** Either a binary executable, or a script starting with a line of the
-         * form: "#! interpreter [optional-arg]" */
-        const char* const pathname;
-
-        /** An array of argument strings passed to the new program. By convention,
-         * the first of these strings should contain the filename associated with
-         * the file being executed */
-        char* const* const argv;
-
-        /** An array of strings of the form key=value, which are passed as
-         * environment to the new program */
-        char* const* const envp;
-    };
-
     /**
      * Class constructor
      *
      * @param logger Logger object to print some useful logs
-     * @param osal   OS abstract layer's implementation to use. This is passed
-     *               to the constructor to ease unit testing of Executor class.
      *
      * @note Instead of allowing this class to have its own copy of the logger
      *       object (shared_ptr), logger is made a non-const reference to a
@@ -108,39 +65,69 @@ public:
      *       logger object must (obviously) be kept valid by Main.cpp where it
      *       is created until this class is no longer used.
      */
-    explicit Executor(const service::plugins::logger::ILogger& logger,
-                      const IOsal& osal);
+    explicit Linux(const service::plugins::logger::ILogger& logger);
 
     /** Class destructor */
-    ~Executor();
+    ~Linux() override;
 
     /** Class copy constructor */
-    Executor(const Executor&) = delete;
+    Linux(const Linux&) = delete;
 
     /** Class copy-assignment operator */
-    Executor& operator=(const Executor&) = delete;
+    Linux& operator=(const Linux&) = delete;
 
     /** Class move constructor */
-    Executor(Executor&&) = delete;
+    Linux(Linux&&) = delete;
 
     /** Class move-assignment operator */
-    Executor& operator=(Executor&&) = delete;
+    Linux& operator=(Linux&&) = delete;
 
     /**
-     * @brief Execute the program pointed to by pathname
+     * @brief creates a new process by duplicating the calling process. It
+     *        can basically be a wrapper to fork() call.
      *
-     * This function performs a fork+execve in a secure way (re-initialize
-     * the random number generator, close file descriptors, ...). Except
-     * "flags", all input parameters have the same meaning as in execve()
-     * manpage.
-     *
-     * @param params An object of type @ref ProgramParams
-     * @param flags  A set of masks of type @ref Flags
-     *
-     * @see http://man7.org/linux/man-pages/man2/execve.2.html
+     * @return An id of type @ref ProcessId
      */
-    void executeProgram(const ProgramParams& params,
-                        Flags flags = Flags::ALL) const;
+    [[nodiscard]] ProcessId createProcess() const override;
+
+    /**
+     * @brief Wait for any child process whose process group ID is equal to
+     *        that of the calling process.
+     */
+    void waitChildProcess() const override;
+
+    /**
+     * @brief Execute the program referred to by pathname
+     *
+     * @param pathname Either a binary executable, or a script starting with a
+     *                 line of the form: "#! interpreter [optional-arg]"
+     * @param argv     An array of argument strings passed to the new program.
+     *                 By convention, the first of these strings should contain
+     *                 the filename associated with the file being executed.
+     * @param envp     An array of strings of the form key=value, which are
+     *                 passed as environment to the new program.
+     */
+    void executeProgram(const char* pathname,
+                        char* const argv[],
+                        char* const envp[]) const override;
+
+    /**
+     * @brief Initialize the Random Number Generator for a new sequence of
+     *        pseudo-random integers to be returned by rand()
+     */
+    void reseedPRNG() const override;
+
+    /**
+     * @brief Close all opened file descriptors except those related to the
+     *        standard streams (stdin, stdout, stderr). These are only reopened
+     *        to /dev/null if not already opened.
+     */
+    void sanitizeFiles() const override;
+
+    /**
+     * @brief Permanently drop the privileges of the process
+     */
+    void dropPrivileges() const override;
 
 private:
     struct Internal;

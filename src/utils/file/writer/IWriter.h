@@ -35,7 +35,7 @@
 namespace utils::file {
 
 /**
- * @interface IWriter IWriter.h "utils/file/IWriter.h"
+ * @interface IWriter IWriter.h "utils/file/writer/IWriter.h"
  * @ingroup Helper
  *
  * @brief A helper class to write a given value to a specified output stream.
@@ -84,7 +84,8 @@ public:
      * @param stream The output stream where to write the value
      * @param value  The new value that will replace the currrent content
      */
-    virtual void writeToStream(std::ostream& stream, const std::string& value) const = 0;
+    virtual void writeToStream(std::ostream& stream,
+                               const std::string& value) const = 0;
 };
 
 }

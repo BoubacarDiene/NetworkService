@@ -36,7 +36,7 @@
 namespace utils::command {
 
 /**
- * @class Parser Parser.h "utils/command/Parser.h"
+ * @class Parser Parser.h "utils/command/parser/Parser.h"
  * @ingroup Helper
  *
  * @brief A helper class to parse a string representing a command so

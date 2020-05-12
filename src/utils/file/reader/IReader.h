@@ -35,7 +35,7 @@
 namespace utils::file {
 
 /**
- * @interface IReader IReader.h "utils/file/IReader.h"
+ * @interface IReader IReader.h "utils/file/reader/IReader.h"
  * @ingroup Helper
  *
  * @brief A helper class to read content from a specified input stream.

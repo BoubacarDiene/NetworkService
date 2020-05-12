@@ -27,6 +27,7 @@
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
 #include "utils/command/executor/Executor.h"
+#include "utils/command/executor/osal/Linux.h"
 #include "utils/command/parser/Parser.h"
 
 #include "Rule.h"
@@ -41,9 +42,11 @@ struct Rule::Internal {
     const std::string& name;
     const std::vector<std::string>& commands;
 
+    std::unique_ptr<Executor> executor;
+
     /* const to make these objects non-copyable, non-movable and
      * non-resettable */
-    const std::unique_ptr<Executor> executor;
+    const std::unique_ptr<IOsal> osal;
     const std::unique_ptr<Parser> parser;
 
     explicit Internal(const ILogger& providedLogger,
@@ -52,9 +55,11 @@ struct Rule::Internal {
         : logger(providedLogger),
           name(providedName),
           commands(providedCommands),
-          executor(std::make_unique<Executor>(providedLogger)),
+          osal(std::make_unique<Linux>(providedLogger)),
           parser(std::make_unique<Parser>(providedLogger))
-    {}
+    {
+        executor = std::make_unique<Executor>(logger, *osal);
+    }
 };
 
 Rule::Rule(const ILogger& logger,
@@ -72,7 +77,8 @@ void Rule::applyCommands() const
             = m_internal->parser->parse(command);
 
         m_internal->logger.debug(m_internal->name + " - Apply command: " + command);
-        m_internal->executor->executeProgram(
-            parsedCommand->pathname, parsedCommand->argv, nullptr);
+        const Executor::ProgramParams params
+            = {parsedCommand->pathname, parsedCommand->argv, nullptr};
+        m_internal->executor->executeProgram(params);
     }
 }

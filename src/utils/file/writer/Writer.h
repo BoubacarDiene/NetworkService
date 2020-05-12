@@ -38,7 +38,7 @@
 namespace utils::file {
 
 /**
- * @class Writer Writer.h "utils/file/Writer.h"
+ * @class Writer Writer.h "utils/file/writer/Writer.h"
  * @ingroup Helper
  *
  * @brief A helper class to write a given value to a specified file
@@ -92,7 +92,8 @@ public:
      * @param stream The output stream where to write the value
      * @param value  The new value that will replace the currrent content
      */
-    void writeToStream(std::ostream& stream, const std::string& value) const override;
+    void writeToStream(std::ostream& stream,
+                       const std::string& value) const override;
 
 private:
     struct Internal;

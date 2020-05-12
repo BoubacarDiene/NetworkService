@@ -54,7 +54,7 @@ add_library(${TARGET_UTILS_HELPER} OBJECT "")
 # here because "If no CMakeLists.txt file changes when a source
 # is added or removed then the generated build system cannot know
 # when to ask CMake to regenerate"
-set(ALL_CXX_TEST_FILES
+set(ALL_CXX_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/Config.h
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/JsonConfig.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/MockConfig.cpp
@@ -80,6 +80,9 @@ set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/service/NetworkService.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/Executor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/Executor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/IOsal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Linux.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Linux.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/parser/Parser.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/parser/Parser.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/writer/IWriter.h
