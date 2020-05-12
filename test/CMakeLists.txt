@@ -41,6 +41,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/frameworks/googletest.cmake)
 # when to ask CMake to regenerate"
 set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockLogger.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockOsal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/ParserTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/ReaderTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/WriterTest.cpp

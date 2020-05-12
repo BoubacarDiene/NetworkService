@@ -139,8 +139,7 @@ public:
      *
      * @see http://man7.org/linux/man-pages/man2/execve.2.html
      */
-    void executeProgram(const ProgramParams& params,
-                        Flags flags = Flags::ALL) const;
+    void executeProgram(const ProgramParams& params, Flags flags = Flags::ALL) const;
 
 private:
     struct Internal;
