@@ -56,8 +56,8 @@ add_library(${TARGET_UTILS_HELPER} OBJECT "")
 # when to ask CMake to regenerate"
 set(ALL_CXX_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/Config.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/FakeConfig.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/JsonConfig.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/MockConfig.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/Rule.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/Rule.h
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/RuleFactory.cpp

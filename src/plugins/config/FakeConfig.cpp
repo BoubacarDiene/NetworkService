@@ -57,24 +57,24 @@ private:
         network->interfaceNames.emplace_back("lo");
 
         network->interfaceCommands.emplace_back(
-            "/bin/echo \"[MOCK] Interface command 1\n\" >> " + configFile);
+            "/bin/echo \"[FAKE] Interface command 1\n\" >> " + configFile);
         network->interfaceCommands.emplace_back(
-            "/bin/echo \"[MOCK] Interface command 2\n\" >> " + configFile);
+            "/bin/echo \"[FAKE] Interface command 2\n\" >> " + configFile);
 
         network->layerCommands.emplace_back(
-            ConfigData::Network::LayerCommand {configFile, "[MOCK] Layer: value\n"});
+            ConfigData::Network::LayerCommand {configFile, "[FAKE] Layer: value\n"});
     }
 
     static inline void fillInRulesData(const std::string& configFile,
                                        std::vector<ConfigData::Rule>* rules)
     {
         std::vector<std::string> rule1Commands
-            = {"/bin/echo \"[MOCK] Rule 1: command 1\n\" >> " + configFile,
-               "/bin/echo \"[MOCK] Rule 1: command 2\n\" >> " + configFile};
+            = {"/bin/echo \"[FAKE] Rule 1: command 1\n\" >> " + configFile,
+               "/bin/echo \"[FAKE] Rule 1: command 2\n\" >> " + configFile};
         rules->emplace_back(ConfigData::Rule({"Rule 1", rule1Commands}));
 
         std::vector<std::string> rule2Commands
-            = {"/bin/echo \"[MOCK] Rule 2: command 1\n\" >> " + configFile};
+            = {"/bin/echo \"[FAKE] Rule 2: command 1\n\" >> " + configFile};
         rules->emplace_back(ConfigData::Rule({"Rule 2", rule2Commands}));
     }
 };

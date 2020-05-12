@@ -13,7 +13,7 @@
 # mkdir build && cd build
 # cmake .. -DCMAKE_INSTALL_PREFIX=./out
 #          -DCMAKE_BUILD_TYPE=<Debug = default | Release>
-#          -DCONFIG_LOADER=<json = default | mock>
+#          -DCONFIG_LOADER=<json = default | fake>
 #          -DLOGS_OUTPUT=<std = default>
 #          -DENABLE_UNIT_TESTING=<ON | OFF = default>
 #          -DENABLE_COVERAGE=<ON | OFF = default>
@@ -21,8 +21,8 @@
 #
 #
 # \note
-#     -DCONFIG_LOADER=mock can be used to test the service with
-#     the mock version of the config loader. "json" is the default
+#     -DCONFIG_LOADER=fake can be used to test the service with
+#     the fake version of the config loader. "json" is the default
 #     value
 #
 #     -DLOGS_OUTPUT=std can be used to output logs messages to

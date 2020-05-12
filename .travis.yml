@@ -91,16 +91,16 @@ before_script:
 
 # Checks to ensure that the software compiles in all configurations
 script:
-  # Build MOCK version (Debug build)
+  # Build FAKE version (Debug build)
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
       -c "mkdir -p build && cd build;
-          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=mock;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_IWYU=ON -DCONFIG_LOADER=fake;
           make && make install;"
 
-  # Build MOCK version (Release build)
+  # Build FAKE version (Release build)
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
       -c "mkdir -p build && cd build;
-          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=mock;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DCONFIG_LOADER=fake;
           make && make install;"
 
   # Build JSON version (Debug build)
