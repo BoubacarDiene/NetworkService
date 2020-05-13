@@ -93,7 +93,7 @@ struct Config::Internal {
 
     explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
 
-    std::unique_ptr<ConfigData>
+    [[nodiscard]] std::unique_ptr<ConfigData>
         getConfigDataFrom(const std::string& configFile) const
     {
         std::string result;

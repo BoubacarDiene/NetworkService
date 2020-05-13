@@ -56,15 +56,16 @@ struct Network::Internal {
     const std::unique_ptr<Interface> interface;
     const std::unique_ptr<Layer> layer;
 
-    explicit Internal(const ILogger& providedLogger)
+    explicit Internal(const ILogger& providedLogger,
+                      const utils::command::Executor& providedExecutor)
         : logger(providedLogger),
-          interface(std::make_unique<Interface>(logger)),
+          interface(std::make_unique<Interface>(logger, providedExecutor)),
           layer(std::make_unique<Layer>(logger))
     {}
 };
 
-Network::Network(const ILogger& logger)
-    : m_internal(std::make_unique<Internal>(logger))
+Network::Network(const ILogger& logger, const utils::command::Executor& executor)
+    : m_internal(std::make_unique<Internal>(logger, executor))
 {}
 
 Network::~Network() = default;

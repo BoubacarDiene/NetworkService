@@ -29,7 +29,7 @@
 #ifndef __UTILS_COMMAND_IOS_ABSTRACTION_LAYER_H__
 #define __UTILS_COMMAND_IOS_ABSTRACTION_LAYER_H__
 
-namespace utils::command {
+namespace utils::command::osal {
 
 /**
  * @interface IOsal IOsal.h "utils/command/executor/IOsal.h"

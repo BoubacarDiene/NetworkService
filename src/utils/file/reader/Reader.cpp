@@ -26,6 +26,7 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
+#include <ios>
 #include <stdexcept>
 
 #include "Reader.h"
@@ -52,9 +53,9 @@ void Reader::readFromStream(std::istream& stream, std::string& result) const
     }
 
     // Get length of file
-    stream.seekg(0, stream.end);
+    stream.seekg(0, std::ios_base::end);
     std::streamoff length = stream.tellg();
-    stream.seekg(0, stream.beg);
+    stream.seekg(0, std::ios_base::beg);
 
     char* buffer = new char[length];
 

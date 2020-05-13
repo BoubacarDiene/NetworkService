@@ -30,6 +30,7 @@
 
 using namespace service::plugins::logger;
 using namespace utils::command;
+using namespace utils::command::osal;
 
 struct Executor::Internal {
     const ILogger& logger;

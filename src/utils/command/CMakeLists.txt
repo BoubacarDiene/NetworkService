@@ -10,18 +10,29 @@
 ##
 
 #################################################################
+#                       Subdirectories                          #
+#################################################################
+
+# Abstraction layer
+# For now, conditional build is not necessary since only one OSAL
+# exists
+add_subdirectory(executor/osal)
+
+#################################################################
 #                           Sources                             #
 #################################################################
 
+# Parser and Executor could technically be separated but they are
+# supposed to evolve together. Indeed, output of Parser is used as
+# input for Executor
+#
+# => Built together until need for a separation becomes obvious
 target_sources(${TARGET_UTILS_COMMAND}
     PRIVATE
         executor/Executor.cpp
-        executor/osal/Linux.cpp
         parser/Parser.cpp
     PUBLIC
         executor/Executor.h
-        executor/osal/Linux.h
         parser/Parser.h
-    INTERFACE
         executor/IOsal.h
 )

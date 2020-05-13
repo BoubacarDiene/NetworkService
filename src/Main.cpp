@@ -36,11 +36,17 @@
 
 #include "service/NetworkService.h"
 
+#include "utils/command/executor/Executor.h"
+#include "utils/command/executor/osal/Linux.h"
+
 using namespace service;
 using namespace service::plugins::config;
 using namespace service::plugins::firewall;
 using namespace service::plugins::logger;
 using namespace service::plugins::network;
+
+using namespace utils::command;
+using namespace utils::command::osal;
 
 static inline std::string parseCommandLine(int argc, char** argv)
 {
@@ -72,11 +78,12 @@ int main(int argc, char** argv)
     std::string configFile = parseCommandLine(argc, argv);
 
     /* Initialize and inject dependencies */
-    std::shared_ptr<ILogger> logger   = std::make_shared<Logger>();
-    std::unique_ptr<IConfig> config   = std::make_unique<Config>(*logger);
-    std::unique_ptr<INetwork> network = std::make_unique<Network>(*logger);
-    std::unique_ptr<IRuleFactory> ruleFactory
-        = std::make_unique<RuleFactory>(*logger);
+    auto logger      = std::make_shared<Logger>();
+    auto osal        = std::make_unique<Linux>(*logger);
+    auto executor    = std::make_unique<Executor>(*logger, *osal);
+    auto network     = std::make_unique<Network>(*logger, *executor);
+    auto ruleFactory = std::make_unique<RuleFactory>(*logger, *executor);
+    auto config      = std::make_unique<Config>(*logger);
 
     NetworkService networkService(
         {logger, std::move(config), std::move(network), std::move(ruleFactory)});

@@ -27,7 +27,6 @@
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
 #include "utils/command/executor/Executor.h"
-#include "utils/command/executor/osal/Linux.h"
 #include "utils/command/parser/Parser.h"
 
 #include "Setup.h"
@@ -38,25 +37,22 @@ using namespace utils::command;
 
 struct Interface::Internal {
     const ILogger& logger;
+    const Executor& executor;
 
-    std::unique_ptr<Executor> executor;
-
-    /* const to make these objects non-copyable, non-movable and
+    /* const to make this object non-copyable, non-movable and
      * non-resettable */
-    const std::unique_ptr<IOsal> osal;
     const std::unique_ptr<Parser> parser;
 
-    explicit Internal(const ILogger& providedLogger)
+    explicit Internal(const ILogger& providedLogger,
+                      const Executor& providedExecutor)
         : logger(providedLogger),
-          osal(std::make_unique<Linux>(providedLogger)),
+          executor(providedExecutor),
           parser(std::make_unique<Parser>(providedLogger))
-    {
-        executor = std::make_unique<Executor>(logger, *osal);
-    }
+    {}
 };
 
-Interface::Interface(const ILogger& logger)
-    : m_internal(std::make_unique<Internal>(logger))
+Interface::Interface(const ILogger& logger, const Executor& executor)
+    : m_internal(std::make_unique<Internal>(logger, executor))
 {}
 
 Interface::~Interface() = default;
@@ -68,5 +64,5 @@ void Interface::applyCommand(const std::string& command) const
     m_internal->logger.debug("Apply command: " + command);
     const Executor::ProgramParams params
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
-    m_internal->executor->executeProgram(params);
+    m_internal->executor.executeProgram(params);
 }

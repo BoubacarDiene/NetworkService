@@ -33,7 +33,7 @@
 
 #include "utils/command/executor/IOsal.h"
 
-namespace utils::command {
+namespace utils::command::osal {
 
 class MockOsal : public IOsal {
 

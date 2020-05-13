@@ -41,7 +41,7 @@
 #include "Linux.h"
 
 using namespace service::plugins::logger;
-using namespace utils::command;
+using namespace utils::command::osal;
 using namespace utils::helper;
 
 struct Linux::Internal {

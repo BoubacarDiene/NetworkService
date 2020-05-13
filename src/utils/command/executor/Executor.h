@@ -109,7 +109,7 @@ public:
      *       is created until this class is no longer used.
      */
     explicit Executor(const service::plugins::logger::ILogger& logger,
-                      const IOsal& osal);
+                      const osal::IOsal& osal);
 
     /** Class destructor */
     ~Executor();

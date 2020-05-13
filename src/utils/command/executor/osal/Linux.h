@@ -26,15 +26,15 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __UTILS_COMMAND_LINUX_H__
-#define __UTILS_COMMAND_LINUX_H__
+#ifndef __UTILS_COMMAND_EXECUTOR_LINUX_OSAL_H__
+#define __UTILS_COMMAND_EXECUTOR_LINUX_OSAL_H__
 
 #include <memory>
 
 #include "service/plugins/ILogger.h"
 #include "utils/command/executor/IOsal.h"
 
-namespace utils::command {
+namespace utils::command::osal {
 
 /**
  * @class Linux Linux.h "utils/command/executor/osal/Linux.h"

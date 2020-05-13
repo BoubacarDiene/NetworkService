@@ -32,6 +32,8 @@
 #include <memory>
 
 #include "service/plugins/ILogger.h"
+#include "utils/command/executor/Executor.h"
+
 #include "service/plugins/IRule.h"
 
 namespace service::plugins::firewall {
@@ -59,10 +61,11 @@ public:
     /**
      * Class constructor
      *
-     * @param logger  Logger object to print some useful logs
-     * @param name    A name for the rule mainly used in logs messages to
-     *                help identifying rules
+     * @param logger   Logger object to print some useful logs
+     * @param name     A name for the rule mainly used in logs messages to
+     *                 help identifying rules
      * @param commands The list of shell commands that compose the rule
+     * @param executor Command executor to use
      *
      * @note Instead of allowing this class to have its own copy of the logger
      *       object (shared_ptr), logger is made a non-const reference to a
@@ -72,7 +75,8 @@ public:
      */
     explicit Rule(const service::plugins::logger::ILogger& logger,
                   const std::string& name,
-                  const std::vector<std::string>& commands);
+                  const std::vector<std::string>& commands,
+                  const utils::command::Executor& executor);
 
     /**
      * Class destructor

@@ -27,7 +27,6 @@
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
 #include "utils/command/executor/Executor.h"
-#include "utils/command/executor/osal/Linux.h"
 #include "utils/command/parser/Parser.h"
 
 #include "Rule.h"
@@ -38,34 +37,32 @@ using namespace utils::command;
 
 struct Rule::Internal {
     const ILogger& logger;
+    const Executor& executor;
 
     const std::string& name;
     const std::vector<std::string>& commands;
 
-    std::unique_ptr<Executor> executor;
-
-    /* const to make these objects non-copyable, non-movable and
+    /* const to make this object non-copyable, non-movable and
      * non-resettable */
-    const std::unique_ptr<IOsal> osal;
     const std::unique_ptr<Parser> parser;
 
     explicit Internal(const ILogger& providedLogger,
+                      const Executor& providedExecutor,
                       const std::string& providedName,
                       const std::vector<std::string>& providedCommands)
         : logger(providedLogger),
+          executor(providedExecutor),
           name(providedName),
           commands(providedCommands),
-          osal(std::make_unique<Linux>(providedLogger)),
           parser(std::make_unique<Parser>(providedLogger))
-    {
-        executor = std::make_unique<Executor>(logger, *osal);
-    }
+    {}
 };
 
 Rule::Rule(const ILogger& logger,
            const std::string& name,
-           const std::vector<std::string>& commands)
-    : m_internal(std::make_unique<Internal>(logger, name, commands))
+           const std::vector<std::string>& commands,
+           const Executor& executor)
+    : m_internal(std::make_unique<Internal>(logger, executor, name, commands))
 {}
 
 Rule::~Rule() = default;
@@ -79,6 +76,6 @@ void Rule::applyCommands() const
         m_internal->logger.debug(m_internal->name + " - Apply command: " + command);
         const Executor::ProgramParams params
             = {parsedCommand->pathname, parsedCommand->argv, nullptr};
-        m_internal->executor->executeProgram(params);
+        m_internal->executor.executeProgram(params);
     }
 }

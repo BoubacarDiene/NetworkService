@@ -39,6 +39,7 @@ using ::testing::Sequence;
 
 using namespace service::plugins::logger;
 using namespace utils::command;
+using namespace utils::command::osal;
 
 namespace {
 

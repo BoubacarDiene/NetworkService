@@ -34,12 +34,18 @@ using namespace service::plugins::logger;
 
 struct RuleFactory::Internal {
     const ILogger& logger;
+    const utils::command::Executor& executor;
 
-    explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
+    explicit Internal(const ILogger& providedLogger,
+                      const utils::command::Executor& providedExecutor)
+        : logger(providedLogger),
+          executor(providedExecutor)
+    {}
 };
 
-RuleFactory::RuleFactory(const ILogger& logger)
-    : m_internal(std::make_unique<Internal>(logger))
+RuleFactory::RuleFactory(const ILogger& logger,
+                         const utils::command::Executor& executor)
+    : m_internal(std::make_unique<Internal>(logger, executor))
 {}
 
 RuleFactory::~RuleFactory() = default;
@@ -49,5 +55,6 @@ std::unique_ptr<IRule>
                             const std::vector<std::string>& commands) const
 {
     m_internal->logger.debug("Create rule: " + name);
-    return std::make_unique<Rule>(m_internal->logger, name, commands);
+    return std::make_unique<Rule>(
+        m_internal->logger, name, commands, m_internal->executor);
 }
