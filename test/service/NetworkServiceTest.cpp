@@ -215,10 +215,8 @@ TEST_F(NetworkServiceTestFixture, setupNetworkBeforeFirewall)
         EXPECT_CALL(m_mockNetwork, applyLayerCommands).InSequence(seq2);
         EXPECT_CALL(m_mockRuleFactory, createRule)
             .InSequence(seq2)
-            .WillOnce([](const std::string& name,
-                         const std::vector<std::string>& commands) {
-                (void)name;
-                (void)commands;
+            .WillOnce([]([[maybe_unused]] const std::string& name,
+                         [[maybe_unused]] const std::vector<std::string>& commands) {
                 auto rule = std::make_unique<MockRule>();
                 EXPECT_CALL(*rule, applyCommands);
                 return rule;
