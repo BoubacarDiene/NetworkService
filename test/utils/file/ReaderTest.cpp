@@ -77,7 +77,7 @@ TEST_F(ReaderTestFixture, raiseExceptionIfInvalidStream)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(ReaderTestFixture, readContentIfValidStream)
 {
-    // Use ostringstream because it does not require interaction
+    // Use istringstream because it does not require interaction
     // with the filesystem
     std::istringstream stream("value");
 
@@ -85,6 +85,19 @@ TEST_F(ReaderTestFixture, readContentIfValidStream)
     m_reader.readFromStream(stream, result);
 
     ASSERT_EQ(result, "value");
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(ReaderTestFixture, shouldNotFailIfStreamIsEmpty)
+{
+    // Use istringstream because it does not require interaction
+    // with the filesystem
+    std::istringstream stream;
+
+    std::string result;
+    m_reader.readFromStream(stream, result);
+
+    ASSERT_EQ(result, "");
 }
 
 }
