@@ -38,9 +38,25 @@ namespace utils::command::osal {
 class MockOsal : public IOsal {
 
 public:
+    /** Class constructor */
     MockOsal();
-    virtual ~MockOsal();
 
+    /** Class destructor */
+    ~MockOsal() override;
+
+    /** Copy constructor */
+    MockOsal(const MockOsal&) = delete;
+
+    /** Class copy-assignment operator */
+    MockOsal& operator=(const MockOsal&) = delete;
+
+    /** Class move constructor */
+    MockOsal(MockOsal&&) = delete;
+
+    /** Class move-assignment operator */
+    MockOsal& operator=(MockOsal&&) = delete;
+
+    /** Mocks */
     MOCK_METHOD(ProcessId, createProcess, (), (const, override));
     MOCK_METHOD(void, waitChildProcess, (), (const, override));
     MOCK_METHOD(void,

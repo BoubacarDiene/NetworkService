@@ -33,6 +33,7 @@
 #include <string>
 
 #include "service/plugins/ILogger.h"
+#include "utils/file/writer/IWriter.h"
 
 namespace service::plugins::network::layer {
 
@@ -58,14 +59,10 @@ public:
      * Class constructor
      *
      * @param logger Logger object to print some useful logs
-     *
-     * @note Instead of allowing this class to have its own copy of the logger
-     *       object (shared_ptr), logger is made a non-const reference to a
-     *       const object for better performances. The counterpart is that the
-     *       logger object must (obviously) be kept valid by Main.cpp where it
-     *       is created until this class is no longer used.
+     * @param writer Writer object to write into files
      */
-    explicit Layer(const service::plugins::logger::ILogger& logger);
+    explicit Layer(const service::plugins::logger::ILogger& logger,
+                   const utils::file::IWriter& writer);
 
     /** Class destructor */
     ~Layer();

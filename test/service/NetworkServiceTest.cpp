@@ -96,7 +96,7 @@ TEST_F(NetworkServiceTestFixture, returnFailureWhenLoadRaisesAnException)
         .WillOnce(Throw(std::runtime_error("Exception")));
 
     ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
-};
+}
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, returnFailureWhenHasInterfaceReturnFalse)

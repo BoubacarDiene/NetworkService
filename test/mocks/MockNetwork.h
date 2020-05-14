@@ -38,9 +38,25 @@ namespace service::plugins::network {
 class MockNetwork : public INetwork {
 
 public:
+    /** Class constructor */
     MockNetwork();
-    virtual ~MockNetwork();
 
+    /** Class destructor */
+    ~MockNetwork() override;
+
+    /** Copy constructor */
+    MockNetwork(const MockNetwork&) = delete;
+
+    /** Class copy-assignment operator */
+    MockNetwork& operator=(const MockNetwork&) = delete;
+
+    /** Class move constructor */
+    MockNetwork(MockNetwork&&) = delete;
+
+    /** Class move-assignment operator */
+    MockNetwork& operator=(MockNetwork&&) = delete;
+
+    /** Mocks */
     MOCK_METHOD(bool,
                 hasInterface,
                 (const std::string& interfaceName),

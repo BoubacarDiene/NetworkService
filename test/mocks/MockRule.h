@@ -38,9 +38,25 @@ namespace service::plugins::firewall {
 class MockRule : public IRule {
 
 public:
+    /** Class constructor */
     MockRule();
-    virtual ~MockRule();
 
+    /** Class destructor */
+    ~MockRule() override;
+
+    /** Copy constructor */
+    MockRule(const MockRule&) = delete;
+
+    /** Class copy-assignment operator */
+    MockRule& operator=(const MockRule&) = delete;
+
+    /** Class move constructor */
+    MockRule(MockRule&&) = delete;
+
+    /** Class move-assignment operator */
+    MockRule& operator=(MockRule&&) = delete;
+
+    /** Mocks */
     MOCK_METHOD(void, applyCommands, (), (const, override));
 };
 

@@ -26,8 +26,6 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/file/writer/Writer.h"
-
 #include "Setup.h"
 
 using namespace service::plugins::network::layer;
@@ -36,18 +34,16 @@ using namespace utils::file;
 
 struct Layer::Internal {
     const ILogger& logger;
+    const IWriter& writer;
 
-    /* const to make the object non-copyable, non-movable and
-     * non-resettable */
-    const std::unique_ptr<IWriter> writer;
-
-    explicit Internal(const ILogger& providedLogger)
+    explicit Internal(const ILogger& providedLogger, const IWriter& providedWriter)
         : logger(providedLogger),
-          writer(std::make_unique<Writer>(providedLogger))
+          writer(providedWriter)
     {}
 };
 
-Layer::Layer(const ILogger& logger) : m_internal(std::make_unique<Internal>(logger))
+Layer::Layer(const ILogger& logger, const IWriter& writer)
+    : m_internal(std::make_unique<Internal>(logger, writer))
 {}
 
 Layer::~Layer() = default;
@@ -58,5 +54,5 @@ void Layer::applyCommand(const std::string& pathname, const std::string& value) 
                              + pathname);
 
     std::ofstream stream(pathname);
-    m_internal->writer->writeToStream(stream, value);
+    m_internal->writer.writeToStream(stream, value);
 }

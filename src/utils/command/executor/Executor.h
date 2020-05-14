@@ -33,6 +33,7 @@
 
 #include "service/plugins/ILogger.h"
 
+#include "IExecutor.h"
 #include "IOsal.h"
 
 namespace utils::command {
@@ -43,6 +44,8 @@ namespace utils::command {
  *
  * @brief A helper class to execute shell commands securely.
  *
+ * This class is the "low level class" that implements @ref IExecutor.h
+ *
  * @note Copy contructor, copy-assignment operator, move constructor and
  *       move-assignment operator are defined to be compliant with the
  *       "Rule of five"
@@ -52,67 +55,21 @@ namespace utils::command {
  * @author Boubacar DIENE <boubacar.diene@gmail.com>
  * @date April 2020
  */
-class Executor {
+class Executor : public IExecutor {
 
 public:
-    /**
-     * @enum Flags
-     *
-     * @brief Bitmasks to give control on how this class is handling
-     *        requests
-     */
-    enum Flags : unsigned int {
-        WAIT_COMMAND = (1u << 0u),    /**< Wait until command is completed */
-        RESEED_PRNG  = (1u << 1u),    /**< Re-initialize the Random number
-                                       * Generator */
-        SANITIZE_FILES  = (1u << 2u), /**< Closed file descriptors, ... */
-        DROP_PRIVILEGES = (1u << 3u), /**< Drop the process's privileges */
-        ALL = (WAIT_COMMAND | RESEED_PRNG | SANITIZE_FILES | DROP_PRIVILEGES)
-    };
-
-    /**
-     * @struct ProgramParams
-     *
-     * @brief A data structure containing all input parameters expected by
-     *        execProgram() method.
-     *
-     * One reason that explains why a structure is preferred over a long list of
-     * input parameters (>=4) is that this way it is easier to add new parameters
-     * without impacting the readability.
-     */
-    struct ProgramParams {
-        /** Either a binary executable, or a script starting with a line of the
-         * form: "#! interpreter [optional-arg]" */
-        const char* const pathname;
-
-        /** An array of argument strings passed to the new program. By convention,
-         * the first of these strings should contain the filename associated with
-         * the file being executed */
-        char* const* const argv;
-
-        /** An array of strings of the form key=value, which are passed as
-         * environment to the new program */
-        char* const* const envp;
-    };
-
     /**
      * Class constructor
      *
      * @param logger Logger object to print some useful logs
      * @param osal   OS abstract layer's implementation to use. This is passed
      *               to the constructor to ease unit testing of Executor class.
-     *
-     * @note Instead of allowing this class to have its own copy of the logger
-     *       object (shared_ptr), logger is made a non-const reference to a
-     *       const object for better performances. The counterpart is that the
-     *       logger object must (obviously) be kept valid by Main.cpp where it
-     *       is created until this class is no longer used.
      */
     explicit Executor(const service::plugins::logger::ILogger& logger,
                       const osal::IOsal& osal);
 
     /** Class destructor */
-    ~Executor();
+    ~Executor() override;
 
     /** Class copy constructor */
     Executor(const Executor&) = delete;
@@ -134,12 +91,13 @@ public:
      * "flags", all input parameters have the same meaning as in execve()
      * manpage.
      *
-     * @param params An object of type @ref ProgramParams
-     * @param flags  A set of masks of type @ref Flags
+     * @param params An object of type @ref IExecutor::ProgramParams
+     * @param flags  A set of masks of type @ref IExecutor::Flags
      *
      * @see http://man7.org/linux/man-pages/man2/execve.2.html
      */
-    void executeProgram(const ProgramParams& params, Flags flags = Flags::ALL) const;
+    void executeProgram(const ProgramParams& params,
+                        Flags flags = Flags::ALL) const override;
 
 private:
     struct Internal;

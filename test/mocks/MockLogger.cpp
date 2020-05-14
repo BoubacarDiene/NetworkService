@@ -30,5 +30,5 @@
 
 using namespace service::plugins::logger;
 
-MockLogger::MockLogger() {}
-MockLogger::~MockLogger() {}
+MockLogger::MockLogger()  = default;
+MockLogger::~MockLogger() = default;

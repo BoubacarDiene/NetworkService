@@ -26,7 +26,7 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/command/executor/Executor.h"
+#include "utils/command/executor/IExecutor.h"
 #include "utils/command/parser/Parser.h"
 
 #include "Setup.h"
@@ -37,21 +37,18 @@ using namespace utils::command;
 
 struct Interface::Internal {
     const ILogger& logger;
-    const Executor& executor;
-
-    /* const to make this object non-copyable, non-movable and
-     * non-resettable */
-    const std::unique_ptr<Parser> parser;
+    const IExecutor& executor;
+    const Parser parser;
 
     explicit Internal(const ILogger& providedLogger,
-                      const Executor& providedExecutor)
+                      const IExecutor& providedExecutor)
         : logger(providedLogger),
           executor(providedExecutor),
-          parser(std::make_unique<Parser>(providedLogger))
+          parser(Parser(providedLogger))
     {}
 };
 
-Interface::Interface(const ILogger& logger, const Executor& executor)
+Interface::Interface(const ILogger& logger, const IExecutor& executor)
     : m_internal(std::make_unique<Internal>(logger, executor))
 {}
 
@@ -59,10 +56,10 @@ Interface::~Interface() = default;
 
 void Interface::applyCommand(const std::string& command) const
 {
-    const auto& parsedCommand = m_internal->parser->parse(command);
+    const auto& parsedCommand = m_internal->parser.parse(command);
 
     m_internal->logger.debug("Apply command: " + command);
-    const Executor::ProgramParams params
+    const IExecutor::ProgramParams params
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
     m_internal->executor.executeProgram(params);
 }

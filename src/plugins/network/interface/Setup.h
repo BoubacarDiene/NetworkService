@@ -33,7 +33,7 @@
 #include <string>
 
 #include "service/plugins/ILogger.h"
-#include "utils/command/executor/Executor.h"
+#include "utils/command/executor/IExecutor.h"
 
 namespace service::plugins::network::interface {
 
@@ -60,15 +60,9 @@ public:
      *
      * @param logger   Logger object to print some useful logs
      * @param executor Command executor to use
-     *
-     * @note Instead of allowing this class to have its own copy of the logger
-     *       object (shared_ptr), logger is made a non-const reference to a
-     *       const object for better performances. The counterpart is that the
-     *       logger object must (obviously) be kept valid by Main.cpp where it
-     *       is created until this class is no longer used.
      */
     explicit Interface(const service::plugins::logger::ILogger& logger,
-                       const utils::command::Executor& executor);
+                       const utils::command::IExecutor& executor);
 
     /** Class destructor */
     ~Interface();

@@ -30,5 +30,5 @@
 
 using namespace service::plugins::config;
 
-MockConfig::MockConfig() {}
-MockConfig::~MockConfig() {}
+MockConfig::MockConfig()  = default;
+MockConfig::~MockConfig() = default;

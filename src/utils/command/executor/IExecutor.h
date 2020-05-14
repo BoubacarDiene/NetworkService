@@ -26,25 +26,18 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __PLUGINS_FIREWALL_RULE_FACTORY_H__
-#define __PLUGINS_FIREWALL_RULE_FACTORY_H__
+#ifndef __UTILS_COMMAND_IEXECUTOR_H__
+#define __UTILS_COMMAND_IEXECUTOR_H__
 
-#include <memory>
-
-#include "service/plugins/ILogger.h"
-#include "utils/command/executor/IExecutor.h"
-
-#include "service/plugins/IRuleFactory.h"
-
-namespace service::plugins::firewall {
+namespace utils::command {
 
 /**
- * @class RuleFactory RuleFactory.h "plugins/firewall/RuleFactory.h"
- * @ingroup Implementation
+ * @interface IExecutor IExecutor.h "utils/command/executor/IExecutor.h"
+ * @ingroup Helper
  *
- * @brief A factory class to help creating firewalling rules
- *
- * This class is the "low level class" that implements @ref IRuleFactory.h
+ * @brief A helper class to execute shell commands securely.
+ *        This class is a high level interface added to ease testability
+ *        of component that use it.
  *
  * @note Copy contructor, copy-assignment operator, move constructor and
  *       move-assignment operator are defined to be compliant with the
@@ -53,58 +46,84 @@ namespace service::plugins::firewall {
  * @see https://en.cppreference.com/w/cpp/language/rule_of_three
  *
  * @author Boubacar DIENE <boubacar.diene@gmail.com>
- * @date April 2020
+ * @date May 2020
  */
-class RuleFactory : public IRuleFactory {
+class IExecutor {
 
 public:
     /**
-     * Class constructor
+     * @enum Flags
      *
-     * @param logger   Logger object to print some useful logs
-     * @param executor Command executor to use
+     * @brief Bitmasks to give control on how this class is handling
+     *        requests
      */
-    explicit RuleFactory(const service::plugins::logger::ILogger& logger,
-                         const utils::command::IExecutor& executor);
+    enum Flags : unsigned int {
+        WAIT_COMMAND = (1u << 0u),    /**< Wait until command is completed */
+        RESEED_PRNG  = (1u << 1u),    /**< Re-initialize the Random number
+                                       * Generator */
+        SANITIZE_FILES  = (1u << 2u), /**< Closed file descriptors, ... */
+        DROP_PRIVILEGES = (1u << 3u), /**< Drop the process's privileges */
+        ALL = (WAIT_COMMAND | RESEED_PRNG | SANITIZE_FILES | DROP_PRIVILEGES)
+    };
 
     /**
-     * Class destructor
+     * @struct ProgramParams
      *
-     * @note The override specifier aims at making the compiler warn if the
-     *       base class's destructor is not virtual.
+     * @brief A data structure containing all input parameters expected by
+     *        execProgram() method.
+     *
+     * One reason that explains why a structure is preferred over a long list of
+     * input parameters (>=4) is that this way it is easier to add new parameters
+     * without impacting the readability.
      */
-    ~RuleFactory() override;
+    struct ProgramParams {
+        /** Either a binary executable, or a script starting with a line of the
+         * form: "#! interpreter [optional-arg]" */
+        const char* const pathname;
+
+        /** An array of argument strings passed to the new program. By convention,
+         * the first of these strings should contain the filename associated with
+         * the file being executed */
+        char* const* const argv;
+
+        /** An array of strings of the form key=value, which are passed as
+         * environment to the new program */
+        char* const* const envp;
+    };
+
+    /** Class constructor */
+    IExecutor() = default;
+
+    /** Class destructor */
+    virtual ~IExecutor() = default;
 
     /** Class copy constructor */
-    RuleFactory(const RuleFactory&) = delete;
+    IExecutor(const IExecutor&) = delete;
 
     /** Class copy-assignment operator */
-    RuleFactory& operator=(const RuleFactory&) = delete;
+    IExecutor& operator=(const IExecutor&) = delete;
 
     /** Class move constructor */
-    RuleFactory(RuleFactory&&) = delete;
+    IExecutor(IExecutor&&) = delete;
 
     /** Class move-assignment operator */
-    RuleFactory& operator=(RuleFactory&&) = delete;
+    IExecutor& operator=(IExecutor&&) = delete;
 
     /**
-     * @brief Create a firewalling rule
+     * @brief Execute the program pointed to by pathname
      *
-     * Create a firewall rule based on informations provided by user in the
-     * configuration file.
+     * This function performs a fork+execve in a secure way (re-initialize
+     * the random number generator, close file descriptors, ...). Except
+     * "flags", all input parameters have the same meaning as in execve()
+     * manpage.
      *
-     * @param name     The name of the rule (For internal usage: logging, ...)
-     * @param commands The list of shell commands that compose the rule
+     * @param params An object of type @ref ProgramParams
+     * @param flags  A set of masks of type @ref Flags
      *
-     * @return The created rule
+     * @see http://man7.org/linux/man-pages/man2/execve.2.html
      */
-    [[nodiscard]] std::unique_ptr<IRule>
-        createRule(const std::string& name,
-                   const std::vector<std::string>& commands) const override;
-
-private:
-    struct Internal;
-    std::unique_ptr<Internal> m_internal;
+    virtual void executeProgram(const ProgramParams& params,
+                                Flags flags = Flags::ALL) const = 0;
 };
 
 }

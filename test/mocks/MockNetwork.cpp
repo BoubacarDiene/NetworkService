@@ -30,5 +30,5 @@
 
 using namespace service::plugins::network;
 
-MockNetwork::MockNetwork() {}
-MockNetwork::~MockNetwork() {}
+MockNetwork::MockNetwork()  = default;
+MockNetwork::~MockNetwork() = default;

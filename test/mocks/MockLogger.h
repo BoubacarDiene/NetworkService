@@ -38,9 +38,25 @@ namespace service::plugins::logger {
 class MockLogger : public ILogger {
 
 public:
+    /** Class constructor */
     MockLogger();
-    virtual ~MockLogger();
 
+    /** Class destructor */
+    ~MockLogger() override;
+
+    /** Copy constructor */
+    MockLogger(const MockLogger&) = delete;
+
+    /** Class copy-assignment operator */
+    MockLogger& operator=(const MockLogger&) = delete;
+
+    /** Class move constructor */
+    MockLogger(MockLogger&&) = delete;
+
+    /** Class move-assignment operator */
+    MockLogger& operator=(MockLogger&&) = delete;
+
+    /** Mocks */
     MOCK_METHOD(void, debug, (const std::string& message), (const, override));
     MOCK_METHOD(void, info, (const std::string& message), (const, override));
     MOCK_METHOD(void, warn, (const std::string& message), (const, override));

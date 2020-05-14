@@ -34,17 +34,17 @@ using namespace service::plugins::logger;
 
 struct RuleFactory::Internal {
     const ILogger& logger;
-    const utils::command::Executor& executor;
+    const utils::command::IExecutor& executor;
 
     explicit Internal(const ILogger& providedLogger,
-                      const utils::command::Executor& providedExecutor)
+                      const utils::command::IExecutor& providedExecutor)
         : logger(providedLogger),
           executor(providedExecutor)
     {}
 };
 
 RuleFactory::RuleFactory(const ILogger& logger,
-                         const utils::command::Executor& executor)
+                         const utils::command::IExecutor& executor)
     : m_internal(std::make_unique<Internal>(logger, executor))
 {}
 

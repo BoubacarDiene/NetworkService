@@ -48,24 +48,22 @@ using namespace utils::helper;
 
 struct Network::Internal {
     const ILogger& logger;
-
-    /* const to make these objects non-copyable, non-movable and
-     * non-resettable.
-     *
-     * A pointer just to avoid creating them on the stack */
-    const std::unique_ptr<Interface> interface;
-    const std::unique_ptr<Layer> layer;
+    const Interface interface;
+    const Layer layer;
 
     explicit Internal(const ILogger& providedLogger,
-                      const utils::command::Executor& providedExecutor)
+                      const utils::command::IExecutor& providedExecutor,
+                      const utils::file::IWriter& providedWriter)
         : logger(providedLogger),
-          interface(std::make_unique<Interface>(logger, providedExecutor)),
-          layer(std::make_unique<Layer>(logger))
+          interface(Interface(logger, providedExecutor)),
+          layer(Layer(providedLogger, providedWriter))
     {}
 };
 
-Network::Network(const ILogger& logger, const utils::command::Executor& executor)
-    : m_internal(std::make_unique<Internal>(logger, executor))
+Network::Network(const ILogger& logger,
+                 const utils::command::IExecutor& executor,
+                 const utils::file::IWriter& writer)
+    : m_internal(std::make_unique<Internal>(logger, executor, writer))
 {}
 
 Network::~Network() = default;
@@ -102,7 +100,7 @@ void Network::applyInterfaceCommands(
 {
     for (const std::string& interfaceCommand : interfaceCommands) {
         m_internal->logger.debug("Apply interface command: " + interfaceCommand);
-        m_internal->interface->applyCommand(interfaceCommand);
+        m_internal->interface.applyCommand(interfaceCommand);
     }
 }
 
@@ -111,6 +109,6 @@ void Network::applyLayerCommands(
 {
     for (const auto& layerCommand : layerCommands) {
         m_internal->logger.debug("Apply layer command to: " + layerCommand.pathname);
-        m_internal->layer->applyCommand(layerCommand.pathname, layerCommand.value);
+        m_internal->layer.applyCommand(layerCommand.pathname, layerCommand.value);
     }
 }

@@ -40,7 +40,7 @@ namespace utils::command {
  * @ingroup Helper
  *
  * @brief A helper class to parse a string representing a command so
- *        as to create a real command that can be passed to @ref Executor.
+ *        as to create a real command that can be passed to @ref IExecutor.
  *
  * @note Copy contructor, copy-assignment operator, move constructor and
  *       move-assignment operator are defined to be compliant with the
@@ -59,7 +59,7 @@ public:
      *
      * @brief Represents a shell command to execute
      *
-     * @see Executor
+     * @see IExecutor
      */
     struct Command {
         char* pathname; /**< Absolute path to the program */
@@ -80,12 +80,6 @@ public:
      * Class constructor
      *
      * @param logger Logger object to print some useful logs
-     *
-     * @note Instead of allowing this class to have its own copy of the logger
-     *       object (shared_ptr), logger is made a non-const reference to a
-     *       const object for better performances. The counterpart is that the
-     *       logger object must (obviously) be kept valid by Main.cpp where it
-     *       is created until this class is no longer used.
      */
     explicit Parser(const service::plugins::logger::ILogger& logger);
 
@@ -111,7 +105,7 @@ public:
      * @param delimiter      The delimiter that shows how to split the input
      *                       string into substrings
      *
-     * @return A command that can be provided to @ref Executor
+     * @return A command that can be provided to @ref IExecutor
      *
      * @see Command
      */

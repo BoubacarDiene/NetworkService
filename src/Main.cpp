@@ -39,6 +39,9 @@
 #include "utils/command/executor/Executor.h"
 #include "utils/command/executor/osal/Linux.h"
 
+#include "utils/file/reader/Reader.h"
+#include "utils/file/writer/Writer.h"
+
 using namespace service;
 using namespace service::plugins::config;
 using namespace service::plugins::firewall;
@@ -47,6 +50,7 @@ using namespace service::plugins::network;
 
 using namespace utils::command;
 using namespace utils::command::osal;
+using namespace utils::file;
 
 static inline std::string parseCommandLine(int argc, char** argv)
 {
@@ -81,9 +85,11 @@ int main(int argc, char** argv)
     Logger logger           = Logger();
     Linux osal              = Linux(logger);
     Executor executor       = Executor(logger, osal);
-    Network network         = Network(logger, executor);
+    Writer writer           = Writer(logger);
+    Reader reader           = Reader(logger);
+    Network network         = Network(logger, executor, writer);
     RuleFactory ruleFactory = RuleFactory(logger, executor);
-    Config config           = Config(logger);
+    Config config           = Config(logger, reader);
 
     NetworkService::NetworkServiceParams networkServiceParams(
         {logger, config, network, ruleFactory});

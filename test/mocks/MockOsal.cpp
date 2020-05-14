@@ -30,5 +30,5 @@
 
 using namespace utils::command::osal;
 
-MockOsal::MockOsal() {}
-MockOsal::~MockOsal() {}
+MockOsal::MockOsal()  = default;
+MockOsal::~MockOsal() = default;

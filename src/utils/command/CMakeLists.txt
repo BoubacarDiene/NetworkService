@@ -35,4 +35,6 @@ target_sources(${TARGET_UTILS_COMMAND}
         executor/Executor.h
         parser/Parser.h
         executor/IOsal.h
+    INTERFACE
+        executor/IExecutor.h
 )

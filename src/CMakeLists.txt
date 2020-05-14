@@ -84,6 +84,7 @@ set(ALL_CXX_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/service/NetworkService.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/Executor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/Executor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/IExecutor.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/IOsal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Linux.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Linux.h

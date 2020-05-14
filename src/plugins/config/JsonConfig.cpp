@@ -90,14 +90,11 @@ static void from_json(const json& jsonObject, ConfigData& config)
 
 struct Config::Internal {
     const ILogger& logger;
+    const IReader& reader;
 
-    /* const to make the object non-copyable, non-movable and
-     * non-resettable */
-    const std::unique_ptr<IReader> reader;
-
-    explicit Internal(const ILogger& providedLogger)
+    explicit Internal(const ILogger& providedLogger, const IReader& providedReader)
         : logger(providedLogger),
-          reader(std::make_unique<Reader>(providedLogger))
+          reader(providedReader)
     {}
 
     [[nodiscard]] std::unique_ptr<ConfigData>
@@ -105,15 +102,15 @@ struct Config::Internal {
     {
         std::string result;
         std::ifstream stream(configFile);
-        reader->readFromStream(stream, result);
+        reader.readFromStream(stream, result);
 
         json jsonObject = json::parse(result);
         return std::make_unique<ConfigData>(jsonObject.get<ConfigData>());
     }
 };
 
-Config::Config(const ILogger& logger)
-    : m_internal(std::make_unique<Internal>(logger))
+Config::Config(const ILogger& logger, const IReader& reader)
+    : m_internal(std::make_unique<Internal>(logger, reader))
 {}
 
 Config::~Config() = default;

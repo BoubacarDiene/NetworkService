@@ -36,61 +36,53 @@ struct Config::Internal {
 
     explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
 
-    static void fillInConfigData(const std::string& configFile,
-                                 std::unique_ptr<ConfigData>& configData)
+    static void fillInConfigData(std::unique_ptr<ConfigData>& configData)
     {
-        /* Instead of "forwarding" configFile, a real config reader could, for
-         * example, open it to obtain a valid stream to retrieve data from.
-         *
-         * Besides, unlike to other config generators, configFile is a fake
-         * config file i.e no config is loaded from there. Nevertheless, the
-         * file exists in the filesystem so it is used here to store output of
-         * some commands */
-        fillInNetworkData(configFile, &configData->network);
-        fillInRulesData(configFile, &configData->rules);
+        fillInNetworkData(&configData->network);
+        fillInRulesData(&configData->rules);
     }
 
 private:
-    static inline void fillInNetworkData(const std::string& configFile,
-                                         ConfigData::Network* network)
+    static inline void fillInNetworkData(ConfigData::Network* network)
     {
         network->interfaceNames.emplace_back("lo");
 
         network->interfaceCommands.emplace_back(
-            "/bin/echo \"[FAKE] Interface command 1\n\" >> " + configFile);
+            "/bin/echo \"[FAKE] Interface command 1\n\" >> /dev/null");
         network->interfaceCommands.emplace_back(
-            "/bin/echo \"[FAKE] Interface command 2\n\" >> " + configFile);
+            "/bin/echo \"[FAKE] Interface command 2\n\" >> /dev/null");
 
-        network->layerCommands.emplace_back(
-            ConfigData::Network::LayerCommand {configFile, "[FAKE] Layer: value\n"});
+        network->layerCommands.emplace_back(ConfigData::Network::LayerCommand {
+            "/dev/null", "[FAKE] Layer: value\n"});
     }
 
-    static inline void fillInRulesData(const std::string& configFile,
-                                       std::vector<ConfigData::Rule>* rules)
+    static inline void fillInRulesData(std::vector<ConfigData::Rule>* rules)
     {
         std::vector<std::string> rule1Commands
-            = {"/bin/echo \"[FAKE] Rule 1: command 1\n\" >> " + configFile,
-               "/bin/echo \"[FAKE] Rule 1: command 2\n\" >> " + configFile};
+            = {"/bin/echo \"[FAKE] Rule 1: command 1\n\" >> /dev/null",
+               "/bin/echo \"[FAKE] Rule 1: command 2\n\" >> /dev/null"};
         rules->emplace_back(ConfigData::Rule({"Rule 1", rule1Commands}));
 
         std::vector<std::string> rule2Commands
-            = {"/bin/echo \"[FAKE] Rule 2: command 1\n\" >> " + configFile};
+            = {"/bin/echo \"[FAKE] Rule 2: command 1\n\" >> /dev/null"};
         rules->emplace_back(ConfigData::Rule({"Rule 2", rule2Commands}));
     }
 };
 
-Config::Config(const ILogger& logger)
+Config::Config(const ILogger& logger,
+               [[maybe_unused]] const utils::file::IReader& reader)
     : m_internal(std::make_unique<Internal>(logger))
 {}
 
 Config::~Config() = default;
 
-std::unique_ptr<ConfigData> Config::load(const std::string& configFile) const
+std::unique_ptr<ConfigData> Config::load([
+    [maybe_unused]] const std::string& configFile) const
 {
     std::unique_ptr<ConfigData> configData = std::make_unique<ConfigData>();
 
     m_internal->logger.debug("Fill in config data");
-    Internal::fillInConfigData(configFile, configData);
+    Internal::fillInConfigData(configData);
 
     return configData;
 }

@@ -61,12 +61,6 @@ public:
      * Class constructor
      *
      * @param logger Logger object to print some useful logs
-     *
-     * @note Instead of allowing this class to have its own copy of the logger
-     *       object (shared_ptr), logger is made a non-const reference to a
-     *       const object for better performances. The counterpart is that the
-     *       logger object must (obviously) be kept valid by Main.cpp where it
-     *       is created until this class is no longer used.
      */
     explicit Reader(const service::plugins::logger::ILogger& logger);
 

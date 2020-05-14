@@ -26,7 +26,7 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/command/executor/Executor.h"
+#include "utils/command/executor/IExecutor.h"
 #include "utils/command/parser/Parser.h"
 
 #include "Rule.h"
@@ -37,31 +37,31 @@ using namespace utils::command;
 
 struct Rule::Internal {
     const ILogger& logger;
-    const Executor& executor;
+    const IExecutor& executor;
 
     const std::string& name;
     const std::vector<std::string>& commands;
 
     /* const to make this object non-copyable, non-movable and
      * non-resettable */
-    const std::unique_ptr<Parser> parser;
+    const Parser parser;
 
     explicit Internal(const ILogger& providedLogger,
-                      const Executor& providedExecutor,
+                      const IExecutor& providedExecutor,
                       const std::string& providedName,
                       const std::vector<std::string>& providedCommands)
         : logger(providedLogger),
           executor(providedExecutor),
           name(providedName),
           commands(providedCommands),
-          parser(std::make_unique<Parser>(providedLogger))
+          parser(Parser(providedLogger))
     {}
 };
 
 Rule::Rule(const ILogger& logger,
            const std::string& name,
            const std::vector<std::string>& commands,
-           const Executor& executor)
+           const IExecutor& executor)
     : m_internal(std::make_unique<Internal>(logger, executor, name, commands))
 {}
 
@@ -71,10 +71,10 @@ void Rule::applyCommands() const
 {
     for (const std::string& command : m_internal->commands) {
         const std::unique_ptr<Parser::Command, Parser::CommandDeleter>& parsedCommand
-            = m_internal->parser->parse(command);
+            = m_internal->parser.parse(command);
 
         m_internal->logger.debug(m_internal->name + " - Apply command: " + command);
-        const Executor::ProgramParams params
+        const IExecutor::ProgramParams params
             = {parsedCommand->pathname, parsedCommand->argv, nullptr};
         m_internal->executor.executeProgram(params);
     }

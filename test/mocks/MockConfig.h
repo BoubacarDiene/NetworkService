@@ -38,9 +38,25 @@ namespace service::plugins::config {
 class MockConfig : public IConfig {
 
 public:
+    /** Class constructor */
     MockConfig();
-    virtual ~MockConfig();
 
+    /** Class destructor */
+    ~MockConfig() override;
+
+    /** Copy constructor */
+    MockConfig(const MockConfig&) = delete;
+
+    /** Class copy-assignment operator */
+    MockConfig& operator=(const MockConfig&) = delete;
+
+    /** Class move constructor */
+    MockConfig(MockConfig&&) = delete;
+
+    /** Class move-assignment operator */
+    MockConfig& operator=(MockConfig&&) = delete;
+
+    /** Mocks */
     MOCK_METHOD(std::unique_ptr<ConfigData>,
                 load,
                 (const std::string& configFile),

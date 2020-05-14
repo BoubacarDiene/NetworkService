@@ -30,5 +30,5 @@
 
 using namespace service::plugins::firewall;
 
-MockRule::MockRule() {}
-MockRule::~MockRule() {}
+MockRule::MockRule()  = default;
+MockRule::~MockRule() = default;
