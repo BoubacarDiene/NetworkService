@@ -42,6 +42,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/frameworks/googletest.cmake)
 set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockConfig.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockConfig.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockExecutor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockExecutor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockLogger.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockLogger.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockNetwork.h
@@ -52,6 +54,11 @@ set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRule.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRuleFactory.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRuleFactory.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockWriter.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockWriter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/InterfaceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/LayerTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/NetworkTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/service/NetworkServiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/ExecutorTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/ParserTest.cpp
@@ -73,3 +80,4 @@ include_directories(.)
 
 add_subdirectory(utils)
 add_subdirectory(service)
+add_subdirectory(plugins)
