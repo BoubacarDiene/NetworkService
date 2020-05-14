@@ -40,8 +40,14 @@ include(${CMAKE_SOURCE_DIR}/cmake/frameworks/googletest.cmake)
 # is added or removed then the generated build system cannot know
 # when to ask CMake to regenerate"
 set(ALL_CXX_TEST_FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockConfig.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockLogger.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockNetwork.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockOsal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRule.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRuleFactory.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/service/NetworkServiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/ExecutorTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/ParserTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/ReaderTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/WriterTest.cpp
@@ -60,3 +66,4 @@ include_directories(.)
 #################################################################
 
 add_subdirectory(utils)
+add_subdirectory(service)

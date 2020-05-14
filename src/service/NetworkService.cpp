@@ -36,51 +36,43 @@
 using namespace service;
 using namespace service::plugins::config;
 using namespace service::plugins::firewall;
-using namespace service::plugins::logger;
-using namespace service::plugins::network;
 
-// std::move is used on logger for performances's sake. Indeed, logger is
-// passed by copy => +1 on reference counter.
-// Without std::move, +1 again on reference counter so it is better to use
-// std::move here to move the ownership of NetworkService's copy of logger
-// object to its internal member object (m_logger).
-//
-// For others (unique_ptr), std::move is required because the constructor
-// does not just use provided objects. It also keeps copies.
-NetworkService::NetworkService(NetworkServiceParams params)
-    : m_logger(std::move(params.logger)),
-      m_config(std::move(params.config)),
-      m_network(std::move(params.network)),
-      m_ruleFactory(std::move(params.ruleFactory))
+NetworkService::NetworkService(const NetworkServiceParams& params) : m_params(params)
 {}
 
 int NetworkService::applyConfig(const std::string& configFile) const
 {
     try {
-        m_logger->info("Load config: " + configFile);
-        const std::unique_ptr<ConfigData>& configData = m_config->load(configFile);
+        m_params.logger.info("Load config: " + configFile);
+        const std::unique_ptr<ConfigData>& configData
+            = m_params.config.load(configFile);
 
-        m_logger->debug("Make sure specified interfaces are valid");
+        m_params.logger.debug("Make sure specified interfaces are valid");
         const ConfigData::Network& networkData         = configData->network;
         const std::vector<ConfigData::Rule>& rulesData = configData->rules;
 
         for (const std::string& interfaceName : networkData.interfaceNames) {
-            if (!m_network->hasInterface(interfaceName)) {
+            if (!m_params.network.hasInterface(interfaceName)) {
                 throw std::invalid_argument("No valid interface found for: "
                                             + interfaceName);
             }
         }
 
-        m_logger->debug("Apply network interface commands");
-        m_network->applyInterfaceCommands(networkData.interfaceCommands);
+        m_params.logger.debug("Apply network interface commands");
+        m_params.network.applyInterfaceCommands(networkData.interfaceCommands);
 
-        m_logger->debug("Apply network layer commands");
-        m_network->applyLayerCommands(networkData.layerCommands);
+        m_params.logger.debug("Apply network layer commands");
+        m_params.network.applyLayerCommands(networkData.layerCommands);
 
-        m_logger->debug("Create and apply rules");
+        m_params.logger.debug("Create and apply rules");
         for (const ConfigData::Rule& ruleData : rulesData) {
             const std::unique_ptr<IRule>& rule
-                = m_ruleFactory->createRule(ruleData.name, ruleData.commands);
+                = m_params.ruleFactory.createRule(ruleData.name, ruleData.commands);
+
+            if (!rule) {
+                throw std::runtime_error("createRule() returned an invalid object");
+            }
+
             rule->applyCommands();
         }
     }
@@ -88,7 +80,7 @@ int NetworkService::applyConfig(const std::string& configFile) const
         // All exceptions are caught because the service is expected to ignore
         // how lower -level components are implemented (which specific exception
         // is raised, ...)
-        m_logger->error(e.what());
+        m_params.logger.error(e.what());
         return EXIT_FAILURE;
     }
 

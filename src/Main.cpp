@@ -78,15 +78,14 @@ int main(int argc, char** argv)
     std::string configFile = parseCommandLine(argc, argv);
 
     /* Initialize and inject dependencies */
-    auto logger      = std::make_shared<Logger>();
-    auto osal        = std::make_unique<Linux>(*logger);
-    auto executor    = std::make_unique<Executor>(*logger, *osal);
-    auto network     = std::make_unique<Network>(*logger, *executor);
-    auto ruleFactory = std::make_unique<RuleFactory>(*logger, *executor);
-    auto config      = std::make_unique<Config>(*logger);
+    Logger logger           = Logger();
+    Linux osal              = Linux(logger);
+    Executor executor       = Executor(logger, osal);
+    Network network         = Network(logger, executor);
+    RuleFactory ruleFactory = RuleFactory(logger, executor);
+    Config config           = Config(logger);
 
-    NetworkService networkService(
-        {logger, std::move(config), std::move(network), std::move(ruleFactory)});
+    NetworkService networkService({logger, config, network, ruleFactory});
 
     /* Set up the network and firewall based on provided file */
     return networkService.applyConfig(configFile);

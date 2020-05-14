@@ -26,37 +26,34 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/file/writer/Writer.h"
+#ifndef __TEST_MOCKS_MOCK_NETWORK_H__
+#define __TEST_MOCKS_MOCK_NETWORK_H__
 
-#include "Setup.h"
+#include "gmock/gmock.h"
 
-using namespace service::plugins::network::layer;
-using namespace service::plugins::logger;
-using namespace utils::file;
+#include "service/plugins/INetwork.h"
 
-struct Layer::Internal {
-    const ILogger& logger;
+namespace service::plugins::network {
 
-    /* const to make the object non-copyable, non-movable and
-     * non-resettable */
-    const std::unique_ptr<IWriter> writer;
+class MockNetwork : public INetwork {
 
-    explicit Internal(const ILogger& providedLogger)
-        : logger(providedLogger),
-          writer(std::make_unique<Writer>(providedLogger))
-    {}
+public:
+    MOCK_METHOD(bool,
+                hasInterface,
+                (const std::string& interfaceName),
+                (const, override));
+    MOCK_METHOD(void,
+                applyInterfaceCommands,
+                (const std::vector<std::string>& interfaceCommands),
+                (const, override));
+    MOCK_METHOD(void,
+                applyLayerCommands,
+                (const std::vector<
+                    service::plugins::config::ConfigData::Network::LayerCommand>&
+                     layerCommands),
+                (const, override));
 };
 
-Layer::Layer(const ILogger& logger) : m_internal(std::make_unique<Internal>(logger))
-{}
-
-Layer::~Layer() = default;
-
-void Layer::applyCommand(const std::string& pathname, const std::string& value) const
-{
-    m_internal->logger.debug("Apply command: " + value + std::string(" > ")
-                             + pathname);
-
-    std::ofstream stream(pathname);
-    m_internal->writer->writeToStream(stream, value);
 }
+
+#endif

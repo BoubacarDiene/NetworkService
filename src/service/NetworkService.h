@@ -131,75 +131,25 @@ public:
      */
     struct NetworkServiceParams {
         /** An object to use the logger plugin */
-        std::shared_ptr<service::plugins::logger::ILogger> logger;
+        const plugins::logger::ILogger& logger;
 
         /** An object to use the config plugin */
-        std::unique_ptr<service::plugins::config::IConfig> config;
+        const plugins::config::IConfig& config;
 
         /** An object to use the network plugin */
-        std::unique_ptr<service::plugins::network::INetwork> network;
+        const plugins::network::INetwork& network;
 
         /** An object to use the firewall plugin */
-        std::unique_ptr<service::plugins::firewall::IRuleFactory> ruleFactory;
+        const plugins::firewall::IRuleFactory& ruleFactory;
     };
 
     /**
      * @brief Create a NetworkService object
      *
-     * @param params A structure of type @ref NetworkServiceParams with all expected
-     *               parameters
-     *
-     * @note
-     * Passed-by-value method is used here. This choice is well explained below:
-     *
-     * From
-     * https://www.modernescpp.com/index.php/c-core-guidelines-passing-smart-pointer
-     *
-     * - R.32: Take a unique_ptr<widget> parameter to express that a function
-     *   assumes ownership of a widget
-     * - R.33: Take a unique_ptr<widget>& parameter to express that a function
-     *   reseats the widget
-     * - R.34: Take a shared_ptr<widget> parameter to express that a function
-     *   is part owner
-     * - R.35: Take a shared_ptr<widget>& parameter to express that a function
-     *   might reseat the shared pointer
-     * - R.36: Take a const shared_ptr<widget>& parameter to express that it
-     *   might retain a reference count to the object
-     *
-     * How is that used here?
-     *
-     * logger:
-     * - R.32 would force caller to transfer the ownership of this object to
-     *   NetworkService (using std::move) making impossible for the caller to
-     *   share it with others.
-     *
-     * - R.33 is not appropriate because NetworkService does not need to reset
-     *   the object.
-     *
-     * - R.34 is fine because NetworkService also becomes an owner. Thus, even
-     *   if others do not use their copy of the object anymore, that would not
-     *   impact NetworkService's one. Also, I want NetworkService to be
-     *   independent of the lower-level details.
-     *
-     *   Note: shared_ptr is known to add a little memory overhead due to the
-     *   reference counter (see
-     *   https://www.modernescpp.com/index.php/memory-and-performance-overhead-of-smart-pointer)
-     *
-     * - R.35, NO for the same reasons as R.33
-     *
-     * - R.36, better use a simple pointer or a reference to the object as
-     *   mentioned in the article
-     *
-     *   R.34 wins!
-     *
-     * others:
-     * - config, network and ruleFactory are expected to only have one single
-     *   user i.e NetworkService so unique_ptr seems appropriate.
-     * - NetworkService does not need to reset them so a non-const reference
-     *   is not useful hence the choice of R.32 (by copy) which force the
-     *   caller to transfer the ownership to NetworkService using std::move.
+     * @param params A structure of type @ref NetworkServiceParams with all
+     *               expected parameters
      */
-    explicit NetworkService(NetworkServiceParams params);
+    explicit NetworkService(const NetworkServiceParams& params);
 
     /**
      * @brief Apply the network configuration given in provided file
@@ -215,10 +165,7 @@ public:
     [[nodiscard]] int applyConfig(const std::string& configFile) const;
 
 private:
-    std::shared_ptr<service::plugins::logger::ILogger> m_logger;
-    std::unique_ptr<service::plugins::config::IConfig> m_config;
-    std::unique_ptr<service::plugins::network::INetwork> m_network;
-    std::unique_ptr<service::plugins::firewall::IRuleFactory> m_ruleFactory;
+    const NetworkServiceParams& m_params;
 };
 
 /**@}*/

@@ -26,37 +26,24 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/file/writer/Writer.h"
+#ifndef __TEST_MOCKS_MOCK_RULE_FACTORY_H__
+#define __TEST_MOCKS_MOCK_RULE_FACTORY_H__
 
-#include "Setup.h"
+#include "gmock/gmock.h"
 
-using namespace service::plugins::network::layer;
-using namespace service::plugins::logger;
-using namespace utils::file;
+#include "service/plugins/IRuleFactory.h"
 
-struct Layer::Internal {
-    const ILogger& logger;
+namespace service::plugins::firewall {
 
-    /* const to make the object non-copyable, non-movable and
-     * non-resettable */
-    const std::unique_ptr<IWriter> writer;
+class MockRuleFactory : public IRuleFactory {
 
-    explicit Internal(const ILogger& providedLogger)
-        : logger(providedLogger),
-          writer(std::make_unique<Writer>(providedLogger))
-    {}
+public:
+    MOCK_METHOD(std::unique_ptr<IRule>,
+                createRule,
+                (const std::string& name, const std::vector<std::string>& commands),
+                (const, override));
 };
 
-Layer::Layer(const ILogger& logger) : m_internal(std::make_unique<Internal>(logger))
-{}
-
-Layer::~Layer() = default;
-
-void Layer::applyCommand(const std::string& pathname, const std::string& value) const
-{
-    m_internal->logger.debug("Apply command: " + value + std::string(" > ")
-                             + pathname);
-
-    std::ofstream stream(pathname);
-    m_internal->writer->writeToStream(stream, value);
 }
+
+#endif

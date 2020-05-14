@@ -28,8 +28,9 @@
 
 #include "gtest/gtest.h"
 
-#include "mocks/MockOsal.h"
 #include "mocks/MockLogger.h"
+#include "mocks/MockOsal.h"
+
 #include "utils/command/executor/Executor.h"
 
 using ::testing::AtLeast;
@@ -65,18 +66,16 @@ protected:
     }
 
     Executor m_executor;
+    MockOsal m_mockOsal;
 
 private:
     MockLogger m_mockLogger;
-
-protected:
-    MockOsal m_mockOsal;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(ExecutorTestFixture, waitCommandInFlags)
 {
-    Executor::Flags flags = Executor::Flags::WAIT_COMMAND;
+    Executor::Flags flags                = Executor::Flags::WAIT_COMMAND;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* In parent process
@@ -112,7 +111,7 @@ TEST_F(ExecutorTestFixture, waitCommandInFlags)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(ExecutorTestFixture, reseedPrngInFlags)
 {
-    Executor::Flags flags = Executor::Flags::RESEED_PRNG;
+    Executor::Flags flags                = Executor::Flags::RESEED_PRNG;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* In parent process
@@ -150,7 +149,7 @@ TEST_F(ExecutorTestFixture, reseedPrngInFlags)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(ExecutorTestFixture, sanitizeFilesInFlags)
 {
-    Executor::Flags flags = Executor::Flags::SANITIZE_FILES;
+    Executor::Flags flags                = Executor::Flags::SANITIZE_FILES;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* In parent process
@@ -182,7 +181,7 @@ TEST_F(ExecutorTestFixture, sanitizeFilesInFlags)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(ExecutorTestFixture, dropPrivilegesInFlags)
 {
-    Executor::Flags flags = Executor::Flags::DROP_PRIVILEGES;
+    Executor::Flags flags                = Executor::Flags::DROP_PRIVILEGES;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* In parent process
@@ -226,7 +225,8 @@ TEST_F(ExecutorTestFixture, defaultIsAllFlagsSet)
      *       any order
      */
     {
-        Sequence seq1, seq2;
+        Sequence seq1;
+        Sequence seq2;
 
         EXPECT_CALL(m_mockOsal, createProcess)
             .InSequence(seq1, seq2)
@@ -250,7 +250,9 @@ TEST_F(ExecutorTestFixture, defaultIsAllFlagsSet)
      *       any order
      */
     {
-        Sequence seq1, seq2, seq3;
+        Sequence seq1;
+        Sequence seq2;
+        Sequence seq3;
 
         EXPECT_CALL(m_mockOsal, createProcess)
             .InSequence(seq1, seq2, seq3)
@@ -258,7 +260,9 @@ TEST_F(ExecutorTestFixture, defaultIsAllFlagsSet)
         EXPECT_CALL(m_mockOsal, reseedPRNG).Times(1).InSequence(seq1);
         EXPECT_CALL(m_mockOsal, sanitizeFiles).Times(1).InSequence(seq2);
         EXPECT_CALL(m_mockOsal, dropPrivileges).Times(1).InSequence(seq3);
-        EXPECT_CALL(m_mockOsal, executeProgram).Times(1).InSequence(seq1, seq2, seq3);
+        EXPECT_CALL(m_mockOsal, executeProgram)
+            .Times(1)
+            .InSequence(seq1, seq2, seq3);
     }
 
     m_executor.executeProgram(params);
