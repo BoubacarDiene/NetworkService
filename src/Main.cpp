@@ -85,7 +85,9 @@ int main(int argc, char** argv)
     RuleFactory ruleFactory = RuleFactory(logger, executor);
     Config config           = Config(logger);
 
-    NetworkService networkService({logger, config, network, ruleFactory});
+    NetworkService::NetworkServiceParams networkServiceParams(
+        {logger, config, network, ruleFactory});
+    NetworkService networkService(networkServiceParams);
 
     /* Set up the network and firewall based on provided file */
     return networkService.applyConfig(configFile);

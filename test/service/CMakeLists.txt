@@ -22,7 +22,13 @@ set(TEST_EXECUTABLE_NAME NetworkServiceTest)
 
 add_executable(${TEST_EXECUTABLE_NAME}
     NetworkServiceTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/service/NetworkService.cpp)
+    ${CMAKE_SOURCE_DIR}/src/service/NetworkService.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockConfig.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockNetwork.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockOsal.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockRule.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockRuleFactory.cpp)
 
 target_link_libraries(${TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock)

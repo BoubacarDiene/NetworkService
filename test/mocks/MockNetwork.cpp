@@ -26,37 +26,9 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __TEST_MOCKS_MOCK_NETWORK_H__
-#define __TEST_MOCKS_MOCK_NETWORK_H__
+#include "MockNetwork.h"
 
-#include "gmock/gmock.h"
+using namespace service::plugins::network;
 
-#include "service/plugins/INetwork.h"
-
-namespace service::plugins::network {
-
-class MockNetwork : public INetwork {
-
-public:
-    MockNetwork();
-    virtual ~MockNetwork();
-
-    MOCK_METHOD(bool,
-                hasInterface,
-                (const std::string& interfaceName),
-                (const, override));
-    MOCK_METHOD(void,
-                applyInterfaceCommands,
-                (const std::vector<std::string>& interfaceCommands),
-                (const, override));
-    MOCK_METHOD(void,
-                applyLayerCommands,
-                (const std::vector<
-                    service::plugins::config::ConfigData::Network::LayerCommand>&
-                     layerCommands),
-                (const, override));
-};
-
-}
-
-#endif
+MockNetwork::MockNetwork() {}
+MockNetwork::~MockNetwork() {}

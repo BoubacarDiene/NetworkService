@@ -24,7 +24,8 @@ set(READER_TEST_EXECUTABLE_NAME ReaderTest)
 # Add writer executable to the project
 add_executable(${WRITER_TEST_EXECUTABLE_NAME}
     WriterTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/file/writer/Writer.cpp)
+    ${CMAKE_SOURCE_DIR}/src/utils/file/writer/Writer.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp)
 
 target_link_libraries(${WRITER_TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock)
@@ -35,7 +36,8 @@ add_test(${WRITER_TEST_EXECUTABLE_NAME}
 # Add reader executable to the project
 add_executable(${READER_TEST_EXECUTABLE_NAME}
     ReaderTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/file/reader/Reader.cpp)
+    ${CMAKE_SOURCE_DIR}/src/utils/file/reader/Reader.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp)
 
 target_link_libraries(${READER_TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock)

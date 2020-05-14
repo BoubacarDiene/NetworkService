@@ -24,7 +24,8 @@ set(EXECUTOR_TEST_EXECUTABLE_NAME ExecutorTest)
 # Add parser executable to the project
 add_executable(${PARSER_TEST_EXECUTABLE_NAME}
     ParserTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp)
+    ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp)
 
 target_link_libraries(${PARSER_TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock)
@@ -35,7 +36,9 @@ add_test(${PARSER_TEST_EXECUTABLE_NAME}
 # Add executor executable to the project
 add_executable(${EXECUTOR_TEST_EXECUTABLE_NAME}
     ExecutorTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/command/executor/Executor.cpp)
+    ${CMAKE_SOURCE_DIR}/src/utils/command/executor/Executor.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockOsal.cpp)
 
 target_link_libraries(${EXECUTOR_TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock)

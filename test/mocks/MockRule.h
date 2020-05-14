@@ -38,6 +38,9 @@ namespace service::plugins::firewall {
 class MockRule : public IRule {
 
 public:
+    MockRule();
+    virtual ~MockRule();
+
     MOCK_METHOD(void, applyCommands, (), (const, override));
 };
 

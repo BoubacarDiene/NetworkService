@@ -38,6 +38,9 @@ namespace utils::command::osal {
 class MockOsal : public IOsal {
 
 public:
+    MockOsal();
+    virtual ~MockOsal();
+
     MOCK_METHOD(ProcessId, createProcess, (), (const, override));
     MOCK_METHOD(void, waitChildProcess, (), (const, override));
     MOCK_METHOD(void,

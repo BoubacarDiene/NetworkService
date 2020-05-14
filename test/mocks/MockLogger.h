@@ -38,6 +38,9 @@ namespace service::plugins::logger {
 class MockLogger : public ILogger {
 
 public:
+    MockLogger();
+    virtual ~MockLogger();
+
     MOCK_METHOD(void, debug, (const std::string& message), (const, override));
     MOCK_METHOD(void, info, (const std::string& message), (const, override));
     MOCK_METHOD(void, warn, (const std::string& message), (const, override));

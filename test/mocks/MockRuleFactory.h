@@ -38,6 +38,9 @@ namespace service::plugins::firewall {
 class MockRuleFactory : public IRuleFactory {
 
 public:
+    MockRuleFactory();
+    virtual ~MockRuleFactory();
+
     MOCK_METHOD(std::unique_ptr<IRule>,
                 createRule,
                 (const std::string& name, const std::vector<std::string>& commands),

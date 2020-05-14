@@ -38,6 +38,9 @@ namespace service::plugins::config {
 class MockConfig : public IConfig {
 
 public:
+    MockConfig();
+    virtual ~MockConfig();
+
     MOCK_METHOD(std::unique_ptr<ConfigData>,
                 load,
                 (const std::string& configFile),

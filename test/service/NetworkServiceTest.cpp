@@ -39,7 +39,6 @@
 using ::testing::_;
 using ::testing::AtLeast;
 using ::testing::ByMove;
-using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::Sequence;
 using ::testing::Throw;
