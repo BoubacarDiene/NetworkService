@@ -30,6 +30,9 @@ add_executable(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
 target_link_libraries(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock)
 
+add_test(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
+    ${JSON_CONFIG_TEST_EXECUTABLE_NAME})
+
 #################################################################
 #                        Installation                           #
 #################################################################
