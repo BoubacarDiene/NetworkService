@@ -50,12 +50,15 @@ set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockNetwork.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockOsal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockOsal.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockReader.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockReader.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRule.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRule.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRuleFactory.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockRuleFactory.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockWriter.h
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks/MockWriter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/JsonConfigTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/RuleFactoryTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/RuleTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/InterfaceTest.cpp
