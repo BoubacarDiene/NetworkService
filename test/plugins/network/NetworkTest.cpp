@@ -33,7 +33,9 @@
 #include "mocks/MockWriter.h"
 
 #include "plugins/network/Network.h"
+#include "utils/command/parser/Parser.h"
 
+using ::testing::_;
 using ::testing::AtLeast;
 
 using namespace service::plugins::config;
@@ -56,12 +58,10 @@ protected:
         EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
     }
 
+    MockLogger m_mockLogger;
     MockExecutor m_mockExecutor;
     MockWriter m_mockWriter;
     Network m_network;
-
-private:
-    MockLogger m_mockLogger;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
@@ -79,7 +79,22 @@ TEST_F(NetworkTestFixture, hasInterfaceReturnFalseIfInterfaceDoesNotExist)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, applyInterfaceCommandsShouldNotFailWithValidParameters)
 {
-    const std::vector<std::string> interfaceCommands = {"command1", "command2"};
+    const std::vector<std::string> interfaceCommands = {"command"};
+
+    // Parser is deterministic meaning that for the same input, it will
+    // always produce the same output so it's fine using it.
+    const auto& parsedCommand = Parser(m_mockLogger).parse(interfaceCommands[0]);
+    const IExecutor::ProgramParams expectedParams
+        = {parsedCommand->pathname, parsedCommand->argv, nullptr};
+
+    EXPECT_CALL(m_mockExecutor, executeProgram(_, _))
+        .WillOnce([&expectedParams](const IExecutor::ProgramParams& params,
+                                    [[maybe_unused]] IExecutor::Flags flags) {
+            ASSERT_STREQ(params.pathname, expectedParams.pathname);
+            ASSERT_STREQ(params.argv[0], expectedParams.argv[0]);
+            ASSERT_STREQ(params.argv[1], expectedParams.argv[1]);
+        });
+
     m_network.applyInterfaceCommands(interfaceCommands);
 }
 
@@ -87,7 +102,15 @@ TEST_F(NetworkTestFixture, applyInterfaceCommandsShouldNotFailWithValidParameter
 TEST_F(NetworkTestFixture, applyLayerCommandsShouldNotFailWithValidParameters)
 {
     const std::vector<ConfigData::Network::LayerCommand> layerCommands
-        = {{"pathname1", "value1"}, {"pathname2", "value2"}};
+        = {{"pathname", "value"}};
+    const std::string expectedValue("value");
+
+    EXPECT_CALL(m_mockWriter, writeToStream(_, _))
+        .WillOnce([&expectedValue](std::ostream& stream, const std::string& value) {
+            ASSERT_TRUE(stream.good());
+            ASSERT_EQ(value, expectedValue);
+        });
+
     m_network.applyLayerCommands(layerCommands);
 }
 
