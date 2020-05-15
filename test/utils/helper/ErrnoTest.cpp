@@ -48,7 +48,7 @@ TEST(ErrnoTestSuite, returnStrerrorForEmptyFunctionName)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST(ErrnoTestSuite, workEvenForInvalidErrorCode)
 {
-    std::string result = Errno::toString("NAME", -1);
+    const std::string result = Errno::toString("NAME", -1);
 
     EXPECT_THAT(result, HasSubstr(std::string("NAME")));
     EXPECT_THAT(result, HasSubstr(std::strerror(-1)));
@@ -57,7 +57,7 @@ TEST(ErrnoTestSuite, workEvenForInvalidErrorCode)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST(ErrnoTestSuite, concatenateStrerrorAndFunctionName)
 {
-    std::array errnoValues = {EACCES, EAGAIN, EBUSY};
+    const std::array errnoValues = {EACCES, EAGAIN, EBUSY};
     std::string result;
 
     for (const auto& errnoValue : errnoValues) {

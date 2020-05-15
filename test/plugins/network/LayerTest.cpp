@@ -62,8 +62,8 @@ protected:
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LayerTestFixture, shouldCallWriterWithExpectedValues)
 {
-    std::string pathname("/dev/null");
-    std::string expectedValue("value");
+    const std::string pathname("/dev/null");
+    const std::string expectedValue("value");
 
     EXPECT_CALL(m_mockWriter, writeToStream(_, _))
         .WillOnce([&expectedValue](std::ostream& stream, const std::string& value) {

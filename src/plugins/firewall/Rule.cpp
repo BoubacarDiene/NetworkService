@@ -41,9 +41,6 @@ struct Rule::Internal {
 
     const std::string& name;
     const std::vector<std::string>& commands;
-
-    /* const to make this object non-copyable, non-movable and
-     * non-resettable */
     const Parser parser;
 
     explicit Internal(const ILogger& providedLogger,

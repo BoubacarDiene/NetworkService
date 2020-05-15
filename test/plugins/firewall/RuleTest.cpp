@@ -31,22 +31,22 @@
 #include "mocks/MockExecutor.h"
 #include "mocks/MockLogger.h"
 
-#include "plugins/network/interface/Setup.h"
+#include "plugins/firewall/Rule.h"
 #include "utils/command/parser/Parser.h"
 
 using ::testing::_;
 using ::testing::AtLeast;
 
 using namespace service::plugins::logger;
-using namespace service::plugins::network::interface;
+using namespace service::plugins::firewall;
 using namespace utils::command;
 
 namespace {
 
-class InterfaceTestFixture : public ::testing::Test {
+class RuleTestFixture : public ::testing::Test {
 
 protected:
-    InterfaceTestFixture() : m_interface(m_mockLogger, m_mockExecutor)
+    RuleTestFixture()
     {
         // Logger methods are not always called
         EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
@@ -57,17 +57,31 @@ protected:
 
     MockExecutor m_mockExecutor;
     MockLogger m_mockLogger;
-    Interface m_interface;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(InterfaceTestFixture, shouldCallExecutorWithExpectedValues)
+TEST_F(RuleTestFixture, shouldCallExecutorTwice)
 {
-    const std::string command("/sbin/iptables -L");
+    const std::string name("name");
+    const std::vector<std::string> commands = {"command1", "command2"};
+
+    Rule rule(m_mockLogger, name, commands, m_mockExecutor);
+
+    EXPECT_CALL(m_mockExecutor, executeProgram(_, _)).Times(2);
+    rule.applyCommands();
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(RuleTestFixture, shouldCallExecutorWithExpectedValues)
+{
+    const std::string name("name");
+    const std::vector<std::string> commands = {"command"};
+
+    Rule rule(m_mockLogger, name, commands, m_mockExecutor);
 
     // Parser is deterministic meaning that for the same input, it will
     // always produce the same output so it's fine using it.
-    const auto& parsedCommand = Parser(m_mockLogger).parse(command);
+    const auto& parsedCommand = Parser(m_mockLogger).parse(commands[0]);
     const IExecutor::ProgramParams expectedParams
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
 
@@ -79,7 +93,7 @@ TEST_F(InterfaceTestFixture, shouldCallExecutorWithExpectedValues)
             ASSERT_STREQ(params.argv[1], expectedParams.argv[1]);
         });
 
-    m_interface.applyCommand(command);
+    rule.applyCommands();
 }
 
 }

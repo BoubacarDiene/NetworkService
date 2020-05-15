@@ -31,22 +31,20 @@
 #include "mocks/MockExecutor.h"
 #include "mocks/MockLogger.h"
 
-#include "plugins/network/interface/Setup.h"
-#include "utils/command/parser/Parser.h"
+#include "plugins/firewall/RuleFactory.h"
 
-using ::testing::_;
 using ::testing::AtLeast;
 
 using namespace service::plugins::logger;
-using namespace service::plugins::network::interface;
+using namespace service::plugins::firewall;
 using namespace utils::command;
 
 namespace {
 
-class InterfaceTestFixture : public ::testing::Test {
+class RuleFactoryTestFixture : public ::testing::Test {
 
 protected:
-    InterfaceTestFixture() : m_interface(m_mockLogger, m_mockExecutor)
+    RuleFactoryTestFixture() : m_ruleFactory(m_mockLogger, m_mockExecutor)
     {
         // Logger methods are not always called
         EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
@@ -57,29 +55,16 @@ protected:
 
     MockExecutor m_mockExecutor;
     MockLogger m_mockLogger;
-    Interface m_interface;
+    RuleFactory m_ruleFactory;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(InterfaceTestFixture, shouldCallExecutorWithExpectedValues)
+TEST_F(RuleFactoryTestFixture, createRuleShouldReturnAValidPointer)
 {
-    const std::string command("/sbin/iptables -L");
+    const std::string name("name");
+    const std::vector<std::string> commands = {"command1", "command2"};
 
-    // Parser is deterministic meaning that for the same input, it will
-    // always produce the same output so it's fine using it.
-    const auto& parsedCommand = Parser(m_mockLogger).parse(command);
-    const IExecutor::ProgramParams expectedParams
-        = {parsedCommand->pathname, parsedCommand->argv, nullptr};
-
-    EXPECT_CALL(m_mockExecutor, executeProgram(_, _))
-        .WillOnce([&expectedParams](const IExecutor::ProgramParams& params,
-                                    [[maybe_unused]] IExecutor::Flags flags) {
-            ASSERT_STREQ(params.pathname, expectedParams.pathname);
-            ASSERT_STREQ(params.argv[0], expectedParams.argv[0]);
-            ASSERT_STREQ(params.argv[1], expectedParams.argv[1]);
-        });
-
-    m_interface.applyCommand(command);
+    ASSERT_NE(m_ruleFactory.createRule(name, commands), nullptr);
 }
 
 }

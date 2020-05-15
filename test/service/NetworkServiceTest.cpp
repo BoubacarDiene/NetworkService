@@ -60,7 +60,8 @@ protected:
     NetworkServiceTestFixture()
         : m_networkServiceParams(
             {m_mockLogger, m_mockConfig, m_mockNetwork, m_mockRuleFactory}),
-          m_networkService(m_networkServiceParams)
+          m_networkService(m_networkServiceParams),
+          m_configFile("/path/to/configFile")
     {
         // Logger methods are not always called
         EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
@@ -83,82 +84,71 @@ protected:
     MockConfig m_mockConfig;
     MockNetwork m_mockNetwork;
     MockRuleFactory m_mockRuleFactory;
-
     NetworkService m_networkService;
+
+    const std::string m_configFile;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, returnFailureWhenLoadRaisesAnException)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile))
+    EXPECT_CALL(m_mockConfig, load(m_configFile))
         .WillOnce(Throw(std::runtime_error("Exception")));
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, returnFailureWhenHasInterfaceReturnFalse)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
     EXPECT_CALL(m_mockNetwork, hasInterface).WillOnce(Return(false));
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, returnFailureWhenHasInterfaceRaisesAnException)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
     EXPECT_CALL(m_mockNetwork, hasInterface)
         .WillOnce(Throw(std::runtime_error("Exception")));
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture,
        returnFailureWhenApplyInterfaceCommandsRaisesAnException)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
     EXPECT_CALL(m_mockNetwork, hasInterface).WillRepeatedly(Return(true));
     EXPECT_CALL(m_mockNetwork, applyLayerCommands).Times(AtLeast(0));
 
     EXPECT_CALL(m_mockNetwork, applyInterfaceCommands)
         .WillOnce(Throw(std::runtime_error("Exception")));
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture,
        returnFailureWhenApplyLayerCommandsRaisesAnException)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
     EXPECT_CALL(m_mockNetwork, hasInterface).WillRepeatedly(Return(true));
     EXPECT_CALL(m_mockNetwork, applyInterfaceCommands).Times(AtLeast(0));
 
     EXPECT_CALL(m_mockNetwork, applyLayerCommands)
         .WillOnce(Throw(std::runtime_error("Exception")));
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, returnFailureWhenCreateRuleRaisesAnException)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
     EXPECT_CALL(m_mockNetwork, hasInterface).WillRepeatedly(Return(true));
     EXPECT_CALL(m_mockNetwork, applyInterfaceCommands).Times(AtLeast(0));
     EXPECT_CALL(m_mockNetwork, applyLayerCommands).Times(AtLeast(0));
@@ -166,43 +156,37 @@ TEST_F(NetworkServiceTestFixture, returnFailureWhenCreateRuleRaisesAnException)
     EXPECT_CALL(m_mockRuleFactory, createRule)
         .WillOnce(Throw(std::runtime_error("Exception")));
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, returnFailureWhenCreateRuleReturnNull)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
     EXPECT_CALL(m_mockNetwork, hasInterface).WillRepeatedly(Return(true));
     EXPECT_CALL(m_mockNetwork, applyInterfaceCommands);
     EXPECT_CALL(m_mockNetwork, applyLayerCommands);
 
     EXPECT_CALL(m_mockRuleFactory, createRule);
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, hasInterfaceShouldBeCalledTwice)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
     EXPECT_CALL(m_mockNetwork, hasInterface)
         .WillOnce(Return(true))
         .WillOnce(Return(false));
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_FAILURE);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_FAILURE);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkServiceTestFixture, setupNetworkBeforeFirewall)
 {
-    std::string configFile("/path/to/configFile");
-
-    EXPECT_CALL(m_mockConfig, load(configFile)).Times(1);
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
 
     {
         Sequence seq1;
@@ -223,7 +207,7 @@ TEST_F(NetworkServiceTestFixture, setupNetworkBeforeFirewall)
             });
     }
 
-    ASSERT_EQ(m_networkService.applyConfig(configFile), EXIT_SUCCESS);
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_SUCCESS);
 }
 
 }
