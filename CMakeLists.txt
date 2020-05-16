@@ -16,7 +16,6 @@
 #          -DCONFIG_LOADER=<json = default | fake>
 #          -DLOGS_OUTPUT=<std = default>
 #          -DENABLE_UNIT_TESTING=<ON | OFF = default>
-#          -DENABLE_COVERAGE=<ON | OFF = default>
 # make && make install
 #
 #
@@ -27,8 +26,6 @@
 #
 #     -DLOGS_OUTPUT=std can be used to output logs messages to
 #     the standard output. It's the default value
-#
-#     -DENABLE_COVERAGE=ON will set coverage flags for the compiler
 ##
 
 cmake_minimum_required(VERSION 3.17.2)

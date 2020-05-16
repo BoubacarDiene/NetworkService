@@ -107,6 +107,7 @@ else()
     set(ENABLE_ASAN ON)
     set(ENABLE_SECURITY ON)
     set(ENABLE_LWYU ON)
+    set(ENABLE_COVERAGE ON)
 endif()
 
 # Address sanitizer

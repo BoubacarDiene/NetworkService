@@ -25,9 +25,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         lcov \
         net-tools \
         python-pip \
-        python3-pip \
         python-setuptools \
         python-wheel \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel \
         strace \
         tree \
         unzip \

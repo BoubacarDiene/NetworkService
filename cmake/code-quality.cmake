@@ -25,6 +25,9 @@ include(${CMAKE_SOURCE_DIR}/cmake/tools/clang-tidy.cmake)
 # Graphviz: Dependency graph
 include(${CMAKE_SOURCE_DIR}/cmake/tools/dependency-graph.cmake)
 
+# Gcov: Code coverage
+include(${CMAKE_SOURCE_DIR}/cmake/tools/code-coverage.cmake)
+
 # Git hooks
 include(${CMAKE_SOURCE_DIR}/cmake/git/pre-commit-hook.cmake)
 
@@ -32,7 +35,10 @@ include(${CMAKE_SOURCE_DIR}/cmake/git/pre-commit-hook.cmake)
 #                           Target                              #
 #################################################################
 
-# To avoid running dependency-graph, clang-format and clang-tidy
-# commands one by one
-add_custom_target(analysis
-    DEPENDS dependency-graph clang-format clang-tidy)
+# To avoid running all listed commands one by one
+add_custom_target(analysis)
+foreach (target coverage dependency-graph clang-format clang-tidy)
+    if (TARGET ${target})
+        add_dependencies(analysis ${target})
+    endif()
+endforeach()

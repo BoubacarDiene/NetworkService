@@ -14,6 +14,15 @@
 #                           Variables                           #
 #################################################################
 
+# From https://cmake.org/cmake/help/latest/command/install.html:
+#   When TYPE is specified, a destination will then be set
+#   automatically by taking the corresponding variable from
+#   GNUInstallDirs, or by using a built-in default if that variable
+#   is not defined
+
+# Copy the generated dependency graph to share/ directory when
+# "make install" is called
+include(GNUInstallDirs)
 set(TESTS_INSTALL_DIR ${CMAKE_INSTALL_BINDIR}/tests)
 
 #################################################################
@@ -27,6 +36,7 @@ set(TESTS_INSTALL_DIR ${CMAKE_INSTALL_BINDIR}/tests)
 #     change the sign of the result [-Werror=sign-conversion]
 #
 # Add "-Wno-error=sign-conversion" to make the build pass.
+message(STATUS "Downloading googletest...")
 set(CMAKE_CXX_FLAGS -Wno-error=sign-conversion)
 include(${CMAKE_SOURCE_DIR}/cmake/frameworks/googletest.cmake)
 
