@@ -33,6 +33,7 @@
 #include "mocks/MockWriter.h"
 
 #include "plugins/network/Network.h"
+#include "plugins/network/fakes/ifaddrs.h"
 #include "utils/command/parser/Parser.h"
 
 using ::testing::_;
@@ -65,14 +66,29 @@ protected:
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(NetworkTestFixture, hasInterfaceRaisesExceptionIfGetIfaddrsFails)
+{
+    setIfaddrsTest(FAILURE);
+    try {
+        (void)m_network.hasInterface("fakeInterface");
+        FAIL() << "Should fail because getifaddrs() has failed";
+    }
+    catch (const std::runtime_error& e) {
+        // Expected!
+    }
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, hasInterfaceReturnTrueIfInterfaceExists)
 {
-    ASSERT_TRUE(m_network.hasInterface("lo"));
+    setIfaddrsTest(SUCCESS);
+    ASSERT_TRUE(m_network.hasInterface("fakeInterface"));
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, hasInterfaceReturnFalseIfInterfaceDoesNotExist)
 {
+    setIfaddrsTest(SUCCESS);
     ASSERT_FALSE(m_network.hasInterface("doesNotExist"));
 }
 
@@ -106,8 +122,8 @@ TEST_F(NetworkTestFixture, applyLayerCommandsShouldNotFailWithValidParameters)
     const std::string expectedValue("value");
 
     EXPECT_CALL(m_mockWriter, writeToStream(_, _))
-        .WillOnce([&expectedValue](std::ostream& stream, const std::string& value) {
-            ASSERT_TRUE(stream.good());
+        .WillOnce([&expectedValue]([[maybe_unused]] std::ostream& stream,
+                                   const std::string& value) {
             ASSERT_EQ(value, expectedValue);
         });
 

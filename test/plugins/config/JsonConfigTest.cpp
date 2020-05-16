@@ -65,9 +65,7 @@ TEST_F(JsonConfigTestFixture, shouldRaiseAnExceptionIfConfigIsInvalid)
     const std::string configFile("/dev/null");
 
     EXPECT_CALL(m_mockReader, readFromStream(_, _))
-        .WillOnce([](std::istream& stream, std::string& result) {
-            ASSERT_TRUE(stream.good());
-
+        .WillOnce([]([[maybe_unused]] std::istream& stream, std::string& result) {
             const std::string configFileContent("{}");
             result.assign(configFileContent);
         });
@@ -90,9 +88,7 @@ TEST_F(JsonConfigTestFixture, shouldReturnExpectedConfigDataIfConfigIsValid)
     const std::string configFile("/dev/null");
 
     EXPECT_CALL(m_mockReader, readFromStream(_, _))
-        .WillOnce([](std::istream& stream, std::string& result) {
-            ASSERT_TRUE(stream.good());
-
+        .WillOnce([]([[maybe_unused]] std::istream& stream, std::string& result) {
             const char* configFileContent
                 = "{"
                   "    \"network\": {"

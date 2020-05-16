@@ -26,58 +26,31 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "gtest/gtest.h"
+#ifndef __TEST_PLUGINS_NETWORK_FAKES_IFADDRS_H__
+#define __TEST_PLUGINS_NETWORK_FAKES_IFADDRS_H__
 
-#include "mocks/MockLogger.h"
-#include "mocks/MockWriter.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "plugins/network/layer/Setup.h"
+#include <sys/socket.h>
 
-using ::testing::_;
-using ::testing::AtLeast;
+enum Test { SUCCESS, FAILURE };
 
-using namespace service::plugins::logger;
-using namespace service::plugins::network::layer;
-using namespace utils::file;
+struct ifaddrs {
+    struct ifaddrs* ifa_next;
 
-namespace {
-
-class LayerTestFixture : public ::testing::Test {
-
-protected:
-    LayerTestFixture() : m_layer(m_mockLogger, m_mockWriter)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
-
-    MockWriter m_mockWriter;
-    MockLogger m_mockLogger;
-    Layer m_layer;
+    char* ifa_name;
+    struct sockaddr* ifa_addr;
 };
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(LayerTestFixture, shouldCallWriterWithExpectedValues)
-{
-    const std::string pathname("/dev/null");
-    const std::string expectedValue("value");
+int getifaddrs(struct ifaddrs** __ifap);
+void freeifaddrs(struct ifaddrs* __ifa);
 
-    EXPECT_CALL(m_mockWriter, writeToStream(_, _))
-        .WillOnce([&expectedValue]([[maybe_unused]] std::ostream& stream,
-                                   const std::string& value) {
-            ASSERT_EQ(value, expectedValue);
-        });
+void setIfaddrsTest(enum Test test);
 
-    m_layer.applyCommand(pathname, expectedValue);
+#ifdef __cplusplus
 }
+#endif
 
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif

@@ -52,6 +52,7 @@ add_test(${INTERFACE_TEST_EXECUTABLE_NAME}
 # Add network executable to the project
 add_executable(${NETWORK_TEST_EXECUTABLE_NAME}
     NetworkTest.cpp
+    fakes/ifaddrs.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/Network.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/interface/Setup.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Setup.cpp
@@ -63,6 +64,9 @@ add_executable(${NETWORK_TEST_EXECUTABLE_NAME}
 
 target_link_libraries(${NETWORK_TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock)
+
+target_include_directories(${NETWORK_TEST_EXECUTABLE_NAME}
+    SYSTEM BEFORE PUBLIC fakes)
 
 add_test(${NETWORK_TEST_EXECUTABLE_NAME}
     ${NETWORK_TEST_EXECUTABLE_NAME})

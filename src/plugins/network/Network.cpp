@@ -77,7 +77,7 @@ bool Network::hasInterface(const std::string& interfaceName) const
         throw std::runtime_error(Errno::toString("getifaddrs()", errno));
     }
 
-    for (auto* ifa = ifaddresses; ifa != nullptr; ifa = ifa->ifa_next) {
+    for (const auto* ifa = ifaddresses; ifa != nullptr; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == nullptr) {
             continue;
         }

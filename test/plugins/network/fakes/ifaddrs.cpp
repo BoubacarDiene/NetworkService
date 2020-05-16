@@ -26,58 +26,46 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "gtest/gtest.h"
-
-#include "mocks/MockLogger.h"
-#include "mocks/MockWriter.h"
-
-#include "plugins/network/layer/Setup.h"
-
-using ::testing::_;
-using ::testing::AtLeast;
-
-using namespace service::plugins::logger;
-using namespace service::plugins::network::layer;
-using namespace utils::file;
+#include "ifaddrs.h"
 
 namespace {
 
-class LayerTestFixture : public ::testing::Test {
+enum Test gTest = SUCCESS;
 
-protected:
-    LayerTestFixture() : m_layer(m_mockLogger, m_mockWriter)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
+struct sockaddr gIfaAddr;
+struct ifaddrs gAddrsNext;
+struct ifaddrs gAddrsFirst = {&gAddrsNext, nullptr, nullptr};
+
+char gInterface[] = "fakeInterface";
+
+}
+
+/*
+ * This fake version of ifaddrs allows to test all lines in hasInterface() method:
+ * 1- Return -1 to make hasInterface() throw an exception
+ * 2- Set the first ifa_addr to NULL to make hasInterface() continue browsing the
+ *    returned list
+ * 3- Return a data structure for which "fakeInterface" is considered as a valid
+ *    network interface
+ */
+int getifaddrs(struct ifaddrs** __ifap)
+{
+    if (gTest == FAILURE) {
+        return -1;
     }
 
-    MockWriter m_mockWriter;
-    MockLogger m_mockLogger;
-    Layer m_layer;
-};
+    gAddrsFirst.ifa_next->ifa_name            = static_cast<char*>(gInterface);
+    gAddrsFirst.ifa_next->ifa_addr            = &gIfaAddr;
+    gAddrsFirst.ifa_next->ifa_addr->sa_family = AF_PACKET;
 
-// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(LayerTestFixture, shouldCallWriterWithExpectedValues)
-{
-    const std::string pathname("/dev/null");
-    const std::string expectedValue("value");
+    *__ifap = &gAddrsFirst;
 
-    EXPECT_CALL(m_mockWriter, writeToStream(_, _))
-        .WillOnce([&expectedValue]([[maybe_unused]] std::ostream& stream,
-                                   const std::string& value) {
-            ASSERT_EQ(value, expectedValue);
-        });
-
-    m_layer.applyCommand(pathname, expectedValue);
+    return 0;
 }
 
-}
+void freeifaddrs([[maybe_unused]] struct ifaddrs* __ifa) {}
 
-int main(int argc, char** argv)
+void setIfaddrsTest(enum Test test)
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    gTest = test;
 }
