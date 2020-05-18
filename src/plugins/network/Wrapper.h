@@ -26,31 +26,50 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __TEST_PLUGINS_NETWORK_FAKES_IFADDRS_H__
-#define __TEST_PLUGINS_NETWORK_FAKES_IFADDRS_H__
+/**
+ * @file plugins/network/Wrapper.h
+ * @ingroup Implementation
+ *
+ * @brief This is a wrapper to "low level calls" used in Network.cpp. Putting them
+ *        in a separate file makes it a bit more easy to test hasInterface() method.
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date May 2020
+ */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef __PLUGINS_NETWORK_WRAPPER_H__
+#define __PLUGINS_NETWORK_WRAPPER_H__
 
-#include <sys/socket.h>
+#include <ifaddrs.h>
+#include <sys/types.h>
 
-enum Test { SUCCESS, FAILURE };
+/**
+ * @fn int osGetifaddrs(struct ifaddrs** ifap)
+ *
+ * @brief A wrapper to getifaddrs()
+ *
+ * It creates a linked list of structures describing the network interfaces of
+ * the local system.
+ *
+ * @param ifap The address of the first item of the list is stored in *ifap
+ *
+ * @return On success, 0 is returned. On error, -1 is returned and errno is set
+ *         appropriately
+ */
+int osGetifaddrs(struct ifaddrs** ifap);
 
-struct ifaddrs {
-    struct ifaddrs* ifa_next;
-
-    char* ifa_name;
-    struct sockaddr* ifa_addr;
-};
-
-int getifaddrs(struct ifaddrs** __ifap);
-void freeifaddrs(struct ifaddrs* __ifa);
-
-void setIfaddrsTest(enum Test test);
-
-#ifdef __cplusplus
-}
-#endif
+/**
+ * @fn void osFreeifaddrs(struct ifaddrs* ifa)
+ *
+ * @brief A wrapper to freeifaddrs()
+ *
+ * It is used to free resources allocated by @ref osGetifaddrs
+ *
+ * @param ifa The resource to free
+ *
+ * @return On success, 0 is returned. On error, -1 is returned and errno is set
+ *         appropriately
+ */
+void osFreeifaddrs(struct ifaddrs* ifa);
 
 #endif

@@ -71,8 +71,9 @@ set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/config/JsonConfigTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/RuleFactoryTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/RuleTest.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/fakes/ifaddrs.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/fakes/ifaddrs.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/fakes/MockWrapper.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/fakes/MockWrapper.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/fakes/Wrapper.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/InterfaceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/LayerTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/NetworkTest.cpp

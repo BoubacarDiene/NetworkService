@@ -26,11 +26,7 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include <cerrno>
-#include <ifaddrs.h>
 #include <stdexcept>
-#include <sys/socket.h>
-#include <utility>
 
 #include "utils/helper/Errno.h"
 
@@ -38,6 +34,7 @@
 #include "layer/Setup.h"
 
 #include "Network.h"
+#include "Wrapper.h"
 
 using namespace service::plugins::config;
 using namespace service::plugins::logger;
@@ -73,7 +70,7 @@ bool Network::hasInterface(const std::string& interfaceName) const
     bool exist           = false;
     ifaddrs* ifaddresses = nullptr;
 
-    if (getifaddrs(&ifaddresses) == -1) {
+    if (osGetifaddrs(&ifaddresses) == -1) {
         throw std::runtime_error(Errno::toString("getifaddrs()", errno));
     }
 
@@ -90,7 +87,7 @@ bool Network::hasInterface(const std::string& interfaceName) const
         }
     }
 
-    freeifaddrs(ifaddresses);
+    osFreeifaddrs(ifaddresses);
 
     return exist;
 }

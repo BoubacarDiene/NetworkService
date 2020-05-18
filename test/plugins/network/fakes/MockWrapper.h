@@ -26,46 +26,41 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "ifaddrs.h"
+#ifndef __TEST_PLUGINS_NETWORK_FAKES_MOCK_WRAPPER_H__
+#define __TEST_PLUGINS_NETWORK_FAKES_MOCK_WRAPPER_H__
 
-namespace {
+#include "gmock/gmock.h"
 
-enum Test gTest = SUCCESS;
+#include "plugins/network/Wrapper.h"
 
-struct sockaddr gIfaAddr;
-struct ifaddrs gAddrsNext;
-struct ifaddrs gAddrsFirst = {&gAddrsNext, nullptr, nullptr};
+namespace service::plugins::network {
 
-char gInterface[] = "fakeInterface";
+class MockWrapper {
+
+public:
+    /** Class constructor */
+    MockWrapper();
+
+    /** Class destructor */
+    ~MockWrapper();
+
+    /** Copy constructor */
+    MockWrapper(const MockWrapper&) = delete;
+
+    /** Class copy-assignment operator */
+    MockWrapper& operator=(const MockWrapper&) = delete;
+
+    /** Class move constructor */
+    MockWrapper(MockWrapper&&) = delete;
+
+    /** Class move-assignment operator */
+    MockWrapper& operator=(MockWrapper&&) = delete;
+
+    /** Mocks */
+    MOCK_METHOD(int, osGetifaddrs, (struct ifaddrs * *ifap), ());
+    MOCK_METHOD(void, osFreeifaddrs, (struct ifaddrs * ifap), ());
+};
 
 }
 
-/*
- * This fake version of ifaddrs allows to test all lines in hasInterface() method:
- * 1- Return -1 to make hasInterface() throw an exception
- * 2- Set the first ifa_addr to NULL to make hasInterface() continue browsing the
- *    returned list
- * 3- Return a data structure for which "fakeInterface" is considered as a valid
- *    network interface
- */
-int getifaddrs(struct ifaddrs** __ifap)
-{
-    if (gTest == FAILURE) {
-        return -1;
-    }
-
-    gAddrsFirst.ifa_next->ifa_name            = static_cast<char*>(gInterface);
-    gAddrsFirst.ifa_next->ifa_addr            = &gIfaAddr;
-    gAddrsFirst.ifa_next->ifa_addr->sa_family = AF_PACKET;
-
-    *__ifap = &gAddrsFirst;
-
-    return 0;
-}
-
-void freeifaddrs([[maybe_unused]] struct ifaddrs* __ifa) {}
-
-void setIfaddrsTest(enum Test test)
-{
-    gTest = test;
-}
+#endif

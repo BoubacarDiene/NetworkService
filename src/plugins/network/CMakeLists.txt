@@ -32,6 +32,7 @@ add_library(${TARGET_PLUGINS_NETWORK}
 target_sources(${TARGET_PLUGINS_NETWORK}
     PRIVATE
         Network.cpp
+        Wrapper.cpp
         interface/Setup.cpp
         layer/Setup.cpp
     PUBLIC

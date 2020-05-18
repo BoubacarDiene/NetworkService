@@ -28,22 +28,25 @@
 
 #include "gtest/gtest.h"
 
+#include "fakes/MockWrapper.h"
 #include "mocks/MockExecutor.h"
 #include "mocks/MockLogger.h"
 #include "mocks/MockWriter.h"
 
 #include "plugins/network/Network.h"
-#include "plugins/network/fakes/ifaddrs.h"
 #include "utils/command/parser/Parser.h"
 
 using ::testing::_;
 using ::testing::AtLeast;
+using ::testing::Return;
 
 using namespace service::plugins::config;
 using namespace service::plugins::logger;
 using namespace service::plugins::network;
 using namespace utils::command;
 using namespace utils::file;
+
+MockWrapper* gMockWrapper = nullptr;
 
 namespace {
 
@@ -59,16 +62,29 @@ protected:
         EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
     }
 
+    void SetUp() override
+    {
+        gMockWrapper = &m_mockWrapper;
+    }
+
+    void TearDown() override
+    {
+        gMockWrapper = nullptr;
+    }
+
     MockLogger m_mockLogger;
     MockExecutor m_mockExecutor;
     MockWriter m_mockWriter;
     Network m_network;
+
+    MockWrapper m_mockWrapper;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, hasInterfaceRaisesExceptionIfGetIfaddrsFails)
 {
-    setIfaddrsTest(FAILURE);
+    EXPECT_CALL(m_mockWrapper, osGetifaddrs).WillOnce(Return(-1));
+
     try {
         (void)m_network.hasInterface("fakeInterface");
         FAIL() << "Should fail because getifaddrs() has failed";
@@ -81,14 +97,37 @@ TEST_F(NetworkTestFixture, hasInterfaceRaisesExceptionIfGetIfaddrsFails)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, hasInterfaceReturnTrueIfInterfaceExists)
 {
-    setIfaddrsTest(SUCCESS);
+    struct sockaddr ifaAddr;
+    struct ifaddrs ifaNext;
+    struct ifaddrs firstIfaAddr;
+
+    char interface[] = "fakeInterface";
+
+    firstIfaAddr.ifa_next = &ifaNext;
+    firstIfaAddr.ifa_name = nullptr;
+    firstIfaAddr.ifa_addr = nullptr;
+
+    firstIfaAddr.ifa_next->ifa_name            = static_cast<char*>(interface);
+    firstIfaAddr.ifa_next->ifa_addr            = &ifaAddr;
+    firstIfaAddr.ifa_next->ifa_addr->sa_family = AF_PACKET;
+
+    EXPECT_CALL(m_mockWrapper, osGetifaddrs)
+        .WillOnce([&firstIfaAddr](struct ifaddrs** ifap) {
+            *ifap = &firstIfaAddr;
+            return 0;
+        });
+
+    EXPECT_CALL(m_mockWrapper, osFreeifaddrs).Times(1);
+
     ASSERT_TRUE(m_network.hasInterface("fakeInterface"));
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, hasInterfaceReturnFalseIfInterfaceDoesNotExist)
 {
-    setIfaddrsTest(SUCCESS);
+    EXPECT_CALL(m_mockWrapper, osGetifaddrs).WillOnce(Return(0));
+    EXPECT_CALL(m_mockWrapper, osFreeifaddrs).Times(1);
+
     ASSERT_FALSE(m_network.hasInterface("doesNotExist"));
 }
 
