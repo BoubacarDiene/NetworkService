@@ -16,3 +16,4 @@
 add_subdirectory(helper)
 add_subdirectory(file)
 add_subdirectory(command)
+add_subdirectory(command/osal)

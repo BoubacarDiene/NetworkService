@@ -100,7 +100,7 @@ void Linux::executeProgram(const char* pathname,
                            char* const envp[]) const
 {
     // Note that execve() must not return unless when it fails
-    osExecve(pathname, argv, envp);
+    (void)osExecve(pathname, argv, envp);
     m_internal->logger.error(Errno::toString("execve()", errno));
 
     std::_Exit(EXIT_FAILURE);
@@ -142,30 +142,29 @@ void Linux::sanitizeFiles() const
         if ((osFstat(fd, &buffer) != -1) || (errno != EBADF)) {
             m_internal->logger.debug("Nothing to do with standard fd: "
                                      + std::to_string(fd));
-            break;
         }
-
-        m_internal->logger.debug("Reopen standard fd: " + std::to_string(fd));
-        if (!Internal::redirectStandardStream(fd, "/dev/null")) {
-            throw std::runtime_error("Failed to reopen standard descriptor: "
-                                     + std::to_string(fd));
+        else {
+            m_internal->logger.debug("Reopen standard fd: " + std::to_string(fd));
+            if (!Internal::redirectStandardStream(fd, "/dev/null")) {
+                throw std::runtime_error("Failed to reopen standard descriptor: "
+                                         + std::to_string(fd));
+            }
         }
     }
 }
 
 void Linux::dropPrivileges() const
 {
-    /* - realGid : The group id of the user that has launched this program
-     * - effectiveGid: The group id used by the kernel to determine
-     *   privileges granted to the process
-     * - realUid : The user id of the user that has launched this program
-     * - effectiveGid: The user id used by the kernel to determine
-     *   privileges granted to the process
+    /* - realGid:      The group id of the user that has launched this program
+     * - effectiveGid: The group id used by the kernel to determine privileges
+     *                 granted to the process
+     * - realUid:      The user id of the user that has launched this program
+     * - effectiveUid: The user id used by the kernel to determine privileges
+     *                 granted to the process
      *
      * Note: The real uid can differ from the effective one when for example
      *       root changes the owner of the program to itself and set
-     * "Set-UID" bit (chmod u+s). Thus, the effective uid with be equal to
-     * 0. */
+     * "Set-UID" bit (chmod u+s). Thus, the effective uid with be equal to 0 */
     gid_t realGid      = osGetgid();
     gid_t effectiveGid = osGetegid();
     uid_t realUid      = osGetuid();
