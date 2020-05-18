@@ -88,6 +88,8 @@ set(ALL_CXX_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/IOsal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Linux.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Linux.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Wrapper.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/executor/osal/Wrapper.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/parser/Parser.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/parser/Parser.h
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/file/writer/IWriter.h

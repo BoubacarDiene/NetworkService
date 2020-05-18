@@ -27,18 +27,11 @@
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
 #include <cerrno>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-#include <grp.h>
-#include <stdexcept>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
 #include "utils/helper/Errno.h"
 
 #include "Linux.h"
+#include "Wrapper.h"
 
 using namespace service::plugins::logger;
 using namespace utils::command::osal;
@@ -57,22 +50,22 @@ struct Linux::Internal {
 
         switch (fd) {
         case 0:
-            file = freopen(destPathname, "rb", stdin);
+            file = osFreopen(destPathname, "rb", stdin);
             break;
 
         case 1:
-            file = freopen(destPathname, "rb", stdout);
+            file = osFreopen(destPathname, "rb", stdout);
             break;
 
         case 2:
-            file = freopen(destPathname, "rb", stderr);
+            file = osFreopen(destPathname, "rb", stderr);
             break;
 
         default:
             break; // Intentionally left empty
         }
 
-        return ((file != nullptr) && (fileno(file) == fd));
+        return ((file != nullptr) && (osFileno(file) == fd));
     }
 };
 
@@ -83,7 +76,7 @@ Linux::~Linux() = default;
 
 IOsal::ProcessId Linux::createProcess() const
 {
-    pid_t childPid = fork();
+    pid_t childPid = osFork();
     if (childPid == -1) {
         throw std::runtime_error(Errno::toString("fork()", errno));
     }
@@ -97,7 +90,7 @@ void Linux::waitChildProcess() const
     int status;
 
     do {
-        pid = waitpid(0, &status, 0);
+        pid = osWaitpid(0, &status, 0);
     } while ((pid == -1) && (errno == EINTR));
     m_internal->logger.debug("Parent - waitpid() status: " + std::to_string(status));
 }
@@ -107,7 +100,7 @@ void Linux::executeProgram(const char* pathname,
                            char* const envp[]) const
 {
     // Note that execve() must not return unless when it fails
-    execve(pathname, argv, envp);
+    osExecve(pathname, argv, envp);
     m_internal->logger.error(Errno::toString("execve()", errno));
 
     std::_Exit(EXIT_FAILURE);
@@ -116,7 +109,7 @@ void Linux::executeProgram(const char* pathname,
 void Linux::reseedPRNG() const
 {
     struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
+    osClockGettime(CLOCK_MONOTONIC, &ts);
 
     /* Following two variables are necessary to fix static analysis issue about
      * magic numbers: [readability-magic-numbers] */
@@ -126,9 +119,9 @@ void Linux::reseedPRNG() const
     auto intermediateResult
         = static_cast<unsigned>(ts.tv_sec ^ ts.tv_nsec ^ (ts.tv_nsec >> shift31));
     unsigned seed
-        = intermediateResult ^ ((static_cast<unsigned>(getpid())) << shift16);
+        = intermediateResult ^ ((static_cast<unsigned>(osGetpid())) << shift16);
 
-    srand(seed);
+    osSrand(seed);
 }
 
 void Linux::sanitizeFiles() const
@@ -138,15 +131,15 @@ void Linux::sanitizeFiles() const
      * Note: getdtablesize() is implemented as a libc library function. The
      * glibc version calls getrlimit(2) and returns the current RLIMIT_NOFILE
      * limit, or OPEN_MAX when that fails */
-    int fds = getdtablesize();
+    int fds = osGetdtablesize();
     for (int fd = 3; fd <= fds; ++fd) {
-        close(fd);
+        osClose(fd);
     }
 
     /* Make sure the standard descriptors are opened */
     struct stat buffer;
     for (int fd = 0; fd < 3; ++fd) {
-        if ((fstat(fd, &buffer) != -1) || (errno != EBADF)) {
+        if ((osFstat(fd, &buffer) != -1) || (errno != EBADF)) {
             m_internal->logger.debug("Nothing to do with standard fd: "
                                      + std::to_string(fd));
             break;
@@ -173,14 +166,14 @@ void Linux::dropPrivileges() const
      *       root changes the owner of the program to itself and set
      * "Set-UID" bit (chmod u+s). Thus, the effective uid with be equal to
      * 0. */
-    gid_t realGid      = getgid();
-    gid_t effectiveGid = getegid();
-    uid_t realUid      = getuid();
-    uid_t effectiveUid = geteuid();
+    gid_t realGid      = osGetgid();
+    gid_t effectiveGid = osGetegid();
+    uid_t realUid      = osGetuid();
+    uid_t effectiveUid = osGeteuid();
 
     m_internal->logger.debug("Limit the groups to 1 i.e to caller's group id");
     if (effectiveUid == 0) {
-        if (setgroups(1, &realGid) == -1) {
+        if (osSetgroups(1, &realGid) == -1) {
             throw std::runtime_error(Errno::toString("setgroups()", errno));
         }
     }
@@ -190,7 +183,7 @@ void Linux::dropPrivileges() const
     if (realGid != effectiveGid) {
         m_internal->logger.debug(
             "Permanently replace the effective gid with the real one");
-        if (setregid(realGid, realGid) == -1) {
+        if (osSetregid(realGid, realGid) == -1) {
             throw std::runtime_error(Errno::toString("setregid()", errno));
         }
     }
@@ -200,7 +193,7 @@ void Linux::dropPrivileges() const
     if (realUid != effectiveUid) {
         m_internal->logger.debug(
             "Permanently replace the effective uid with the real one");
-        if (setreuid(realUid, realUid) == -1) {
+        if (osSetreuid(realUid, realUid) == -1) {
             throw std::runtime_error(Errno::toString("setreuid()", errno));
         }
     }

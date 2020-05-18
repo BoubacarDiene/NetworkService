@@ -16,6 +16,7 @@
 target_sources(${TARGET_UTILS_COMMAND}
     PRIVATE
         Linux.cpp
+        Wrapper.cpp
     PUBLIC
         Linux.h
 )
