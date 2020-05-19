@@ -131,13 +131,13 @@ script:
 after_success:
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" networkservice-image:latest
       -c "cd build;
-          coveralls -r .. -i src --exclude build/_deps \
-          --exclude build/CMakeFiles \
-          --exclude src/Main.cpp \
-          --exclude src/plugins/network/Wrapper.cpp \
-          --exclude src/plugins/network/Wrapper.h \
-          --exclude src/utils/command/executor/osal/Wrapper.cpp \
-          --exclude src/utils/command/executor/osal/Wrapper.h \
+          coveralls -r .. -i src --exclude build/_deps
+          --exclude build/CMakeFiles
+          --exclude src/Main.cpp
+          --exclude src/plugins/network/Wrapper.cpp
+          --exclude src/plugins/network/Wrapper.h
+          --exclude src/utils/command/executor/osal/Wrapper.cpp
+          --exclude src/utils/command/executor/osal/Wrapper.h
           --gcov-options '\-lp' --verbose"
 
 # Deploy documentation

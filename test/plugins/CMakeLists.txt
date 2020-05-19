@@ -16,3 +16,4 @@
 add_subdirectory(network)
 add_subdirectory(firewall)
 add_subdirectory(config)
+add_subdirectory(logger)
