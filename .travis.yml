@@ -55,7 +55,7 @@ before_script:
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
       -c "mkdir -p build && cd build;
           cmake .. -DCMAKE_INSTALL_PREFIX=./out -DDOXYGEN_WARN_AS_ERROR=NO;
-          make doc;"
+          make doc && make install;"
   - |
     if [[ -s build/doc/doxygen_warnings.txt ]]; then
         echo "Please, fix doxygen comments (see below)"
@@ -136,6 +136,9 @@ after_success:
 # Deploy documentation
 # See https://docs.travis-ci.com/user/deployment/pages/
 # https://github.com/EmaroLab/docs/wiki/Automatic-deployment-Doxygen-documentation
+before_deploy:
+  - cp build/out/share/dependency-graph/dependency_graph.png build/out/share/doc/html/.
+
 deploy:
   provider: pages
   skip_cleanup: true
