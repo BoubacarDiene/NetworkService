@@ -54,7 +54,7 @@ https://travis-ci.org/BoubacarDiene/NetworkService)
 
 NetworkService is an easy-to-use C++17 project that aims at executing network-related commands more securely by relying on tools such as: ip, iptables, ebtables, nftables, a custom network tool, etc. It won't change your everyday life but for developers and entreprises working on systems that need to communicate with the rest of the world through a network, a service like this could be very useful.
 
-By studying the source code carefully, you might tell yourself this project is just *many lines of code* to take a configuration file as input then perform several fork+exec and write to some network-related files. That's indeed what it roughly does but one must remember that the goal of professional software development is not just making softwares work.
+By studying the source code carefully, you might tell yourself this project is just *many lines of code* to take a configuration file as input then perform several fork+exec and write to some network-related files. That's indeed what it roughly does but one must remember that *the goal of professional software development is not just making software work*.
 
 Thus, NetworkService has been designed and developed so that best practices in software design and object-oriented programming, code quality and also [secure programming](http://shop.oreilly.com/product/9780596003944.do) have been taken into consideration. *At least, I tried somehow:-)*. Let me know if something could be improved; *One never stops learning*.
 
@@ -93,7 +93,7 @@ From the flowchart, one can at least extract three components:
 <img src="design/components.png"/>
 </p>
 
-Logger component has been added to allow logging messages that can help debugging the service when necessary, inform about interesting operations it is doing, etc. The Network service core organizes how components work together to perform actions.
+Logger component has been added to allow logging messages that can help debugging the service when necessary, inform about interesting operations it is doing, etc. The Network service core organizes how components work together to fulfill the objectives.
 
 ### Details
 <p align="center">
@@ -102,7 +102,7 @@ Logger component has been added to allow logging messages that can help debuggin
 
 The core service only depends on (stable) abstractions. It is not supposed to change a lot as it has no knowledge of low level details. These are handled by other components which are kind of plugins from the service's point of view. *Reader*, *Writer* and *Command executor* are underlying helper classes to improve maintainability, ... and ease executing commands.
 
-Note that extending the service is easy. It consists in adding new code (*see <XXX>*); no update of existing code should be necessary.
+Note that extending the service is easy. It consists in adding new code (Each *XXX* can be an extension); no update of existing code should be necessary.
 
 ## Code quality
 Concretely, several tools have been used to reach the level of quality expected in this project. Most of them are automatically enabled when generating a debug version of the software.
