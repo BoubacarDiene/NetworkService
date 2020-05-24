@@ -16,6 +16,9 @@ https://travis-ci.org/BoubacarDiene/NetworkService)
 - [Description](#description)
 - [Goals](#goals)
 - [Software design](#software-design)
+  - [Flowchart](#flowchart)
+  - [Components](#components)
+  - [Details](#details)
 - [Code quality](#code-quality)
   - [Documentation](#documentation)
   - [Compilation options](#compilation-options)
@@ -63,12 +66,43 @@ Thus, NetworkService has been designed and developed so that best practices in s
 ## Goals
 Usually, I develop all my personal softwares in C language. One reason to that is because it is one of the programming languages I'm most comfortable with. This time, I needed to practice a recent version of the C++ language, a widely used programming language which I've not used much even if I understand it quite well.
 
-However, using C++17 is not the only purpose of this project. Indeed, I had time so I decided to set up many of the steps that I think are essential in a *software development process*, always starting with the architecture; the software design to be more precise.
+However, using C++17 is not the only purpose of this project. Indeed, I had time so I decided to set up many of the steps that I think are essential in a *software development process*, always starting with the software design.
 
 I do not consider that the most important in this project is the final software, which can obviously be useful, but all that made it possible to produce it: design, used tools, continuous integration, automatic checks of programming errors, applied good practices, etc.
 
 ## Software design
-TODO
+
+### Flowchart
+<p align="center">
+<img src="design/flowchart.png"/>
+</p>
+
+The above flowchart is a simplified graphical view of what the service should do. Once a valid configuration file is provided, it is parsed and loaded into memory to get the full list of network and firewall commands to execute. It is not mandatory to provide firewall commands. Indeed, the service can be used to only configure network interfaces: set ip addresses, add network interfaces, update routing tables, etc.
+
+Firewall commands can allow to monitor incoming and outgoing traffic to a network interface and filter it according to user-defined rules. A rule can simply be something like: "Reject UDP packets coming from IP address 10.0.0.1/8".
+
+Note that, when firewall rules are provided, network commands have to be executed first so that network interfaces are correctly configured before use.
+
+### Components
+From the flowchart, one can at least extract three components:
+- **Configuration**: To load the configuration file
+- **Network**: To check that physical interfaces to be used exist and execute network commands
+- **Firewall**: To configure firewall by executing rules
+
+<p align="center">
+<img src="design/components.png"/>
+</p>
+
+Logger component has been added to allow logging messages that can help debugging the service when necessary, inform about interesting operations it is doing, etc. The Network service core organizes how components work together to perform actions.
+
+### Details
+<p align="center">
+<img src="design/details.png"/>
+</p>
+
+The core service only depends on (stable) abstractions. It is not supposed to change a lot as it has no knowledge of low level details. These are handled by other components which are kind of plugins from the service's point of view. *Reader*, *Writer* and *Command executor* are underlying helper classes to improve maintainability, ... and ease executing commands.
+
+Note that extending the service is easy. It consists in adding new code (*see <XXX>*); no update of existing code should be necessary.
 
 ## Code quality
 Concretely, several tools have been used to reach the level of quality expected in this project. Most of them are automatically enabled when generating a debug version of the software.
@@ -100,7 +134,7 @@ Several compilation options can be used to help [harden](https://wiki.debian.org
 For more details, see ENABLE_SECU in [compilation-options.cmake](cmake/compilation-options.cmake).
 
 ### Include What You Use
-[Include What You Use](https://include-what-you-use.org/) aka IWYU is a tool that checks all header and source files to make sure "#include"-ed files are really used. It may be very useful when, for example, you've reworked some source files and would like to know if all "#include" inside are still necessary.
+[Include What You Use](https://include-what-you-use.org/) aka IWYU is a tool that checks all header and source files to make sure "#include"-ed files are really used. It may be particularly useful when, for example, you've reworked some source files and would like to know if all "#include" inside are still necessary.
 
 However, note that IWYU can be a bit verbose due to the fact that it expects for each source file to explicitly include all header files it uses. Consider A.h which includes B.h, if Main.cpp includes A.h but also uses functions in B.h, IWYU will warn because a #include "B.h" is not found in Main.cpp. Also, the tool sometimes recommends using some system's internal headers instead of their public versions. Besides, it often tries to enforce the use of forward declarations which can certainly speed up the build time but must be used **intelligently** (See [Forward declarations: pros vs cons](https://google.github.io/styleguide/cppguide.html#Forward_Declarations) for the pros and cons of using forward declaration).
 
@@ -114,7 +148,7 @@ From [ld manual page](https://linux.die.net/man/1/ld): *"Normally the linker wil
 For more details, see ENABLE_LWYU in [compilation-options.cmake](cmake/compilation-options.cmake).
 
 ### Code formatting
-Code formatting is a useful way to keep source code consistent regarding look and feel. Developers that already have performed code reviewing on [gerrit](https://www.gerritcodereview.com/) for example will probably agree that there's nothing worse than being forced to focus on formatting/styling issues instead of using that time to review what's really important: the Content, the architecture. Clearly, that should never happen.
+Code formatting is a useful way to keep source code consistent regarding look and feel. Developers that already have performed code reviewing on [gerrit](https://www.gerritcodereview.com/) for example will probably agree that there's nothing worse than being forced to focus on formatting/styling issues instead of using that time to review what's really important: the content, the architecture. Clearly, that should never happen.
 
 In this project, code formatting can be done automatically thanks to [Git hook](#git-hook) or manually using ```make clang-format``` command. Formatting is also automatically checked by continuous integration tool when submitting a new commit.
 
@@ -257,8 +291,19 @@ valgrind out/bin/networkservice -c ../res/example.json
 **Note:** Obviously, *res/example.json* file is just a sample configuration file to test the software and show how to write config files.
 
 ### Release
+
 #### Build in release mode
+```
+mkdir -p build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release -DENABLE_UNIT_TESTING=OFF
+make && make install
+```
+
 #### Start the application
+```
+out/bin/networkservice -c ../res/example.json
+```
+
 ### Third-party dependencies
   - [**CLI11**](https://github.com/CLIUtils/CLI11): Parse command line options (Header-only)
   - [**nlohmann/json**](https://github.com/nlohmann/json): Parse configuration file (Header-only)
