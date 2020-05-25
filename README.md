@@ -1,5 +1,3 @@
-# NetworkService
-
 [![GitHub license](https://img.shields.io/github/license/BoubacarDiene/NetworkService)](https://github.com/BoubacarDiene/NetworkService/blob/master/LICENSE.md)
 [![Build Status](https://travis-ci.org/BoubacarDiene/NetworkService.svg?branch=master)](
 https://travis-ci.org/BoubacarDiene/NetworkService)
@@ -11,8 +9,9 @@ https://travis-ci.org/BoubacarDiene/NetworkService)
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/21168/badge.svg"/>
 </a>
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/af3661db654a46c8a40ba654d0fb65f9)](https://www.codacy.com/manual/BoubacarDiene/NetworkService?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BoubacarDiene/NetworkService&amp;utm_campaign=Badge_Grade)
 
-# Table of Contents
+# Table of contents
 - [Description](#description)
 - [Goals](#goals)
 - [Software design](#software-design)
