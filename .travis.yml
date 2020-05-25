@@ -26,6 +26,14 @@
 #                                                                                #
 ##################################################################################
 
+# COVERITY_SCAN_TOKEN
+#   pip install travis
+#   cd <path_to>/NetworkService
+#   travis encrypt COVERITY_SCAN_TOKEN="<see https://scan.coverity.com for value>"
+env:
+  global:
+    secure: "nEIqQV0B7HXI9jBoBabN7Mu5Ujej8+zZD5e9h6OB54HXA4DdSlDVczJecvKXQCBmBdUV/a1J4tWWU0w4a1bydeKkZHkLhfGpKILwLghHIXSzsX4ZqWOAreksoAGwe5CJBcLUaAxsgg3MrjNsRoS2G8XMNDmt2FujVBWhzTmbOcu4aCwijIVSgGtl6oIwepzW9AgQ/Fj3zZEJcWORZ+Za4xMWA8LEOFYliuC+TxMaEQbvgEBUu3Afta/cahIj3LHkNN1MPkvEYU9vo7JzoEP1hXe3BsX5Vfkwgh08VeAhcdvm9T0koK+qdqSe3br0Lbxv1Isr2AQINSa5kD3sfS1JI6wneGZHgULHDARN0Tfj6BP4AD+DKJbcld/lEg7FEnaoNjK8XhAk5s5T+wyugWxV3ezYqdMH+p8M9XuF1+9YiNIN7T8MsUxV1idcL22ccSfuWAgopNmRLXwqtEgsKZeGSt/Kul5JUfyjfXS8YAUm66VnOzsVNxaHcghp45W2F2KHjs6LvIrcDjBYHvWmJ0C/0rcSYyH60chHIx2yWC7VBAjo8hpZoH5nyOMz106WYG0hGLaKIPqXotHeaKYWtavCL29UsU7rGbD6aEcZprG9rJI3Z+WaeDbA8smOn77CuNiqDq7xpPLKIZczL1yM0lPerwbrTXDCh7kCZDDYoZZ6Oek="
+
 # Language C++
 language: cpp
 
@@ -126,6 +134,22 @@ script:
       -c "mkdir -p build && cd build;
           cmake .. -DCMAKE_INSTALL_PREFIX=./out -DENABLE_UNIT_TESTING=ON;
           make && ctest -V;"
+
+after_script:
+  # Coverity scan
+  - wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=BoubacarDiene%2FNetworkService" -O coverity_tool.tgz
+  - mkdir coverity_tool && tar xf coverity_tool.tgz -C coverity_tool --strip-components=1
+  - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
+      -c "mkdir -p coverityBuild && cd coverityBuild;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Release;
+          ../coverity_tool/bin/cov-build --dir cov-int make;
+          tar czvf cov-int.tgz cov-int;"
+  - curl --form token=$COVERITY_SCAN_TOKEN
+         --form email=boubacar.diene@gmail.com
+         --form file=@coverityBuild/cov-int.tgz
+         --form version="master"
+         --form description=""
+         https://scan.coverity.com/builds?project=BoubacarDiene%2FNetworkService
 
 # Code coverage
 after_success:
