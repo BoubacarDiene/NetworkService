@@ -23,14 +23,14 @@ set(TEST_EXECUTABLE_NAME LinuxTest)
 # Add Linux executable to the project
 add_executable(${TEST_EXECUTABLE_NAME}
     LinuxTest.cpp
-    fakes/MockWrapper.cpp
-    fakes/Wrapper.cpp
+    fakes/MockOS.cpp
+    fakes/OS.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/executor/osal/Linux.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/helper/Errno.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp)
 
 target_link_libraries(${TEST_EXECUTABLE_NAME}
-    PRIVATE gtest gmock)
+    PRIVATE gtest gmock dl)
 
 add_test(${TEST_EXECUTABLE_NAME}
     ${TEST_EXECUTABLE_NAME})

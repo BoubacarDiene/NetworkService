@@ -78,9 +78,9 @@ set(ALL_CXX_TEST_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/LayerTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/NetworkTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/service/NetworkServiceTest.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/osal/fakes/MockWrapper.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/osal/fakes/MockWrapper.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/osal/fakes/Wrapper.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/osal/fakes/MockOS.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/osal/fakes/MockOS.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/osal/fakes/OS.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/osal/LinuxTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/ExecutorTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/command/ParserTest.cpp

@@ -30,7 +30,7 @@
 
 #include "gtest/gtest.h"
 
-#include "fakes/MockWrapper.h"
+#include "fakes/MockOS.h"
 #include "mocks/MockLogger.h"
 
 #include "utils/command/executor/osal/Linux.h"
@@ -44,7 +44,7 @@ using namespace service::plugins::logger;
 using namespace utils::command;
 using namespace utils::command::osal;
 
-MockWrapper* gMockWrapper = nullptr;
+MockOS* gMockOS = nullptr;
 
 namespace {
 
@@ -62,24 +62,24 @@ protected:
 
     void SetUp() override
     {
-        gMockWrapper = &m_mockWrapper;
+        gMockOS = &m_mockOS;
     }
 
     void TearDown() override
     {
-        gMockWrapper = nullptr;
+        gMockOS = nullptr;
     }
 
     MockLogger m_mockLogger;
     Linux m_linux;
 
-    MockWrapper m_mockWrapper;
+    MockOS m_mockOS;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, createProcessShouldThrowAnExceptionIfForkFails)
 {
-    EXPECT_CALL(m_mockWrapper, osFork).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, fork).WillOnce(Return(-1));
     try {
         (void)m_linux.createProcess();
         FAIL() << "Should fail because fork() has failed";
@@ -92,14 +92,14 @@ TEST_F(LinuxTestFixture, createProcessShouldThrowAnExceptionIfForkFails)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, createProcessShouldReturnParentIfForkReturnsPositiveValue)
 {
-    EXPECT_CALL(m_mockWrapper, osFork).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, fork).WillOnce(Return(1));
     ASSERT_EQ(m_linux.createProcess(), IOsal::ProcessId::PARENT);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, createProcessShouldReturnParentIfForkReturnsZero)
 {
-    EXPECT_CALL(m_mockWrapper, osFork).WillOnce(Return(0));
+    EXPECT_CALL(m_mockOS, fork).WillOnce(Return(0));
     ASSERT_EQ(m_linux.createProcess(), IOsal::ProcessId::CHILD);
 }
 
@@ -107,7 +107,7 @@ TEST_F(LinuxTestFixture, createProcessShouldReturnParentIfForkReturnsZero)
 TEST_F(LinuxTestFixture, waitChildShouldBeCalledSeveralTimesIfInterrupted)
 {
     int gSavedErrno = errno;
-    EXPECT_CALL(m_mockWrapper, osWaitpid)
+    EXPECT_CALL(m_mockOS, waitpid)
         .WillOnce(SetErrnoAndReturn(EINTR, -1))
         .WillOnce(SetErrnoAndReturn(gSavedErrno, 0));
 
@@ -115,26 +115,24 @@ TEST_F(LinuxTestFixture, waitChildShouldBeCalledSeveralTimesIfInterrupted)
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(LinuxTestFixture, shouldExitIfExecuteProgramFails)
+TEST_F(LinuxTestFixture, shouldThrowAnExceptionIfExecuteProgramFails)
 {
-    // FIXME: executeProgram is not considered tested in code coverage.
-    //        Need to study how to make it work when using Death test
-    //        (ASSERT_DEATH, EXPECT_EXIT, ...) and exit() call together
-    EXPECT_CALL(m_mockWrapper, osExecve).Times(AnyNumber());
-
-    // Fixes:
-    //   - warning: avoid using 'goto' for flow control [hicpp-avoid-goto]
-    //   - warning: do not call c-style vararg functions [hicpp-vararg]
-    // NOLINTNEXTLINE(hicpp-avoid-goto, hicpp-vararg)
-    ASSERT_DEATH(m_linux.executeProgram(nullptr, nullptr, nullptr), "");
+    EXPECT_CALL(m_mockOS, execve).Times(AnyNumber());
+    try {
+        m_linux.executeProgram(nullptr, nullptr, nullptr);
+        FAIL() << "Should fail because execve() has failed";
+    }
+    catch (const std::runtime_error& e) {
+        // Expected!
+    }
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, reseedPRNGShouldWorkWithoutError)
 {
-    EXPECT_CALL(m_mockWrapper, osClockGettime);
-    EXPECT_CALL(m_mockWrapper, osGetpid);
-    EXPECT_CALL(m_mockWrapper, osSrand);
+    EXPECT_CALL(m_mockOS, clock_gettime);
+    EXPECT_CALL(m_mockOS, getpid);
+    EXPECT_CALL(m_mockOS, srand);
 
     m_linux.reseedPRNG();
 }
@@ -142,8 +140,8 @@ TEST_F(LinuxTestFixture, reseedPRNGShouldWorkWithoutError)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, sanitizeFilesShouldCloseNonStandardDescriptors)
 {
-    EXPECT_CALL(m_mockWrapper, osGetdtablesize).WillOnce(Return(4));
-    EXPECT_CALL(m_mockWrapper, osClose)
+    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(4));
+    EXPECT_CALL(m_mockOS, close)
         .WillOnce([](int fd) {
             EXPECT_EQ(fd, 3);
             return 0;
@@ -153,7 +151,7 @@ TEST_F(LinuxTestFixture, sanitizeFilesShouldCloseNonStandardDescriptors)
             return 0;
         });
 
-    EXPECT_CALL(m_mockWrapper, osFstat).Times(3).WillRepeatedly(Return(0));
+    EXPECT_CALL(m_mockOS, fstat).Times(3).WillRepeatedly(Return(0));
 
     m_linux.sanitizeFiles();
 }
@@ -162,10 +160,10 @@ TEST_F(LinuxTestFixture, sanitizeFilesShouldCloseNonStandardDescriptors)
 TEST_F(LinuxTestFixture,
        sanitizeFilesShouldNotReopenStandardDescriptorsIfAlreadyOpened)
 {
-    EXPECT_CALL(m_mockWrapper, osFstat).WillRepeatedly(Return(0));
-    EXPECT_CALL(m_mockWrapper, osFreopen).Times(0);
+    EXPECT_CALL(m_mockOS, fstat).WillRepeatedly(Return(0));
+    EXPECT_CALL(m_mockOS, freopen).Times(0);
 
-    EXPECT_CALL(m_mockWrapper, osGetdtablesize).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(2));
 
     m_linux.sanitizeFiles();
 }
@@ -173,11 +171,11 @@ TEST_F(LinuxTestFixture,
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, sanitizeFilesShouldReopenStandardDescriptorsOnDevNull)
 {
-    EXPECT_CALL(m_mockWrapper, osFstat)
+    EXPECT_CALL(m_mockOS, fstat)
         .Times(3)
         .WillRepeatedly(SetErrnoAndReturn(EBADF, -1));
 
-    EXPECT_CALL(m_mockWrapper, osFreopen)
+    EXPECT_CALL(m_mockOS, freopen)
         .Times(3)
         .WillRepeatedly(
             [](const char* path, [[maybe_unused]] const char* mode, FILE* stream) {
@@ -185,7 +183,7 @@ TEST_F(LinuxTestFixture, sanitizeFilesShouldReopenStandardDescriptorsOnDevNull)
                 return stream;
             });
 
-    EXPECT_CALL(m_mockWrapper, osFileno).Times(3).WillRepeatedly([](FILE* stream) {
+    EXPECT_CALL(m_mockOS, fileno).Times(3).WillRepeatedly([](FILE* stream) {
         if (stream == stdin) {
             return 0;
         }
@@ -198,7 +196,7 @@ TEST_F(LinuxTestFixture, sanitizeFilesShouldReopenStandardDescriptorsOnDevNull)
         return -1;
     });
 
-    EXPECT_CALL(m_mockWrapper, osGetdtablesize).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(2));
 
     m_linux.sanitizeFiles();
 }
@@ -208,9 +206,9 @@ TEST_F(
     LinuxTestFixture,
     sanitizeFilesShouldRaiseAnExceptionIfReopeningStandardDescriptorsOnDevNullFailed)
 {
-    EXPECT_CALL(m_mockWrapper, osFstat).WillOnce(SetErrnoAndReturn(EBADF, -1));
+    EXPECT_CALL(m_mockOS, fstat).WillOnce(SetErrnoAndReturn(EBADF, -1));
 
-    EXPECT_CALL(m_mockWrapper, osFreopen)
+    EXPECT_CALL(m_mockOS, freopen)
         .WillOnce([](const char* path,
                      [[maybe_unused]] const char* mode,
                      [[maybe_unused]] FILE* stream) {
@@ -218,7 +216,7 @@ TEST_F(
             return nullptr;
         });
 
-    EXPECT_CALL(m_mockWrapper, osGetdtablesize).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(2));
 
     try {
         m_linux.sanitizeFiles();
@@ -232,13 +230,13 @@ TEST_F(
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, dropPrivilegesShouldCallSetgroupsIfEffectiveUidIsZero)
 {
-    EXPECT_CALL(m_mockWrapper, osGetgid).WillOnce(Return(1));
-    EXPECT_CALL(m_mockWrapper, osGetegid).WillOnce(Return(1));
-    EXPECT_CALL(m_mockWrapper, osGetuid)
+    EXPECT_CALL(m_mockOS, getgid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getegid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getuid)
         .WillOnce(Return(0)); // Same as euid to avoid other calls
-    EXPECT_CALL(m_mockWrapper, osGeteuid).WillOnce(Return(0));
+    EXPECT_CALL(m_mockOS, geteuid).WillOnce(Return(0));
 
-    EXPECT_CALL(m_mockWrapper, osSetgroups).Times(1);
+    EXPECT_CALL(m_mockOS, setgroups).Times(1);
 
     m_linux.dropPrivileges();
 }
@@ -246,13 +244,13 @@ TEST_F(LinuxTestFixture, dropPrivilegesShouldCallSetgroupsIfEffectiveUidIsZero)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, dropPrivilegesShouldRaiseAnExceptionIfSetgroupsFailed)
 {
-    EXPECT_CALL(m_mockWrapper, osGetgid).WillOnce(Return(1));
-    EXPECT_CALL(m_mockWrapper, osGetegid).WillOnce(Return(1));
-    EXPECT_CALL(m_mockWrapper, osGetuid)
+    EXPECT_CALL(m_mockOS, getgid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getegid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getuid)
         .WillOnce(Return(0)); // Same as euid to avoid other calls
-    EXPECT_CALL(m_mockWrapper, osGeteuid).WillOnce(Return(0));
+    EXPECT_CALL(m_mockOS, geteuid).WillOnce(Return(0));
 
-    EXPECT_CALL(m_mockWrapper, osSetgroups).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, setgroups).WillOnce(Return(-1));
 
     try {
         m_linux.dropPrivileges();
@@ -267,12 +265,12 @@ TEST_F(LinuxTestFixture, dropPrivilegesShouldRaiseAnExceptionIfSetgroupsFailed)
 TEST_F(LinuxTestFixture,
        dropPrivilegesShouldCallSetregidIfRealAndEffectiveGidAreDifferent)
 {
-    EXPECT_CALL(m_mockWrapper, osGetgid).WillOnce(Return(2));
-    EXPECT_CALL(m_mockWrapper, osGetegid).WillOnce(Return(1));
-    EXPECT_CALL(m_mockWrapper, osGetuid).WillOnce(Return(-1));
-    EXPECT_CALL(m_mockWrapper, osGeteuid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, getgid).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, getegid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getuid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, geteuid).WillOnce(Return(-1));
 
-    EXPECT_CALL(m_mockWrapper, osSetregid).WillOnce([](gid_t rgid, gid_t egid) {
+    EXPECT_CALL(m_mockOS, setregid).WillOnce([](gid_t rgid, gid_t egid) {
         EXPECT_EQ(rgid, 2);
         EXPECT_EQ(rgid, egid);
         return 0;
@@ -284,12 +282,12 @@ TEST_F(LinuxTestFixture,
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, dropPrivilegesShouldRaiseAnExceptionIfSetregidFailed)
 {
-    EXPECT_CALL(m_mockWrapper, osGetgid).WillOnce(Return(2));
-    EXPECT_CALL(m_mockWrapper, osGetegid).WillOnce(Return(1));
-    EXPECT_CALL(m_mockWrapper, osGetuid).WillOnce(Return(-1));
-    EXPECT_CALL(m_mockWrapper, osGeteuid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, getgid).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, getegid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getuid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, geteuid).WillOnce(Return(-1));
 
-    EXPECT_CALL(m_mockWrapper, osSetregid).WillOnce([](gid_t rgid, gid_t egid) {
+    EXPECT_CALL(m_mockOS, setregid).WillOnce([](gid_t rgid, gid_t egid) {
         EXPECT_EQ(rgid, 2);
         EXPECT_EQ(rgid, egid);
         return -1;
@@ -308,12 +306,12 @@ TEST_F(LinuxTestFixture, dropPrivilegesShouldRaiseAnExceptionIfSetregidFailed)
 TEST_F(LinuxTestFixture,
        dropPrivilegesShouldCallSetreuidIfRealAndEffectiveUidAreDifferent)
 {
-    EXPECT_CALL(m_mockWrapper, osGetgid).WillOnce(Return(-1));
-    EXPECT_CALL(m_mockWrapper, osGetegid).WillOnce(Return(-1));
-    EXPECT_CALL(m_mockWrapper, osGetuid).WillOnce(Return(2));
-    EXPECT_CALL(m_mockWrapper, osGeteuid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getgid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, getegid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, getuid).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, geteuid).WillOnce(Return(1));
 
-    EXPECT_CALL(m_mockWrapper, osSetreuid).WillOnce([](uid_t ruid, uid_t euid) {
+    EXPECT_CALL(m_mockOS, setreuid).WillOnce([](uid_t ruid, uid_t euid) {
         EXPECT_EQ(ruid, 2);
         EXPECT_EQ(ruid, euid);
         return 0;
@@ -325,12 +323,12 @@ TEST_F(LinuxTestFixture,
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, dropPrivilegesShouldRaiseAnExceptionIfSetreuidFailed)
 {
-    EXPECT_CALL(m_mockWrapper, osGetgid).WillOnce(Return(-1));
-    EXPECT_CALL(m_mockWrapper, osGetegid).WillOnce(Return(-1));
-    EXPECT_CALL(m_mockWrapper, osGetuid).WillOnce(Return(2));
-    EXPECT_CALL(m_mockWrapper, osGeteuid).WillOnce(Return(1));
+    EXPECT_CALL(m_mockOS, getgid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, getegid).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, getuid).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, geteuid).WillOnce(Return(1));
 
-    EXPECT_CALL(m_mockWrapper, osSetreuid).WillOnce([](uid_t ruid, uid_t euid) {
+    EXPECT_CALL(m_mockOS, setreuid).WillOnce([](uid_t ruid, uid_t euid) {
         EXPECT_EQ(ruid, 2);
         EXPECT_EQ(ruid, euid);
         return -1;

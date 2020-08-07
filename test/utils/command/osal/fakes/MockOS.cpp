@@ -26,94 +26,9 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "Wrapper.h"
+#include "MockOS.h"
 
-pid_t osFork()
-{
-    return fork();
-}
+using namespace utils::command::osal;
 
-int osExecve(const char* pathname, char* const argv[], char* const envp[])
-{
-    return execve(pathname, argv, envp);
-}
-
-pid_t osGetpid()
-{
-    return getpid();
-}
-
-int osGetdtablesize()
-{
-    return getdtablesize();
-}
-
-int osClose(int fd)
-{
-    return close(fd);
-}
-
-gid_t osGetgid()
-{
-    return getgid();
-}
-
-gid_t osGetegid()
-{
-    return getegid();
-}
-
-uid_t osGetuid()
-{
-    return getuid();
-}
-
-uid_t osGeteuid()
-{
-    return geteuid();
-}
-
-int osSetreuid(uid_t ruid, uid_t euid)
-{
-    return setreuid(ruid, euid);
-}
-
-int osSetregid(gid_t rgid, gid_t egid)
-{
-    return setregid(rgid, egid);
-}
-
-FILE* osFreopen(const char* path, const char* mode, FILE* stream)
-{
-    return freopen(path, mode, stream);
-}
-
-int osFileno(FILE* stream)
-{
-    return fileno(stream);
-}
-
-pid_t osWaitpid(pid_t pid, int* status, int options)
-{
-    return waitpid(pid, status, options);
-}
-
-int osClockGettime(clockid_t clk_id, struct timespec* tp)
-{
-    return clock_gettime(clk_id, tp);
-}
-
-void osSrand(unsigned int seed)
-{
-    srand(seed);
-}
-
-int osFstat(int fd, struct stat* buf)
-{
-    return fstat(fd, buf);
-}
-
-int osSetgroups(size_t size, const gid_t* list)
-{
-    return setgroups(size, list);
-}
+MockOS::MockOS()  = default;
+MockOS::~MockOS() = default;

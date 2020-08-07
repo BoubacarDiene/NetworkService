@@ -26,61 +26,68 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __TEST_UTILS_COMMAND_OSAL_FAKES_MOCK_WRAPPER_H__
-#define __TEST_UTILS_COMMAND_OSAL_FAKES_MOCK_WRAPPER_H__
+#ifndef __TEST_UTILS_COMMAND_OSAL_FAKES_MOCK_OS_H__
+#define __TEST_UTILS_COMMAND_OSAL_FAKES_MOCK_OS_H__
+
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <grp.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "gmock/gmock.h"
 
-#include "utils/command/executor/osal/Wrapper.h"
-
 namespace utils::command::osal {
 
-class MockWrapper {
+class MockOS {
 
 public:
     /** Class constructor */
-    MockWrapper();
+    MockOS();
 
     /** Class destructor */
-    ~MockWrapper();
+    ~MockOS();
 
     /** Copy constructor */
-    MockWrapper(const MockWrapper&) = delete;
+    MockOS(const MockOS&) = delete;
 
     /** Class copy-assignment operator */
-    MockWrapper& operator=(const MockWrapper&) = delete;
+    MockOS& operator=(const MockOS&) = delete;
 
     /** Class move constructor */
-    MockWrapper(MockWrapper&&) = delete;
+    MockOS(MockOS&&) = delete;
 
     /** Class move-assignment operator */
-    MockWrapper& operator=(MockWrapper&&) = delete;
+    MockOS& operator=(MockOS&&) = delete;
 
     /** Mocks */
-    MOCK_METHOD(pid_t, osFork, (), ());
+    MOCK_METHOD(pid_t, fork, (), ());
     MOCK_METHOD(int,
-                osExecve,
+                execve,
                 (const char* pathname, char* const argv[], char* const envp[]),
                 ());
-    MOCK_METHOD(pid_t, osGetpid, (), ());
-    MOCK_METHOD(int, osGetdtablesize, (), ());
-    MOCK_METHOD(int, osClose, (int fd), ());
-    MOCK_METHOD(gid_t, osGetgid, (), ());
-    MOCK_METHOD(gid_t, osGetegid, (), ());
-    MOCK_METHOD(uid_t, osGetuid, (), ());
-    MOCK_METHOD(uid_t, osGeteuid, (), ());
-    MOCK_METHOD(int, osSetreuid, (uid_t ruid, uid_t euid), ());
-    MOCK_METHOD(int, osSetregid, (gid_t rgid, gid_t egid), ());
+    MOCK_METHOD(pid_t, getpid, (), ());
+    MOCK_METHOD(int, getdtablesize, (), ());
+    MOCK_METHOD(int, close, (int fd), ());
+    MOCK_METHOD(gid_t, getgid, (), ());
+    MOCK_METHOD(gid_t, getegid, (), ());
+    MOCK_METHOD(uid_t, getuid, (), ());
+    MOCK_METHOD(uid_t, geteuid, (), ());
+    MOCK_METHOD(int, setreuid, (uid_t ruid, uid_t euid), ());
+    MOCK_METHOD(int, setregid, (gid_t rgid, gid_t egid), ());
     MOCK_METHOD(FILE*,
-                osFreopen,
+                freopen,
                 (const char* path, const char* mode, FILE* stream),
                 ());
-    MOCK_METHOD(int, osFileno, (FILE * stream), ());
-    MOCK_METHOD(pid_t, osWaitpid, (pid_t pid, int* status, int options), ());
-    MOCK_METHOD(int, osClockGettime, (clockid_t clk_id, struct timespec* tp), ());
-    MOCK_METHOD(void, osSrand, (unsigned int seed), ());
-    MOCK_METHOD(int, osFstat, (int fd, struct stat* buf), ());
-    MOCK_METHOD(int, osSetgroups, (size_t size, const gid_t* list), ());
+    MOCK_METHOD(int, fileno, (FILE * stream), ());
+    MOCK_METHOD(pid_t, waitpid, (pid_t pid, int* status, int options), ());
+    MOCK_METHOD(int, clock_gettime, (clockid_t clk_id, struct timespec* tp), ());
+    MOCK_METHOD(void, srand, (unsigned int seed), ());
+    MOCK_METHOD(int, fstat, (int fd, struct stat* buf), ());
+    MOCK_METHOD(int, setgroups, (size_t size, const gid_t* list), ());
 };
 
 }
