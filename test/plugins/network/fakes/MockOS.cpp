@@ -26,41 +26,9 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __TEST_PLUGINS_NETWORK_FAKES_MOCK_WRAPPER_H__
-#define __TEST_PLUGINS_NETWORK_FAKES_MOCK_WRAPPER_H__
+#include "MockOS.h"
 
-#include "gmock/gmock.h"
+using namespace service::plugins::network;
 
-#include "plugins/network/Wrapper.h"
-
-namespace service::plugins::network {
-
-class MockWrapper {
-
-public:
-    /** Class constructor */
-    MockWrapper();
-
-    /** Class destructor */
-    ~MockWrapper();
-
-    /** Copy constructor */
-    MockWrapper(const MockWrapper&) = delete;
-
-    /** Class copy-assignment operator */
-    MockWrapper& operator=(const MockWrapper&) = delete;
-
-    /** Class move constructor */
-    MockWrapper(MockWrapper&&) = delete;
-
-    /** Class move-assignment operator */
-    MockWrapper& operator=(MockWrapper&&) = delete;
-
-    /** Mocks */
-    MOCK_METHOD(int, osGetifaddrs, (struct ifaddrs * *ifap), ());
-    MOCK_METHOD(void, osFreeifaddrs, (struct ifaddrs * ifap), ());
-};
-
-}
-
-#endif
+MockOS::MockOS()  = default;
+MockOS::~MockOS() = default;

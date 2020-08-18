@@ -26,50 +26,29 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-/**
- * @file plugins/network/Wrapper.h
- * @ingroup Implementation
- *
- * @brief This is a wrapper to "low level calls" used in Network.cpp. Putting them
- *        in a separate file makes it a bit more easy to test hasInterface() method.
- *
- * @author Boubacar DIENE <boubacar.diene@gmail.com>
- * @date May 2020
- */
+#include <dlfcn.h>
 
-#ifndef __PLUGINS_NETWORK_WRAPPER_H__
-#define __PLUGINS_NETWORK_WRAPPER_H__
+#include "MockOS.h"
 
-#include <ifaddrs.h>
-#include <sys/types.h>
+#define RETURN_IF_NOT_IN_TESTCASE(retval)                                    \
+    if (gMockOS == nullptr) {                                                \
+        ADD_FAILURE() << __func__                                            \
+                      << " was not expected to be called outside test case"; \
+        errno = EINVAL;                                                      \
+        return retval;                                                       \
+    }
 
-/**
- * @fn int osGetifaddrs(struct ifaddrs** ifap)
- *
- * @brief A wrapper to getifaddrs()
- *
- * It creates a linked list of structures describing the network interfaces of
- * the local system.
- *
- * @param ifap The address of the first item of the list is stored in *ifap
- *
- * @return On success, 0 is returned. On error, -1 is returned and errno is set
- *         appropriately
- */
-int osGetifaddrs(struct ifaddrs** ifap);
+extern service::plugins::network::MockOS* gMockOS;
 
-/**
- * @fn void osFreeifaddrs(struct ifaddrs* ifa)
- *
- * @brief A wrapper to freeifaddrs()
- *
- * It is used to free resources allocated by @ref osGetifaddrs
- *
- * @param ifa The resource to free
- *
- * @return On success, 0 is returned. On error, -1 is returned and errno is set
- *         appropriately
- */
-void osFreeifaddrs(struct ifaddrs* ifa);
+extern "C" {
 
-#endif
+int getifaddrs(struct ifaddrs** ifap)
+{
+    return gMockOS->getifaddrs(ifap);
+}
+
+void freeifaddrs(struct ifaddrs* ifa)
+{
+    gMockOS->freeifaddrs(ifa);
+}
+}

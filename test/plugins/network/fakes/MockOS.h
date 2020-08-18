@@ -26,16 +26,42 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "MockWrapper.h"
+#ifndef __TEST_PLUGINS_NETWORK_FAKES_MOCK_OS_H__
+#define __TEST_PLUGINS_NETWORK_FAKES_MOCK_OS_H__
 
-extern service::plugins::network::MockWrapper* gMockWrapper;
+#include <ifaddrs.h>
+#include <sys/types.h>
 
-int osGetifaddrs(struct ifaddrs** ifap)
-{
-    return gMockWrapper->osGetifaddrs(ifap);
+#include "gmock/gmock.h"
+
+namespace service::plugins::network {
+
+class MockOS {
+
+public:
+    /** Class constructor */
+    MockOS();
+
+    /** Class destructor */
+    ~MockOS();
+
+    /** Copy constructor */
+    MockOS(const MockOS&) = delete;
+
+    /** Class copy-assignment operator */
+    MockOS& operator=(const MockOS&) = delete;
+
+    /** Class move constructor */
+    MockOS(MockOS&&) = delete;
+
+    /** Class move-assignment operator */
+    MockOS& operator=(MockOS&&) = delete;
+
+    /** Mocks */
+    MOCK_METHOD(int, getifaddrs, (struct ifaddrs * *ifap), ());
+    MOCK_METHOD(void, freeifaddrs, (struct ifaddrs * ifap), ());
+};
+
 }
 
-void osFreeifaddrs(struct ifaddrs* ifa)
-{
-    gMockWrapper->osFreeifaddrs(ifa);
-}
+#endif

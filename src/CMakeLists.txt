@@ -74,8 +74,6 @@ set(ALL_CXX_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/layer/Setup.h
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/Network.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/Network.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/Wrapper.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/Wrapper.h
         ${CMAKE_CURRENT_SOURCE_DIR}/service/plugins/IConfig.h
         ${CMAKE_CURRENT_SOURCE_DIR}/service/plugins/IConfigData.h
         ${CMAKE_CURRENT_SOURCE_DIR}/service/plugins/ILogger.h

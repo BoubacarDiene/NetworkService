@@ -28,7 +28,7 @@
 
 #include "gtest/gtest.h"
 
-#include "fakes/MockWrapper.h"
+#include "fakes/MockOS.h"
 #include "mocks/MockExecutor.h"
 #include "mocks/MockLogger.h"
 #include "mocks/MockWriter.h"
@@ -46,7 +46,7 @@ using namespace service::plugins::network;
 using namespace utils::command;
 using namespace utils::file;
 
-MockWrapper* gMockWrapper = nullptr;
+MockOS* gMockOS = nullptr;
 
 namespace {
 
@@ -64,12 +64,12 @@ protected:
 
     void SetUp() override
     {
-        gMockWrapper = &m_mockWrapper;
+        gMockOS = &m_mockOS;
     }
 
     void TearDown() override
     {
-        gMockWrapper = nullptr;
+        gMockOS = nullptr;
     }
 
     MockLogger m_mockLogger;
@@ -77,13 +77,13 @@ protected:
     MockWriter m_mockWriter;
     Network m_network;
 
-    MockWrapper m_mockWrapper;
+    MockOS m_mockOS;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, hasInterfaceRaisesExceptionIfGetIfaddrsFails)
 {
-    EXPECT_CALL(m_mockWrapper, osGetifaddrs).WillOnce(Return(-1));
+    EXPECT_CALL(m_mockOS, getifaddrs).WillOnce(Return(-1));
 
     try {
         (void)m_network.hasInterface("fakeInterface");
@@ -111,13 +111,13 @@ TEST_F(NetworkTestFixture, hasInterfaceReturnTrueIfInterfaceExists)
     firstIfaAddr.ifa_next->ifa_addr            = &ifaAddr;
     firstIfaAddr.ifa_next->ifa_addr->sa_family = AF_PACKET;
 
-    EXPECT_CALL(m_mockWrapper, osGetifaddrs)
+    EXPECT_CALL(m_mockOS, getifaddrs)
         .WillOnce([&firstIfaAddr](struct ifaddrs** ifap) {
             *ifap = &firstIfaAddr;
             return 0;
         });
 
-    EXPECT_CALL(m_mockWrapper, osFreeifaddrs).Times(1);
+    EXPECT_CALL(m_mockOS, freeifaddrs).Times(1);
 
     ASSERT_TRUE(m_network.hasInterface("fakeInterface"));
 }
@@ -125,8 +125,8 @@ TEST_F(NetworkTestFixture, hasInterfaceReturnTrueIfInterfaceExists)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(NetworkTestFixture, hasInterfaceReturnFalseIfInterfaceDoesNotExist)
 {
-    EXPECT_CALL(m_mockWrapper, osGetifaddrs).WillOnce(Return(0));
-    EXPECT_CALL(m_mockWrapper, osFreeifaddrs).Times(1);
+    EXPECT_CALL(m_mockOS, getifaddrs).WillOnce(Return(0));
+    EXPECT_CALL(m_mockOS, freeifaddrs).Times(1);
 
     ASSERT_FALSE(m_network.hasInterface("doesNotExist"));
 }

@@ -52,8 +52,8 @@ add_test(${INTERFACE_TEST_EXECUTABLE_NAME}
 # Add network executable to the project
 add_executable(${NETWORK_TEST_EXECUTABLE_NAME}
     NetworkTest.cpp
-    fakes/Wrapper.cpp
-    fakes/MockWrapper.cpp
+    fakes/OS.cpp
+    fakes/MockOS.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/Network.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/interface/Setup.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Setup.cpp
