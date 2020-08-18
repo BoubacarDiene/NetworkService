@@ -31,7 +31,7 @@
 #include "MockOS.h"
 
 #define RETURN_IF_NOT_IN_TESTCASE(retval)                                    \
-    if (!gMockOS) {                                                          \
+    if (gMockOS == nullptr) {                                                \
         ADD_FAILURE() << __func__                                            \
                       << " was not expected to be called outside test case"; \
         errno = EINVAL;                                                      \

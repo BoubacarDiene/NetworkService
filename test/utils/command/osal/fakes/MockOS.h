@@ -67,7 +67,7 @@ public:
     MOCK_METHOD(pid_t, fork, (), ());
     MOCK_METHOD(int,
                 execve,
-                (const char* pathname, char* const argv[], char* const envp[]),
+                (const char* path, char* const argv[], char* const envp[]),
                 ());
     MOCK_METHOD(pid_t, getpid, (), ());
     MOCK_METHOD(int, getdtablesize, (), ());
@@ -80,14 +80,14 @@ public:
     MOCK_METHOD(int, setregid, (gid_t rgid, gid_t egid), ());
     MOCK_METHOD(FILE*,
                 freopen,
-                (const char* path, const char* mode, FILE* stream),
+                (const char* __restrict filename, const char* modes, FILE* stream),
                 ());
     MOCK_METHOD(int, fileno, (FILE * stream), ());
-    MOCK_METHOD(pid_t, waitpid, (pid_t pid, int* status, int options), ());
-    MOCK_METHOD(int, clock_gettime, (clockid_t clk_id, struct timespec* tp), ());
+    MOCK_METHOD(pid_t, waitpid, (pid_t pid, int* stat_loc, int options), ());
+    MOCK_METHOD(int, clock_gettime, (clockid_t clock_id, struct timespec* tp), ());
     MOCK_METHOD(void, srand, (unsigned int seed), ());
     MOCK_METHOD(int, fstat, (int fd, struct stat* buf), ());
-    MOCK_METHOD(int, setgroups, (size_t size, const gid_t* list), ());
+    MOCK_METHOD(int, setgroups, (size_t n, const gid_t* groups), ());
 };
 
 }

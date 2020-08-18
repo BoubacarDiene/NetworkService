@@ -223,7 +223,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_UNIT_TES
 make && make install
 ```
 
-**Note:** You can add ```-DCONFIG_LOADER=fake``` to CMake options if you want to use the fake version of the config loader. I added it to develop the software without caring about how the configuration will be provided to the service (JSON, YAML, SQL, etc.).
+**Note:** You can add ```-DCONFIG_LOADER=fake``` to CMake options if you want to use the fake version of the config loader. I added it to develop the software without worrying about how the configuration would be provided to the service (JSON, YAML, SQL, XML, etc.).
 
 #### Run unit tests
 ```
