@@ -1,5 +1,5 @@
 ##
-# docker build -t networkservice-image ci/
+# docker build --force-rm --no-cache -t networkservice-image ci/
 # docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
 ##
 
@@ -60,9 +60,6 @@ apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN ln -s /usr/bin/clang-format-10 /usr/bin/clang-format && \
     ln -s /usr/bin/clang-tidy-10 /usr/bin/clang-tidy
-
-# Install cmake_format (See https://github.com/cheshirekow/cmake_format)
-RUN pip install cmake_format
 
 # Install gcovr (See https://gcovr.com/en/stable/guide.html)
 RUN pip3 install gcovr
