@@ -58,8 +58,8 @@ public:
     MockOS& operator=(MockOS&&) = delete;
 
     /** Mocks */
-    MOCK_METHOD(int, getifaddrs, (struct ifaddrs * *ifap), ());
-    MOCK_METHOD(void, freeifaddrs, (struct ifaddrs * ifap), ());
+    MOCK_METHOD(int, getifaddrs, (struct ifaddrs * *ifap));
+    MOCK_METHOD(void, freeifaddrs, (struct ifaddrs * ifap));
 };
 
 }

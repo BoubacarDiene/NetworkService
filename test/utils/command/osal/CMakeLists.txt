@@ -30,7 +30,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp)
 
 target_link_libraries(${TEST_EXECUTABLE_NAME}
-    PRIVATE gtest gmock dl)
+    PRIVATE gtest gmock ${CMAKE_DL_LIBS})
 
 add_test(${TEST_EXECUTABLE_NAME}
     ${TEST_EXECUTABLE_NAME})

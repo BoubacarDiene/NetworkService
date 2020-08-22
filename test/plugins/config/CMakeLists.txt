@@ -15,6 +15,7 @@
 #################################################################
 
 set(JSON_CONFIG_TEST_EXECUTABLE_NAME JsonConfigTest)
+set(FAKE_CONFIG_TEST_EXECUTABLE_NAME FakeConfigTest)
 
 #################################################################
 #                     Build and add test                        #
@@ -33,9 +34,24 @@ target_link_libraries(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
 add_test(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
     ${JSON_CONFIG_TEST_EXECUTABLE_NAME})
 
+# Add fakeConfig executable to the project
+add_executable(${FAKE_CONFIG_TEST_EXECUTABLE_NAME}
+    FakeConfigTest.cpp
+    ${CMAKE_SOURCE_DIR}/src/plugins/config/FakeConfig.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
+    ${CMAKE_SOURCE_DIR}/test/mocks/MockReader.cpp)
+
+target_link_libraries(${FAKE_CONFIG_TEST_EXECUTABLE_NAME}
+    PRIVATE gtest gmock)
+
+add_test(${FAKE_CONFIG_TEST_EXECUTABLE_NAME}
+    ${FAKE_CONFIG_TEST_EXECUTABLE_NAME})
+
 #################################################################
 #                        Installation                           #
 #################################################################
 
-install(TARGETS ${JSON_CONFIG_TEST_EXECUTABLE_NAME}
+install(TARGETS
+            ${JSON_CONFIG_TEST_EXECUTABLE_NAME}
+            ${FAKE_CONFIG_TEST_EXECUTABLE_NAME}
         DESTINATION ${TESTS_INSTALL_DIR})
