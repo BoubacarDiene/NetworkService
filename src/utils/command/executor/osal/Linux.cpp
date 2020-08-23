@@ -99,7 +99,11 @@ void Linux::waitChildProcess() const
     do {
         pid = waitpid(0, &status, 0);
     } while ((pid == -1) && (errno == EINTR));
-    m_internal->logger.debug("Parent - waitpid() status: " + std::to_string(status));
+
+    if ((pid == -1) || (WIFEXITED(status) && (WEXITSTATUS(status) != 0))) {
+        throw std::runtime_error("Parent - waitpid() status: "
+                                 + std::to_string(status));
+    }
 }
 
 void Linux::executeProgram(const char* pathname,
@@ -109,7 +113,7 @@ void Linux::executeProgram(const char* pathname,
     (void)execve(pathname, argv, envp);
 
     // Note that execve() must not return unless when it fails
-    throw std::runtime_error(Errno::toString("execve()", errno));
+    std::_Exit(EXIT_FAILURE);
 }
 
 void Linux::reseedPRNG() const

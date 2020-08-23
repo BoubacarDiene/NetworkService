@@ -27,6 +27,7 @@
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
 #include <cerrno>
+#include <dlfcn.h>
 
 #include "gtest/gtest.h"
 
@@ -35,9 +36,13 @@
 
 #include "utils/command/executor/osal/Linux.h"
 
+using ::testing::_;
 using ::testing::AnyNumber;
 using ::testing::AtLeast;
+using ::testing::ByRef;
+using ::testing::DoAll;
 using ::testing::Return;
+using ::testing::SetArgPointee;
 using ::testing::SetErrnoAndReturn;
 
 using namespace service::plugins::logger;
@@ -104,7 +109,7 @@ TEST_F(LinuxTestFixture, createProcessShouldReturnParentIfForkReturnsZero)
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(LinuxTestFixture, waitChildShouldBeCalledSeveralTimesIfInterrupted)
+TEST_F(LinuxTestFixture, waitChildShouldCallWaitpidSeveralTimesIfInterrupted)
 {
     int gSavedErrno = errno;
     EXPECT_CALL(m_mockOS, waitpid)
@@ -115,16 +120,56 @@ TEST_F(LinuxTestFixture, waitChildShouldBeCalledSeveralTimesIfInterrupted)
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(LinuxTestFixture, shouldThrowAnExceptionIfExecuteProgramFails)
+TEST_F(LinuxTestFixture, waitChildShouldThrowAnExceptionIfChildProcessFails)
 {
-    EXPECT_CALL(m_mockOS, execve).Times(AnyNumber());
+    int stat_loc = EXIT_FAILURE;
+    EXPECT_CALL(m_mockOS, waitpid(_, _, _))
+        .WillOnce(
+            DoAll(SetArgPointee<1>(ByRef(stat_loc)), SetErrnoAndReturn(EAGAIN, -1)));
+
     try {
-        m_linux.executeProgram(nullptr, nullptr, nullptr);
-        FAIL() << "Should fail because execve() has failed";
+        m_linux.waitChildProcess();
+        FAIL() << "Should fail because waitpid() has failed";
     }
-    catch (const std::runtime_error& e) {
+    catch (const std::runtime_error& e2) {
         // Expected!
     }
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(LinuxTestFixture, shouldThrowAnExceptionIfExecuteProgramFails)
+{
+    // FIXME: executeProgram is not considered tested in code coverage.
+    //        Need to study how to make it work when using Death test
+    //        (ASSERT_DEATH, EXPECT_EXIT, ...) and exit() call together
+    EXPECT_CALL(m_mockOS, execve).Times(AnyNumber());
+
+    // See
+    // https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#death-tests-and-threads
+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+
+    using RealClose_t = int (*)(int fd);
+    // NOLINTNEXTLINE(google-readability-casting)
+    auto realClose = (RealClose_t)dlsym(RTLD_NEXT, "close");
+
+    EXPECT_CALL(m_mockOS, close).WillRepeatedly([&realClose](int fd) {
+        return realClose(fd);
+    });
+
+    using RealWaitpid_t = int (*)(pid_t pid, int* stat_loc, int options);
+    // NOLINTNEXTLINE(google-readability-casting)
+    auto realWaitpid = (RealWaitpid_t)dlsym(RTLD_NEXT, "waitpid");
+
+    EXPECT_CALL(m_mockOS, waitpid)
+        .WillOnce([&realWaitpid](pid_t pid, int* stat_loc, int options) {
+            return realWaitpid(pid, stat_loc, options);
+        });
+
+    // Fixes:
+    //   - warning: avoid using 'goto' for flow control [hicpp-avoid-goto]
+    //   - warning: do not call c-style vararg functions [hicpp-vararg]
+    // NOLINTNEXTLINE(hicpp-avoid-goto, hicpp-vararg)
+    ASSERT_DEATH(m_linux.executeProgram(nullptr, nullptr, nullptr), "");
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)

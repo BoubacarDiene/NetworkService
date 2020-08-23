@@ -95,6 +95,8 @@ public:
      *
      * It can basically be a wrapper of waitpid() call in linux with a pid
      * equal to 0.
+     *
+     * \note This method raises an exception when the child process failed
      */
     virtual void waitChildProcess() const = 0;
 

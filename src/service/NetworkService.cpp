@@ -51,6 +51,7 @@ int NetworkService::applyConfig(const std::string& configFile) const
         const std::vector<ConfigData::Rule>& rulesData = configData->rules;
 
         for (const std::string& interfaceName : networkData.interfaceNames) {
+            m_params.logger.debug("Check validity of interface: " + interfaceName);
             if (!m_params.network.hasInterface(interfaceName)) {
                 throw std::invalid_argument("No valid interface found for: "
                                             + interfaceName);
