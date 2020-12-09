@@ -36,7 +36,7 @@ set(TESTS_INSTALL_DIR ${CMAKE_INSTALL_BINDIR}/tests)
 #     change the sign of the result [-Werror=sign-conversion]
 #
 # Add "-Wno-error=sign-conversion" to make the build pass.
-message(STATUS "Downloading googletest...")
+message(STATUS "Preparing googletest...")
 set(CMAKE_CXX_FLAGS -Wno-error=sign-conversion)
 include(${CMAKE_SOURCE_DIR}/cmake/frameworks/googletest.cmake)
 

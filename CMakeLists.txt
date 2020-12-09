@@ -39,7 +39,7 @@ cmake_minimum_required(VERSION 3.17.2)
 # - version = <year>.<month>.<patch>
 # - The project's name will be used to name the executable
 project(networkservice
-    VERSION 20.05.00
+    VERSION 20.12.00
     LANGUAGES CXX
     DESCRIPTION "A native service to allow performing network\
                  commands more securely by using related tools\

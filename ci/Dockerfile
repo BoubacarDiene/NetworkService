@@ -97,6 +97,19 @@ ARG JSON_INSTALL_DIR=/usr/local/include
 RUN wget --no-check-certificate ${JSON_DOWNLOAD_URL}/v${JSON_VERSION}/json.hpp \
     -P ${JSON_INSTALL_DIR}
 
+# Install googletest and googlemock
+ARG GTEST_VERSION=1.10.0
+ARG GTEST_DOWNLOAD_URL=https://github.com/google/googletest/archive
+ARG GTEST_INSTALL_DIR=/opt
+
+RUN wget --no-check-certificate ${GTEST_DOWNLOAD_URL}/release-${GTEST_VERSION}.tar.gz -O - \
+    | tar xzC ${GTEST_INSTALL_DIR}
+RUN mkdir -p ${GTEST_INSTALL_DIR}/googletest-release-${GTEST_VERSION}/build \
+    && cd ${GTEST_INSTALL_DIR}/googletest-release-${GTEST_VERSION}/build \
+    && cmake .. \
+    && make && make install \
+    && cd ${GTEST_INSTALL_DIR} && rm -rf googletest-release-${GTEST_VERSION}
+
 # Add user
 ENV USERNAME networkservice-usr
 ENV HOMEDIR /home/${USERNAME}
