@@ -192,7 +192,9 @@ GoogleTest and GoogleMock frameworks have been used to write unit tests in this 
 Code coverage results are available [**online**](https://coveralls.io/github/BoubacarDiene/NetworkService?branch=master). Unit tests are automatically built and launched by continuous integration tool which then sends the coverage to coveralls.io.
 
 #### Local: gcovr
-It may be interesting to also generate test coverage locally on development machine so that one can get an idea before submitting any change. A ```make coverage``` command has been added to generate the report. After a successful ```make install```, open *"out/share/coverage/index.html"* with your favorite browser to see the report.
+It may be interesting to also generate test coverage locally on development machine so that one can get an idea before submitting any change. A ```make coverage``` command has been added to generate the report. After a successful ```make install```, open *"out/share/coverage/index.html"* with your favorite browser to see the HTML report.
+
+Note that a Cobertura XML report is also generated (see *"out/share/coverage/xml/cobertura.xml"*). It might be interesting when displaying coverage report with your CI/CD tool (e.g. Jenkins) is needed.
 
 ### Git hook
 [Git hooks](https://githooks.com/) are scripts that Git executes before or after events such as: commit, push. Git hooks can be very useful for identifying certain issues before a new change is submitted to code review. Pointing these issues out before code review has the huge advantage of allowing code reviewers to focus on the content, the architecture of the change thus avoiding to waste time with issues relative to style, formatting, trailing whitespaces, etc.
@@ -314,6 +316,6 @@ out/bin/networkservice -c ../res/example.json
 ```
 
 ### Third-party dependencies
-  - [**CLI11**](https://github.com/CLIUtils/CLI11): Parse command line options (Header-only)
-  - [**nlohmann/json**](https://github.com/nlohmann/json): Parse configuration file (Header-only)
-  - [**GTest/GMock**](https://github.com/google/googletest): Unit testing and mocking
+  - [**CLI11 v1.9.0**](https://github.com/CLIUtils/CLI11): Parse command line options (Header-only)
+  - [**nlohmann/json v3.7.3**](https://github.com/nlohmann/json): Parse configuration file (Header-only)
+  - [**GTest/GMock v1.10.0**](https://github.com/google/googletest): Unit testing and mocking

@@ -29,7 +29,8 @@
 #
 #   make coverage && make install
 #
-#   Index.html: out/share/coverage/index.html
+#   index.html: out/share/coverage/html/index.html
+#   cobertura.xml: out/share/coverage/html/cobertura.xml
 #
 
 ###################################################################
@@ -55,25 +56,49 @@ find_program(GENHTML_EXECUTABLE NAMES genhtml)
 
 if (ENABLE_UNIT_TESTING
     AND GCOV_EXECUTABLE AND GCOVR_EXECUTABLE AND GENHTML_EXECUTABLE)
-    # Create the working directory if it does not exist
+    # Create working directories if they do not exist
     set(GCOVR_WORKING_DIR ${CMAKE_BINARY_DIR}/coverage)
     if (NOT EXISTS ${GCOVR_WORKING_DIR})
         file(MAKE_DIRECTORY ${GCOVR_WORKING_DIR})
     endif()
 
-    # Add coverage target
+    set(GCOVR_WORKING_DIR_FOR_HTML_REPORT ${GCOVR_WORKING_DIR}/html)
+    if (NOT EXISTS ${GCOVR_WORKING_DIR_FOR_HTML_REPORT})
+        file(MAKE_DIRECTORY ${GCOVR_WORKING_DIR_FOR_HTML_REPORT})
+    endif()
+
+    set(GCOVR_WORKING_DIR_FOR_XML_REPORT ${GCOVR_WORKING_DIR}/xml)
+    if (NOT EXISTS ${GCOVR_WORKING_DIR_FOR_XML_REPORT})
+        file(MAKE_DIRECTORY ${GCOVR_WORKING_DIR_FOR_XML_REPORT})
+    endif()
+
+    # Add coverage targets
     # See https://gcovr.com/en/stable/guide.html
     #     https://gcc.gnu.org/onlinedocs/gcc/Gcov-Intro.html#Gcov-Intro
-    add_custom_target(coverage
+    add_custom_target(coverage-html
         COMMENT "Generating html report..."
         COMMAND ${GCOVR_EXECUTABLE}
             -r ${COVERAGE_ROOT_DIR} ${CMAKE_BINARY_DIR}
             --branches --html --html-details
             -o index.html
-        WORKING_DIRECTORY ${GCOVR_WORKING_DIR}
+        WORKING_DIRECTORY ${GCOVR_WORKING_DIR_FOR_HTML_REPORT}
     )
 
-    # Add command to install report
+    add_custom_target(coverage-xml
+        COMMENT "Generating xml report..."
+        COMMAND ${GCOVR_EXECUTABLE}
+            -r ${COVERAGE_ROOT_DIR} ${CMAKE_BINARY_DIR}
+            --branches --xml-pretty
+            -o cobertura.xml
+        WORKING_DIRECTORY ${GCOVR_WORKING_DIR_FOR_XML_REPORT}
+    )
+
+    add_custom_target(coverage)
+    foreach (target coverage-html coverage-xml)
+        add_dependencies(coverage ${target})
+    endforeach()
+
+    # Add command to install reports
     #
     # From https://cmake.org/cmake/help/latest/command/install.html:
     #   When TYPE is specified, a destination will then be set
