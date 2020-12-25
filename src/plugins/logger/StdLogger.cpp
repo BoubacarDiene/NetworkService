@@ -57,9 +57,11 @@ Logger::Logger() : m_internal(std::make_unique<Internal>()) {}
 
 Logger::~Logger() = default;
 
-void Logger::debug(const std::string& message) const
+void Logger::debug([[maybe_unused]] const std::string& message) const
 {
+#ifndef NDEBUG
     Internal::debug(message);
+#endif
 }
 
 void Logger::info(const std::string& message) const

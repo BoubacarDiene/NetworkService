@@ -25,10 +25,12 @@ add_library(${TARGET_PLUGINS_CONFIG}
 #                    Conditional compilation                    #
 #################################################################
 
-if (CONFIG_LOADER MATCHES fake)
+if (CONFIG_LOADER MATCHES "^json$")
+    target_sources(${TARGET_PLUGINS_CONFIG}
+        PRIVATE JsonConfig.cpp PUBLIC Config.h)
+elseif (CONFIG_LOADER MATCHES "^fake$")
     target_sources(${TARGET_PLUGINS_CONFIG}
         PRIVATE FakeConfig.cpp PUBLIC Config.h)
 else()
-    target_sources(${TARGET_PLUGINS_CONFIG}
-        PRIVATE JsonConfig.cpp PUBLIC Config.h)
+    message(FATAL_ERROR "\"${CONFIG_LOADER}\" is not a valid config loader")
 endif()

@@ -34,6 +34,7 @@ https://travis-ci.org/BoubacarDiene/NetworkService)
     - [Local: gcovr](#local-gcovr)
   - [Git hook](#git-hook)
 - [Installation](#installation)
+  - [Custom build options](#custom-build-options)
   - [Development](#development)
     - [Build in debug mode](#build-in-debug-mode)
     - [Run unit tests](#run-unit-tests)
@@ -213,6 +214,15 @@ All commands in next sections have to be run inside docker container. Here is ho
 ```
 docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
 ```
+
+### Custom build options
+
+| Name | Options | Default | Description |
+| --- | --- | --- | --- |
+| CONFIG_LOADER | json, fake | json | Where to retrieve network configuration from? |
+| LOGS_OUTPUT | std | std | Which logger to use? (standard streams, ...) |
+| ENABLE_UNIT_TESTING | ON, OFF | OFF | Allow to enable/disable unit testing |
+| EXECUTABLE_NAME | Any valid executable name | networkservice | Name of the generated executable |
 
 ### Development
 

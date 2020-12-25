@@ -20,8 +20,8 @@
 #     -DENABLE_IWYU=ON      Enable Include What You Use
 #     -DENABLE_LWYU=ON      Enable Link What You Use
 #
-# If CMAKE_BUILD_TYPE is not explicitly set to Release, the project
-# is built in Debug mode. In Deebug mode, ASAN, SECURITY and LWYU
+# If CMAKE_BUILD_TYPE is not explicitly set to Debug, the project
+# is built in Release mode. In Debug mode, ASAN, SECURITY and LWYU
 # are automatically enabled.
 #
 ##
@@ -96,11 +96,14 @@ list(APPEND CFLAGS_OPTIONS -Wall -Wextra -Werror
                            -Wparentheses -Winit-self -Wredundant-decls
                            -Wcast-qual -Wcast-align -Wshadow)
 
+# Force build type to Release if not defined
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+        "Choose the type of build, options are: Debug Release" FORCE)
+endif()
+
 # Settings depending on build type
-if (CMAKE_BUILD_TYPE MATCHES Release)
-    message(STATUS "Release build")
-    list(APPEND CFLAGS_OPTIONS -s)
-else()
+if (CMAKE_BUILD_TYPE MATCHES "^Debug$")
     message(STATUS "Debug build")
     list(APPEND CFLAGS_OPTIONS -g)
 
@@ -108,6 +111,9 @@ else()
     set(ENABLE_SECURITY ON)
     set(ENABLE_LWYU ON)
     set(ENABLE_COVERAGE ON)
+else()
+    message(STATUS "Release build")
+    list(APPEND CFLAGS_OPTIONS -s -DNDEBUG)
 endif()
 
 # Address sanitizer

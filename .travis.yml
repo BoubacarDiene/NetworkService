@@ -129,10 +129,10 @@ script:
           cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DCONFIG_LOADER=json;
           make analysis && make install;"
 
-  # Buiild and run unit tests
+  # Build and run unit tests
   - docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-image:latest
       -c "mkdir -p build && cd build;
-          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DENABLE_UNIT_TESTING=ON;
+          cmake .. -DCMAKE_INSTALL_PREFIX=./out -DCMAKE_BUILD_TYPE=Debug -DENABLE_UNIT_TESTING=ON;
           make && ctest -V;"
 
 after_script:

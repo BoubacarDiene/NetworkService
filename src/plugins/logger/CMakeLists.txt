@@ -29,7 +29,9 @@ add_library(${TARGET_PLUGINS_LOGGER} STATIC "")
 #                    Conditional compilation                    #
 #################################################################
 
-# -DLOGS_OUTPUT value is not checked because there is only one
-# implementation of Logger for now
-target_sources(${TARGET_PLUGINS_LOGGER}
-    PRIVATE StdLogger.cpp PUBLIC Logger.h)
+if (LOGS_OUTPUT MATCHES "^std$")
+    target_sources(${TARGET_PLUGINS_LOGGER}
+        PRIVATE StdLogger.cpp PUBLIC Logger.h)
+else()
+    message(FATAL_ERROR "\"${LOGS_OUTPUT}\" is not a valid logs output")
+endif()

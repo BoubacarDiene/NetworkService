@@ -12,10 +12,11 @@
 #
 # mkdir build && cd build
 # cmake .. -DCMAKE_INSTALL_PREFIX=./out
-#          -DCMAKE_BUILD_TYPE=<Debug = default | Release>
+#          -DCMAKE_BUILD_TYPE=<Debug | Release = default>
 #          -DCONFIG_LOADER=<json = default | fake>
 #          -DLOGS_OUTPUT=<std = default>
 #          -DENABLE_UNIT_TESTING=<ON | OFF = default>
+#          -DEXECUTABLE_NAME=<networkservice = default>
 # make && make install
 #
 #
@@ -39,7 +40,7 @@ cmake_minimum_required(VERSION 3.17.2)
 # - version = <year>.<month>.<patch>
 # - The project's name will be used to name the executable
 project(networkservice
-    VERSION 20.12.00
+    VERSION 20.12.01
     LANGUAGES CXX
     DESCRIPTION "A native service to allow performing network\
                  commands more securely by using related tools\
@@ -51,8 +52,17 @@ project(networkservice
 # Allow to enable/disable unit testing
 option(ENABLE_UNIT_TESTING "Build unit tests" OFF)
 
+# Where to retrieve network configuration from?
+set(CONFIG_LOADER "json"
+    CACHE STRING "Network configuration's source")
+
+# Where to send logs?
+set(LOGS_OUTPUT "std"
+    CACHE STRING "Which logger to use?")
+
 # A name for the generated executable file
-set(EXECUTABLE_NAME ${CMAKE_PROJECT_NAME})
+set(EXECUTABLE_NAME ${CMAKE_PROJECT_NAME}
+    CACHE STRING "Name of the generated executable")
 
 # Compilation options
 #
