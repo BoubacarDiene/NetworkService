@@ -73,12 +73,18 @@ set(EXECUTABLE_NAME ${CMAKE_PROJECT_NAME}
 include(${CMAKE_SOURCE_DIR}/cmake/compilation-options.cmake)
 
 #################################################################
+#                     Search directories                        #
+#################################################################
+
+include_directories(SYSTEM third_party)
+include_directories(src)
+
+#################################################################
 #                       Subdirectories                          #
 #################################################################
 
 # Add directory containing source code and everything necessary
-# to build list; and to include files search paths
-include_directories(src)
+# to generate executable
 add_subdirectory(src)
 
 # Add directory containing Doxyfile.in and everything necessary

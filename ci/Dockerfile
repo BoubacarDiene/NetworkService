@@ -81,22 +81,6 @@ RUN wget --no-check-certificate ${IWYU_DOWNLOAD_URL}/${IWYU_VERSION}.zip -P ${IW
     cmake .. -DCMAKE_PREFIX_PATH=/usr/lib/llvm-${IWYU_VERSION##*_} && make && \
     ln -s /opt/include-what-you-use-${IWYU_VERSION}/build/bin/include-what-you-use /usr/bin/iwyu
 
-# Install CLI11 (Command line parser for >= C++11)
-ARG CLI11_VERSION=1.9.0
-ARG CLI11_DOWNLOAD_URL=https://github.com/CLIUtils/CLI11/releases/download
-ARG CLI11_INSTALL_DIR=/usr/local/include
-
-RUN wget --no-check-certificate ${CLI11_DOWNLOAD_URL}/v${CLI11_VERSION}/CLI11.hpp \
-    -P ${CLI11_INSTALL_DIR}
-
-# Install nlohmann/json
-ARG JSON_VERSION=3.7.3
-ARG JSON_DOWNLOAD_URL=https://github.com/nlohmann/json/releases/download
-ARG JSON_INSTALL_DIR=/usr/local/include
-
-RUN wget --no-check-certificate ${JSON_DOWNLOAD_URL}/v${JSON_VERSION}/json.hpp \
-    -P ${JSON_INSTALL_DIR}
-
 # Install googletest and googlemock
 ARG GTEST_VERSION=1.10.0
 ARG GTEST_DOWNLOAD_URL=https://github.com/google/googletest/archive

@@ -316,6 +316,7 @@ out/bin/networkservice -c ../res/example.json
 ```
 
 ### Third-party dependencies
+  - [**CMake v3.17.2**](https://cmake.org/cmake/help/git-master/index.html): Build the source code
   - [**CLI11 v1.9.0**](https://github.com/CLIUtils/CLI11): Parse command line options (Header-only)
   - [**nlohmann/json v3.7.3**](https://github.com/nlohmann/json): Parse configuration file (Header-only)
   - [**GTest/GMock v1.10.0**](https://github.com/google/googletest): Unit testing and mocking

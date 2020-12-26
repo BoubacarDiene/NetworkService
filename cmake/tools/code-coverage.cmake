@@ -41,6 +41,14 @@
 set(COVERAGE_ROOT_DIR ${CMAKE_SOURCE_DIR}/src
     CACHE PATH "Path to directory containing source files")
 
+# Name of a directory to exclude. It is relative to root directory
+# provided above. This variable can be used to exclude a directory
+# that you don't need to be part of the report.
+# In case the specified directory does not exist, there will be no
+# effect.
+set(COVERAGE_EXCLUDE_DIR none
+    CACHE PATH "Name of directory to exclude from report")
+
 #################################################################
 #                        Dependencies                           #
 #################################################################
@@ -79,6 +87,7 @@ if (ENABLE_UNIT_TESTING
         COMMENT "Generating html report..."
         COMMAND ${GCOVR_EXECUTABLE}
             -r ${COVERAGE_ROOT_DIR} ${CMAKE_BINARY_DIR}
+            -e ".*${COVERAGE_EXCLUDE_DIR}.*"
             --branches --html --html-details
             -o index.html
         WORKING_DIRECTORY ${GCOVR_WORKING_DIR_FOR_HTML_REPORT}
@@ -88,6 +97,7 @@ if (ENABLE_UNIT_TESTING
         COMMENT "Generating xml report..."
         COMMAND ${GCOVR_EXECUTABLE}
             -r ${COVERAGE_ROOT_DIR} ${CMAKE_BINARY_DIR}
+            -e ".*${COVERAGE_EXCLUDE_DIR}.*"
             --branches --xml-pretty
             -o cobertura.xml
         WORKING_DIRECTORY ${GCOVR_WORKING_DIR_FOR_XML_REPORT}
