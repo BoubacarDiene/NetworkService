@@ -142,6 +142,98 @@ TEST_F(JsonConfigTestFixture, shouldReturnExpectedConfigDataIfConfigIsValid)
     ASSERT_EQ(configData->rules[0].commands[1], "/sbin/iptables -P INPUT DROP");
 }
 
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(JsonConfigTestFixture,
+       shouldNotSetRulesAndLayerCommandsIfLayerCommandsSectionIsMissing)
+{
+    const std::string configFile("/dev/null");
+
+    EXPECT_CALL(m_mockReader, readFromStream(_, _))
+        .WillOnce([]([[maybe_unused]] std::istream& stream, std::string& result) {
+            const char* configFileContent
+                = "{"
+                  "    \"network\": {"
+                  "        \"interfaceNames\": [\"lo\"],"
+
+                  "        \"interfaceCommands\": ["
+                  "            \"/sbin/ip tuntap add tap10 mode tap\""
+                  "        ]"
+                  "    },"
+
+                  "    \"rules\": ["
+                  "        {"
+                  "            \"name\": \"rule 1.1\","
+                  "            \"commands\": ["
+                  "                \"/sbin/iptables -P OUTPUT ACCEPT\","
+                  "                \"/sbin/iptables -P INPUT DROP\""
+                  "            ]"
+                  "        }"
+                  "    ]"
+                  "}";
+            result.assign(configFileContent);
+        });
+
+    auto configData = m_jsonConfig.load(configFile);
+
+    ASSERT_NE(configData, nullptr);
+
+    ASSERT_EQ(configData->network.interfaceNames.size(), 1);
+    ASSERT_EQ(configData->network.interfaceNames[0], "lo");
+
+    ASSERT_EQ(configData->network.interfaceCommands.size(), 1);
+    ASSERT_EQ(configData->network.interfaceCommands[0],
+              "/sbin/ip tuntap add tap10 mode tap");
+
+    ASSERT_EQ(configData->network.layerCommands.size(), 0);
+    ASSERT_EQ(configData->rules.size(), 0);
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(JsonConfigTestFixture, shouldNotSetRulesIfRulesSectionIsMissing)
+{
+    const std::string configFile("/dev/null");
+
+    EXPECT_CALL(m_mockReader, readFromStream(_, _))
+        .WillOnce([]([[maybe_unused]] std::istream& stream, std::string& result) {
+            const char* configFileContent
+                = "{"
+                  "    \"network\": {"
+                  "        \"interfaceNames\": [\"lo\"],"
+
+                  "        \"interfaceCommands\": ["
+                  "            \"/sbin/ip tuntap add tap10 mode tap\""
+                  "        ],"
+
+                  "        \"layerCommands\": ["
+                  "            {"
+                  "                \"pathname\": \"/proc/sys/net/ipv4/ip_forward\","
+                  "                \"value\": \"0\""
+                  "            }"
+                  "        ]"
+                  "    }"
+                  "}";
+            result.assign(configFileContent);
+        });
+
+    auto configData = m_jsonConfig.load(configFile);
+
+    ASSERT_NE(configData, nullptr);
+
+    ASSERT_EQ(configData->network.interfaceNames.size(), 1);
+    ASSERT_EQ(configData->network.interfaceNames[0], "lo");
+
+    ASSERT_EQ(configData->network.interfaceCommands.size(), 1);
+    ASSERT_EQ(configData->network.interfaceCommands[0],
+              "/sbin/ip tuntap add tap10 mode tap");
+
+    ASSERT_EQ(configData->network.layerCommands.size(), 1);
+    ASSERT_EQ(configData->network.layerCommands[0].pathname,
+              "/proc/sys/net/ipv4/ip_forward");
+    ASSERT_EQ(configData->network.layerCommands[0].value, "0");
+
+    ASSERT_EQ(configData->rules.size(), 0);
+}
+
 }
 
 int main(int argc, char** argv)

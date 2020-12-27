@@ -56,33 +56,40 @@ namespace nlohmann {
 
 static void from_json(const json& jsonObject, ConfigData& config)
 {
-    // Fill in network
     const auto& network = jsonObject.at(JSON_ALIAS_NETWORK);
 
+    // "interfaceNames" section
     for (const auto& interface : network.at(JSON_ALIAS_INTERFACE_NAMES)) {
         config.network.interfaceNames.emplace_back(interface);
     }
 
+    // "interfaceCommands" section
     for (const auto& interfaceCommand : network.at(JSON_ALIAS_INTERFACE_COMMANDS)) {
         config.network.interfaceCommands.emplace_back(interfaceCommand);
     }
 
-    for (const auto& layerCommand : network.at(JSON_ALIAS_LAYER_COMMANDS)) {
-        config.network.layerCommands.emplace_back(
-            ConfigData::Network::LayerCommand {layerCommand.at(JSON_ALIAS_PATHNAME),
-                                               layerCommand.at(JSON_ALIAS_VALUE)});
-    }
-
-    // Fill in rules
-    const auto& rules = jsonObject.at(JSON_ALIAS_RULES);
-
-    for (const auto& rule : rules) {
-        ConfigData::Rule tempRule;
-        for (const auto& command : rule.at(JSON_ALIAS_COMMANDS)) {
-            tempRule.commands.emplace_back(command);
+    try {
+        // "layerCommands" section
+        for (const auto& layerCommand : network.at(JSON_ALIAS_LAYER_COMMANDS)) {
+            config.network.layerCommands.emplace_back(
+                ConfigData::Network::LayerCommand {
+                    layerCommand.at(JSON_ALIAS_PATHNAME),
+                    layerCommand.at(JSON_ALIAS_VALUE)});
         }
-        rule.at(JSON_ALIAS_NAME).get_to(tempRule.name);
-        config.rules.emplace_back(tempRule);
+
+        // "rules" section
+        const auto& rules = jsonObject.at(JSON_ALIAS_RULES);
+
+        for (const auto& rule : rules) {
+            ConfigData::Rule tempRule;
+            for (const auto& command : rule.at(JSON_ALIAS_COMMANDS)) {
+                tempRule.commands.emplace_back(command);
+            }
+            rule.at(JSON_ALIAS_NAME).get_to(tempRule.name);
+            config.rules.emplace_back(tempRule);
+        }
+    }
+    catch (const json::out_of_range& e) {
     }
 }
 

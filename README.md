@@ -192,7 +192,7 @@ GoogleTest and GoogleMock frameworks have been used to write unit tests in this 
 Code coverage results are available [**online**](https://coveralls.io/github/BoubacarDiene/NetworkService?branch=master). Unit tests are automatically built and launched by continuous integration tool which then sends the coverage to coveralls.io.
 
 #### Local: gcovr
-It may be interesting to also generate test coverage locally on development machine so that one can get an idea before submitting any change. A ```make coverage``` command has been added to generate the report. After a successful ```make install```, open *"out/share/coverage/index.html"* with your favorite browser to see the HTML report.
+It may be interesting to also generate test coverage locally on development machine so that one can get an idea before submitting any change. A ```make coverage``` command has been added to generate the report. After a successful ```make install```, open *"out/share/coverage/html/index.html"* with your favorite browser to see the HTML report.
 
 Note that a Cobertura XML report is also generated (see *"out/share/coverage/xml/cobertura.xml"*). It might be interesting when displaying coverage report with your CI/CD tool (e.g. Jenkins) is needed.
 
