@@ -57,11 +57,14 @@ ROOT_DIRECTORY=`git rev-parse --show-toplevel`
 BUILD_DIRECTORY=$ROOT_DIRECTORY/`basename @CMAKE_BINARY_DIR@`
 
 # Make sure the configuration files exist
-test -e $ROOT_DIRECTORY/.clang-format || error ".clang-format not found"
-test -e $ROOT_DIRECTORY/.clang-tidy || error ".clang-tidy not found"
+test -e $ROOT_DIRECTORY/.clang-format || exit 0
+test -e $ROOT_DIRECTORY/.clang-tidy || exit 0
 
 # Make sure the build directory exists
-test -e $BUILD_DIRECTORY || error "$BUILD_DIRECTORY not found"
+test -e $BUILD_DIRECTORY || exit 0
+
+# Make sure compile_commands.json exists
+test -e $BUILD_DIRECTORY/compile_commands.json || exit 0
 
 # Build is performed inside docker container so we need to update
 # paths in compile_commands.json file oherwise clang-tidy can't
