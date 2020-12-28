@@ -47,7 +47,7 @@ Writer::~Writer() = default;
 
 void Writer::writeToStream(std::ostream& stream, const std::string& value) const
 {
-    m_internal->logger.error("Write value: " + value);
+    m_internal->logger.debug("Write value: " + value);
 
     const auto& streamSize = static_cast<std::streamsize>(value.length());
     stream.write(value.c_str(), streamSize);

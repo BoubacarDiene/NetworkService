@@ -58,11 +58,11 @@ int NetworkService::applyConfig(const std::string& configFile) const
             }
         }
 
-        m_params.logger.debug("Apply network interface commands");
-        m_params.network.applyInterfaceCommands(networkData.interfaceCommands);
-
         m_params.logger.debug("Apply network layer commands");
         m_params.network.applyLayerCommands(networkData.layerCommands);
+
+        m_params.logger.debug("Apply network interface commands");
+        m_params.network.applyInterfaceCommands(networkData.interfaceCommands);
 
         m_params.logger.debug("Create and apply rules");
         for (const ConfigData::Rule& ruleData : rulesData) {
