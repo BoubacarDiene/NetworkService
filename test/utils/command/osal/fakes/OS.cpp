@@ -71,10 +71,10 @@ pid_t getpid()
     return realGetpid();
 }
 
-int getdtablesize()
+long sysconf(int name)
 {
     RETURN_IF_NOT_IN_TESTCASE(-1);
-    return gMockOS->getdtablesize();
+    return gMockOS->sysconf(name);
 }
 
 int close(int fd)

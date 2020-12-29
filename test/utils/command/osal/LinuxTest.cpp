@@ -185,7 +185,7 @@ TEST_F(LinuxTestFixture, reseedPRNGShouldWorkWithoutError)
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
 TEST_F(LinuxTestFixture, sanitizeFilesShouldCloseNonStandardDescriptors)
 {
-    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(4));
+    EXPECT_CALL(m_mockOS, sysconf).WillOnce(Return(4L));
     EXPECT_CALL(m_mockOS, close)
         .WillOnce([](int fd) {
             EXPECT_EQ(fd, 3);
@@ -208,7 +208,7 @@ TEST_F(LinuxTestFixture,
     EXPECT_CALL(m_mockOS, fstat).WillRepeatedly(Return(0));
     EXPECT_CALL(m_mockOS, freopen).Times(0);
 
-    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, sysconf).WillOnce(Return(2L));
 
     m_linux.sanitizeFiles();
 }
@@ -241,7 +241,7 @@ TEST_F(LinuxTestFixture, sanitizeFilesShouldReopenStandardDescriptorsOnDevNull)
         return -1;
     });
 
-    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, sysconf).WillOnce(Return(2L));
 
     m_linux.sanitizeFiles();
 }
@@ -261,7 +261,7 @@ TEST_F(
             return nullptr;
         });
 
-    EXPECT_CALL(m_mockOS, getdtablesize).WillOnce(Return(2));
+    EXPECT_CALL(m_mockOS, sysconf).WillOnce(Return(2L));
 
     try {
         m_linux.sanitizeFiles();

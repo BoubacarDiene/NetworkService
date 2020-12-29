@@ -136,12 +136,8 @@ void Linux::reseedPRNG() const
 
 void Linux::sanitizeFiles() const
 {
-    /* Close all opened descriptors other than the standard ones
-     *
-     * Note: getdtablesize() is implemented as a libc library function. The
-     * glibc version calls getrlimit(2) and returns the current RLIMIT_NOFILE
-     * limit, or OPEN_MAX when that fails */
-    int fds = getdtablesize();
+    /* Close all opened descriptors other than the standard ones */
+    int fds = static_cast<int>(sysconf(_SC_OPEN_MAX));
     for (int fd = 3; fd <= fds; ++fd) {
         close(fd);
     }

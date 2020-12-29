@@ -69,7 +69,7 @@ public:
                 execve,
                 (const char* path, char* const argv[], char* const envp[]));
     MOCK_METHOD(pid_t, getpid, ());
-    MOCK_METHOD(int, getdtablesize, ());
+    MOCK_METHOD(long, sysconf, (int name));
     MOCK_METHOD(int, close, (int fd));
     MOCK_METHOD(gid_t, getgid, ());
     MOCK_METHOD(gid_t, getegid, ());
