@@ -58,7 +58,9 @@ void Reader::readFromStream(std::istream& stream, std::string& result) const
     std::streamoff length = stream.tellg();
     stream.seekg(0, std::ios_base::beg);
 
-    char* buffer = new char[length];
+    // Technically, there's a potential data loss here but it is very unlikely
+    // that uint64_t is not sufficient to contain the content of the whole stream.
+    char* buffer = new char[static_cast<uint64_t>(length)];
 
     // Read data as a block
     // Note: operator>> is not used because it stops reading at first whitespace
