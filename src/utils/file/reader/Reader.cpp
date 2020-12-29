@@ -27,6 +27,7 @@
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
 #include <ios>
+#include <sstream>
 #include <stdexcept>
 
 #include "Reader.h"
@@ -65,8 +66,10 @@ void Reader::readFromStream(std::istream& stream, std::string& result) const
 
     if (stream.fail()) {
         delete[] buffer;
-        std::string readCharacters(stream.gcount() + "/" + length);
-        throw std::runtime_error("Could not read all characters: " + readCharacters);
+
+        std::stringstream readCharacters;
+        readCharacters << stream.gcount() << "/" << length;
+        throw std::runtime_error("Could not read all characters: " + readCharacters.str());
     }
 
     result.assign(buffer, static_cast<std::size_t>(length));
