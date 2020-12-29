@@ -26,8 +26,8 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#ifndef __PLUGINS_NETWORK_INTERFACE_SETUP_H__
-#define __PLUGINS_NETWORK_INTERFACE_SETUP_H__
+#ifndef __PLUGINS_NETWORK_INTERFACE_INTERFACE_H__
+#define __PLUGINS_NETWORK_INTERFACE_INTERFACE_H__
 
 #include <memory>
 #include <string>
@@ -38,7 +38,7 @@
 namespace service::plugins::network::interface {
 
 /**
- * @class Interface Setup.h "plugins/network/Setup.h"
+ * @class Interface Interface.h "plugins/network/interface/Interface.h"
  * @ingroup Implementation
  *
  * @brief Helper class to handle "interface commands"

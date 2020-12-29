@@ -31,7 +31,7 @@
 #include "mocks/MockExecutor.h"
 #include "mocks/MockLogger.h"
 
-#include "plugins/network/interface/Setup.h"
+#include "plugins/network/interface/Interface.h"
 #include "utils/command/parser/Parser.h"
 
 using ::testing::_;

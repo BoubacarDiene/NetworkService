@@ -26,40 +26,72 @@
 //                                                                                //
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
 
-#include "utils/command/executor/IExecutor.h"
-#include "utils/command/parser/Parser.h"
+#ifndef __PLUGINS_NETWORK_LAYER_LAYER_H__
+#define __PLUGINS_NETWORK_LAYER_LAYER_H__
 
-#include "Setup.h"
+#include <memory>
+#include <string>
 
-using namespace service::plugins::logger;
-using namespace service::plugins::network::interface;
-using namespace utils::command;
+#include "service/plugins/ILogger.h"
+#include "utils/file/writer/IWriter.h"
 
-struct Interface::Internal {
-    const ILogger& logger;
-    const IExecutor& executor;
-    const Parser parser;
+namespace service::plugins::network::layer {
 
-    explicit Internal(const ILogger& providedLogger,
-                      const IExecutor& providedExecutor)
-        : logger(providedLogger),
-          executor(providedExecutor),
-          parser(Parser(providedLogger))
-    {}
+/**
+ * @class Layer Layer.h "plugins/network/layer/Layer.h"
+ * @ingroup Implementation
+ *
+ * @brief Helper class to handle "layer commands"
+ *
+ * @note Copy contructor, copy-assignment operator, move constructor and
+ *       move-assignment operator are defined to be compliant with the
+ *       "Rule of five"
+ *
+ * @see https://en.cppreference.com/w/cpp/language/rule_of_three
+ *
+ * @author Boubacar DIENE <boubacar.diene@gmail.com>
+ * @date April 2020
+ */
+class Layer {
+
+public:
+    /**
+     * Class constructor
+     *
+     * @param logger Logger object to print some useful logs
+     * @param writer Writer object to write into files
+     */
+    explicit Layer(const service::plugins::logger::ILogger& logger,
+                   const utils::file::IWriter& writer);
+
+    /** Class destructor */
+    ~Layer();
+
+    /** Class copy constructor */
+    Layer(const Layer&) = delete;
+
+    /** Class copy-assignment operator */
+    Layer& operator=(const Layer&) = delete;
+
+    /** Class move constructor */
+    Layer(Layer&&) = delete;
+
+    /** Class move-assignment operator */
+    Layer& operator=(Layer&&) = delete;
+
+    /**
+     * @brief Apply the requested "layer command"
+     *
+     * @param pathname Absolute path to the file to update
+     * @param value    New content to write to file
+     */
+    void applyCommand(const std::string& pathname, const std::string& value) const;
+
+private:
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 };
 
-Interface::Interface(const ILogger& logger, const IExecutor& executor)
-    : m_internal(std::make_unique<Internal>(logger, executor))
-{}
-
-Interface::~Interface() = default;
-
-void Interface::applyCommand(const std::string& command) const
-{
-    const auto& parsedCommand = m_internal->parser.parse(command);
-
-    m_internal->logger.debug("Apply command: " + command);
-    const IExecutor::ProgramParams params
-        = {parsedCommand->pathname, parsedCommand->argv, nullptr};
-    m_internal->executor.executeProgram(params);
 }
+
+#endif

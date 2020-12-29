@@ -68,10 +68,10 @@ set(ALL_CXX_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/firewall/RuleFactory.h
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/logger/Logger.h
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/logger/StdLogger.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/interface/Setup.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/interface/Setup.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/layer/Setup.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/layer/Setup.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/interface/Interface.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/interface/Interface.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/layer/Layer.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/layer/Layer.h
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/Network.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/network/Network.h
         ${CMAKE_CURRENT_SOURCE_DIR}/service/plugins/IConfig.h

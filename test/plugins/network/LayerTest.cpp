@@ -31,7 +31,7 @@
 #include "mocks/MockLogger.h"
 #include "mocks/MockWriter.h"
 
-#include "plugins/network/layer/Setup.h"
+#include "plugins/network/layer/Layer.h"
 
 using ::testing::_;
 using ::testing::AtLeast;

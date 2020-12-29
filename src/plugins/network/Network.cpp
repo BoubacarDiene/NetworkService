@@ -32,8 +32,8 @@
 
 #include "utils/helper/Errno.h"
 
-#include "interface/Setup.h"
-#include "layer/Setup.h"
+#include "interface/Interface.h"
+#include "layer/Layer.h"
 
 #include "Network.h"
 

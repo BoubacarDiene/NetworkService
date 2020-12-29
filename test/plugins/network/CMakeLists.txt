@@ -25,7 +25,7 @@ set(NETWORK_TEST_EXECUTABLE_NAME NetworkTest)
 # Add layer executable to the project
 add_executable(${LAYER_TEST_EXECUTABLE_NAME}
     LayerTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Setup.cpp
+    ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Layer.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockWriter.cpp)
 
@@ -38,7 +38,7 @@ add_test(${LAYER_TEST_EXECUTABLE_NAME}
 # Add interface executable to the project
 add_executable(${INTERFACE_TEST_EXECUTABLE_NAME}
     InterfaceTest.cpp
-    ${CMAKE_SOURCE_DIR}/src/plugins/network/interface/Setup.cpp
+    ${CMAKE_SOURCE_DIR}/src/plugins/network/interface/Interface.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockExecutor.cpp)
@@ -55,8 +55,8 @@ add_executable(${NETWORK_TEST_EXECUTABLE_NAME}
     fakes/OS.cpp
     fakes/MockOS.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/Network.cpp
-    ${CMAKE_SOURCE_DIR}/src/plugins/network/interface/Setup.cpp
-    ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Setup.cpp
+    ${CMAKE_SOURCE_DIR}/src/plugins/network/interface/Interface.cpp
+    ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Layer.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/helper/Errno.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp

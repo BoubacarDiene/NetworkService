@@ -32,8 +32,8 @@ add_library(${TARGET_PLUGINS_NETWORK}
 target_sources(${TARGET_PLUGINS_NETWORK}
     PRIVATE
         Network.cpp
-        interface/Setup.cpp
-        layer/Setup.cpp
+        interface/Interface.cpp
+        layer/Layer.cpp
     PUBLIC
         Network.h
 )
