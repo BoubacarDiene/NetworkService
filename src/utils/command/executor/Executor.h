@@ -31,8 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
-
 #include "IExecutor.h"
 #include "IOsal.h"
 
@@ -61,16 +59,18 @@ public:
     /**
      * Class constructor
      *
-     * @param logger Logger object to print some useful logs
      * @param osal   OS abstract layer's implementation to use. This is passed
      *               to the constructor to ease unit testing of Executor class.
      * @param flags  A set of masks of type @ref IExecutor::Flags
      */
-    explicit Executor(const service::plugins::logger::ILogger& logger,
-                      const osal::IOsal& osal,
-                      Flags flags = Flags::WAIT_COMMAND);
+    explicit Executor(const osal::IOsal& osal, Flags flags = Flags::WAIT_COMMAND);
 
-    /** Class destructor */
+    /**
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
+     */
     ~Executor() override;
 
     /** Class copy constructor */

@@ -25,7 +25,6 @@ set(FAKE_CONFIG_TEST_EXECUTABLE_NAME FakeConfigTest)
 add_executable(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
     JsonConfigTest.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/config/JsonConfig.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockReader.cpp)
 
 target_link_libraries(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
@@ -38,7 +37,6 @@ add_test(${JSON_CONFIG_TEST_EXECUTABLE_NAME}
 add_executable(${FAKE_CONFIG_TEST_EXECUTABLE_NAME}
     FakeConfigTest.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/config/FakeConfig.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockReader.cpp)
 
 target_link_libraries(${FAKE_CONFIG_TEST_EXECUTABLE_NAME}

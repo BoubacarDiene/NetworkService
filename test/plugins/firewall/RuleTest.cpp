@@ -29,15 +29,12 @@
 #include "gtest/gtest.h"
 
 #include "mocks/MockExecutor.h"
-#include "mocks/MockLogger.h"
 
 #include "plugins/firewall/Rule.h"
 #include "utils/command/parser/Parser.h"
 
 using ::testing::_;
-using ::testing::AtLeast;
 
-using namespace service::plugins::logger;
 using namespace service::plugins::firewall;
 using namespace utils::command;
 
@@ -46,17 +43,7 @@ namespace {
 class RuleTestFixture : public ::testing::Test {
 
 protected:
-    RuleTestFixture()
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
-
     MockExecutor m_mockExecutor;
-    MockLogger m_mockLogger;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
@@ -65,7 +52,7 @@ TEST_F(RuleTestFixture, shouldCallExecutorTwice)
     const std::string name("name");
     const std::vector<std::string> commands = {"command1", "command2"};
 
-    Rule rule(m_mockLogger, name, commands, m_mockExecutor);
+    Rule rule(name, commands, m_mockExecutor);
 
     EXPECT_CALL(m_mockExecutor, executeProgram(_)).Times(2);
     rule.applyCommands();
@@ -77,11 +64,11 @@ TEST_F(RuleTestFixture, shouldCallExecutorWithExpectedValues)
     const std::string name("name");
     const std::vector<std::string> commands = {"command"};
 
-    Rule rule(m_mockLogger, name, commands, m_mockExecutor);
+    Rule rule(name, commands, m_mockExecutor);
 
     // Parser is deterministic meaning that for the same input, it will
     // always produce the same output so it's fine using it.
-    const auto& parsedCommand = Parser(m_mockLogger).parse(commands[0]);
+    const auto& parsedCommand = Parser().parse(commands[0]);
     const IExecutor::ProgramParams expectedParams
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
 

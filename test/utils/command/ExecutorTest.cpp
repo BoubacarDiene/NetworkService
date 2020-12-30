@@ -28,17 +28,14 @@
 
 #include "gtest/gtest.h"
 
-#include "mocks/MockLogger.h"
 #include "mocks/MockOsal.h"
 
 #include "utils/command/executor/Executor.h"
 
-using ::testing::AtLeast;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::Sequence;
 
-using namespace service::plugins::logger;
 using namespace utils::command;
 using namespace utils::command::osal;
 
@@ -49,12 +46,6 @@ class ExecutorTestFixture : public ::testing::Test {
 protected:
     ExecutorTestFixture()
     {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-
         // Each test will configure the number of expected
         // calls for these methods
         EXPECT_CALL(m_mockOsal, createProcess).Times(0);
@@ -66,7 +57,6 @@ protected:
     }
 
     MockOsal m_mockOsal;
-    MockLogger m_mockLogger;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
@@ -76,7 +66,7 @@ TEST_F(ExecutorTestFixture, waitCommandInFlags)
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* Instantiate an executor */
-    Executor executor(m_mockLogger, m_mockOsal, flags);
+    Executor executor(m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -115,7 +105,7 @@ TEST_F(ExecutorTestFixture, reseedPrngInFlags)
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* Instantiate an executor */
-    Executor executor(m_mockLogger, m_mockOsal, flags);
+    Executor executor(m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -156,7 +146,7 @@ TEST_F(ExecutorTestFixture, sanitizeFilesInFlags)
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* Instantiate an executor */
-    Executor executor(m_mockLogger, m_mockOsal, flags);
+    Executor executor(m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -191,7 +181,7 @@ TEST_F(ExecutorTestFixture, dropPrivilegesInFlags)
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* Instantiate an executor */
-    Executor executor(m_mockLogger, m_mockOsal, flags);
+    Executor executor(m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -226,7 +216,7 @@ TEST_F(ExecutorTestFixture, AllInFlags)
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* Instantiate an executor */
-    Executor executor(m_mockLogger, m_mockOsal, flags);
+    Executor executor(m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -287,7 +277,7 @@ TEST_F(ExecutorTestFixture, defaultIsWaitCommandFlagSet)
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
     /* Instantiate an executor */
-    Executor executor(m_mockLogger, m_mockOsal);
+    Executor executor(m_mockOsal);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT

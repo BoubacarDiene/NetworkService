@@ -31,7 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
 #include "utils/command/executor/IExecutor.h"
 #include "utils/file/writer/IWriter.h"
 
@@ -63,12 +62,10 @@ public:
     /**
      * Class constructor
      *
-     * @param logger   Logger object to print some useful logs
      * @param executor Command executor to use
      * @param writer   Writer object to write into files
      */
-    explicit Network(const service::plugins::logger::ILogger& logger,
-                     const utils::command::IExecutor& executor,
+    explicit Network(const utils::command::IExecutor& executor,
                      const utils::file::IWriter& writer);
 
     /**

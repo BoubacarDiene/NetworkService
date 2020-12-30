@@ -32,20 +32,17 @@
 #include "gtest/gtest.h"
 
 #include "fakes/MockOS.h"
-#include "mocks/MockLogger.h"
 
 #include "utils/command/executor/osal/Linux.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;
-using ::testing::AtLeast;
 using ::testing::ByRef;
 using ::testing::DoAll;
 using ::testing::Return;
 using ::testing::SetArgPointee;
 using ::testing::SetErrnoAndReturn;
 
-using namespace service::plugins::logger;
 using namespace utils::command;
 using namespace utils::command::osal;
 
@@ -56,15 +53,6 @@ namespace {
 class LinuxTestFixture : public ::testing::Test {
 
 protected:
-    LinuxTestFixture() : m_linux(m_mockLogger)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
-
     void SetUp() override
     {
         gMockOS = &m_mockOS;
@@ -75,9 +63,7 @@ protected:
         gMockOS = nullptr;
     }
 
-    MockLogger m_mockLogger;
     Linux m_linux;
-
     MockOS m_mockOS;
 };
 

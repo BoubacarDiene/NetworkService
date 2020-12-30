@@ -31,7 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
 #include "utils/command/executor/IExecutor.h"
 
 #include "service/plugins/IRuleFactory.h"
@@ -61,11 +60,9 @@ public:
     /**
      * Class constructor
      *
-     * @param logger   Logger object to print some useful logs
      * @param executor Command executor to use
      */
-    explicit RuleFactory(const service::plugins::logger::ILogger& logger,
-                         const utils::command::IExecutor& executor);
+    explicit RuleFactory(const utils::command::IExecutor& executor);
 
     /**
      * Class destructor

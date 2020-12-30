@@ -26,7 +26,6 @@ add_executable(${RULE_TEST_EXECUTABLE_NAME}
     RuleTest.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/firewall/Rule.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockExecutor.cpp)
 
 target_link_libraries(${RULE_TEST_EXECUTABLE_NAME}
@@ -41,7 +40,6 @@ add_executable(${RULE_FACTORY_TEST_EXECUTABLE_NAME}
     ${CMAKE_SOURCE_DIR}/src/plugins/firewall/RuleFactory.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/firewall/Rule.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockExecutor.cpp)
 
 target_link_libraries(${RULE_FACTORY_TEST_EXECUTABLE_NAME}

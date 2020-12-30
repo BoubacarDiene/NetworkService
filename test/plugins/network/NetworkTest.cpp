@@ -30,18 +30,15 @@
 
 #include "fakes/MockOS.h"
 #include "mocks/MockExecutor.h"
-#include "mocks/MockLogger.h"
 #include "mocks/MockWriter.h"
 
 #include "plugins/network/Network.h"
 #include "utils/command/parser/Parser.h"
 
 using ::testing::_;
-using ::testing::AtLeast;
 using ::testing::Return;
 
 using namespace service::plugins::config;
-using namespace service::plugins::logger;
 using namespace service::plugins::network;
 using namespace utils::command;
 using namespace utils::file;
@@ -53,14 +50,7 @@ namespace {
 class NetworkTestFixture : public ::testing::Test {
 
 protected:
-    NetworkTestFixture() : m_network(m_mockLogger, m_mockExecutor, m_mockWriter)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
+    NetworkTestFixture() : m_network(m_mockExecutor, m_mockWriter) {}
 
     void SetUp() override
     {
@@ -72,7 +62,6 @@ protected:
         gMockOS = nullptr;
     }
 
-    MockLogger m_mockLogger;
     MockExecutor m_mockExecutor;
     MockWriter m_mockWriter;
     Network m_network;
@@ -138,7 +127,7 @@ TEST_F(NetworkTestFixture, applyInterfaceCommandsShouldNotFailWithValidParameter
 
     // Parser is deterministic meaning that for the same input, it will
     // always produce the same output so it's fine using it.
-    const auto& parsedCommand = Parser(m_mockLogger).parse(interfaceCommands[0]);
+    const auto& parsedCommand = Parser().parse(interfaceCommands[0]);
     const IExecutor::ProgramParams expectedParams
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
 

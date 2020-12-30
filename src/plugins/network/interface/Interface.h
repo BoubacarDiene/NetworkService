@@ -32,7 +32,6 @@
 #include <memory>
 #include <string>
 
-#include "service/plugins/ILogger.h"
 #include "utils/command/executor/IExecutor.h"
 
 namespace service::plugins::network::interface {
@@ -58,11 +57,9 @@ public:
     /**
      * Class constructor
      *
-     * @param logger   Logger object to print some useful logs
      * @param executor Command executor to use
      */
-    explicit Interface(const service::plugins::logger::ILogger& logger,
-                       const utils::command::IExecutor& executor);
+    explicit Interface(const utils::command::IExecutor& executor);
 
     /** Class destructor */
     ~Interface();

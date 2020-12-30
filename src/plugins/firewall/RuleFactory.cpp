@@ -30,22 +30,17 @@
 #include "Rule.h"
 
 using namespace service::plugins::firewall;
-using namespace service::plugins::logger;
 
 struct RuleFactory::Internal {
-    const ILogger& logger;
     const utils::command::IExecutor& executor;
 
-    explicit Internal(const ILogger& providedLogger,
-                      const utils::command::IExecutor& providedExecutor)
-        : logger(providedLogger),
-          executor(providedExecutor)
+    explicit Internal(const utils::command::IExecutor& providedExecutor)
+        : executor(providedExecutor)
     {}
 };
 
-RuleFactory::RuleFactory(const ILogger& logger,
-                         const utils::command::IExecutor& executor)
-    : m_internal(std::make_unique<Internal>(logger, executor))
+RuleFactory::RuleFactory(const utils::command::IExecutor& executor)
+    : m_internal(std::make_unique<Internal>(executor))
 {}
 
 RuleFactory::~RuleFactory() = default;
@@ -54,7 +49,5 @@ std::unique_ptr<IRule>
     RuleFactory::createRule(const std::string& name,
                             const std::vector<std::string>& commands) const
 {
-    m_internal->logger.debug("Create rule: " + name);
-    return std::make_unique<Rule>(
-        m_internal->logger, name, commands, m_internal->executor);
+    return std::make_unique<Rule>(name, commands, m_internal->executor);
 }

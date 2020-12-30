@@ -40,15 +40,10 @@
 
 #include "Linux.h"
 
-using namespace service::plugins::logger;
 using namespace utils::command::osal;
 using namespace utils::helper;
 
 struct Linux::Internal {
-    const ILogger& logger;
-
-    explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
-
     /* Reopen the standard stream (stdin, stdout or stderr) and redirect it
      * to the the provided destination file */
     static inline bool redirectStandardStream(int fd, const char* const destPathname)
@@ -76,8 +71,7 @@ struct Linux::Internal {
     }
 };
 
-Linux::Linux(const ILogger& logger) : m_internal(std::make_unique<Internal>(logger))
-{}
+Linux::Linux() : m_internal(std::make_unique<Internal>()) {}
 
 Linux::~Linux() = default;
 
@@ -145,15 +139,11 @@ void Linux::sanitizeFiles() const
     /* Make sure the standard descriptors are opened */
     struct stat buffer;
     for (int fd = 0; fd < 3; ++fd) {
-        if ((fstat(fd, &buffer) != -1) || (errno != EBADF)) {
-            m_internal->logger.debug("Nothing to do with standard fd: "
-                                     + std::to_string(fd));
-        }
-        else {
-            m_internal->logger.debug("Reopen standard fd: " + std::to_string(fd));
+        if ((fstat(fd, &buffer) == -1) && (errno == EBADF)) {
             if (!Internal::redirectStandardStream(fd, "/dev/null")) {
-                throw std::runtime_error("Failed to reopen standard descriptor: "
-                                         + std::to_string(fd));
+                throw std::runtime_error(
+                    "Linux: Failed to reopen standard descriptor: "
+                    + std::to_string(fd));
             }
         }
     }
@@ -176,30 +166,28 @@ void Linux::dropPrivileges() const
     uid_t realUid      = getuid();
     uid_t effectiveUid = geteuid();
 
-    m_internal->logger.debug("Limit the groups to 1 i.e to caller's group id");
+    // Limit the groups to 1 i.e to caller's group id
     if (effectiveUid == 0) {
         if (setgroups(1, &realGid) == -1) {
-            throw std::runtime_error(Errno::toString("setgroups()", errno));
+            throw std::runtime_error(Errno::toString("Linux: setgroups()", errno));
         }
     }
 
     /* Replace the effective gid with the real one if they are not the same
      * and make changes permanent (the real gid also set) */
     if (realGid != effectiveGid) {
-        m_internal->logger.debug(
-            "Permanently replace the effective gid with the real one");
+        // Permanently replace the effective gid with the real one
         if (setregid(realGid, realGid) == -1) {
-            throw std::runtime_error(Errno::toString("setregid()", errno));
+            throw std::runtime_error(Errno::toString("Linux: setregid()", errno));
         }
     }
 
     /* Replace the effective uid with the real one if they are not the same
      * and make changes permanent (the real uid also set) */
     if (realUid != effectiveUid) {
-        m_internal->logger.debug(
-            "Permanently replace the effective uid with the real one");
+        // Permanently replace the effective uid with the real one
         if (setreuid(realUid, realUid) == -1) {
-            throw std::runtime_error(Errno::toString("setreuid()", errno));
+            throw std::runtime_error(Errno::toString("Linux: setreuid()", errno));
         }
     }
 }

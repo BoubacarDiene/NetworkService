@@ -31,8 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
-
 namespace utils::command {
 
 /**
@@ -76,12 +74,8 @@ public:
         void operator()(Command* command);
     };
 
-    /**
-     * Class constructor
-     *
-     * @param logger Logger object to print some useful logs
-     */
-    explicit Parser(const service::plugins::logger::ILogger& logger);
+    /* Class constructor */
+    Parser();
 
     /** Class destructor */
     ~Parser();

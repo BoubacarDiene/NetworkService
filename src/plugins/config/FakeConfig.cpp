@@ -29,13 +29,8 @@
 #include "Config.h"
 
 using namespace service::plugins::config;
-using namespace service::plugins::logger;
 
 struct Config::Internal {
-    const ILogger& logger;
-
-    explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
-
     static void fillInConfigData(std::unique_ptr<ConfigData>& configData)
     {
         fillInNetworkData(&configData->network);
@@ -69,9 +64,8 @@ private:
     }
 };
 
-Config::Config(const ILogger& logger,
-               [[maybe_unused]] const utils::file::IReader& reader)
-    : m_internal(std::make_unique<Internal>(logger))
+Config::Config([[maybe_unused]] const utils::file::IReader& reader)
+    : m_internal(std::make_unique<Internal>())
 {}
 
 Config::~Config() = default;
@@ -80,8 +74,6 @@ std::unique_ptr<ConfigData> Config::load([
     [maybe_unused]] const std::string& configFile) const
 {
     std::unique_ptr<ConfigData> configData = std::make_unique<ConfigData>();
-
-    m_internal->logger.debug("Fill in config data");
     Internal::fillInConfigData(configData);
 
     return configData;

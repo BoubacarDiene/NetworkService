@@ -29,30 +29,21 @@
 #include "Layer.h"
 
 using namespace service::plugins::network::layer;
-using namespace service::plugins::logger;
 using namespace utils::file;
 
 struct Layer::Internal {
-    const ILogger& logger;
     const IWriter& writer;
 
-    explicit Internal(const ILogger& providedLogger, const IWriter& providedWriter)
-        : logger(providedLogger),
-          writer(providedWriter)
-    {}
+    explicit Internal(const IWriter& providedWriter) : writer(providedWriter) {}
 };
 
-Layer::Layer(const ILogger& logger, const IWriter& writer)
-    : m_internal(std::make_unique<Internal>(logger, writer))
+Layer::Layer(const IWriter& writer) : m_internal(std::make_unique<Internal>(writer))
 {}
 
 Layer::~Layer() = default;
 
 void Layer::applyCommand(const std::string& pathname, const std::string& value) const
 {
-    m_internal->logger.debug("Apply command: " + value + std::string(" > ")
-                             + pathname);
-
     std::ofstream stream(pathname);
     m_internal->writer.writeToStream(stream, value);
 }

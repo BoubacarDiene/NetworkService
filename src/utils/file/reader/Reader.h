@@ -31,8 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
-
 #include "IReader.h"
 
 namespace utils::file {
@@ -57,15 +55,16 @@ namespace utils::file {
 class Reader : public IReader {
 
 public:
-    /**
-     * Class constructor
-     *
-     * @param logger Logger object to print some useful logs
-     */
-    explicit Reader(const service::plugins::logger::ILogger& logger);
+    /* Class constructor */
+    Reader() = default;
 
-    /** Class destructor */
-    ~Reader() override;
+    /**
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
+     */
+    ~Reader() override = default;
 
     /** Class copy constructor */
     Reader(const Reader&) = delete;
@@ -86,10 +85,6 @@ public:
      * @param result The output variable into which store data
      */
     void readFromStream(std::istream& stream, std::string& result) const override;
-
-private:
-    struct Internal;
-    std::unique_ptr<Internal> m_internal;
 };
 
 }

@@ -26,7 +26,6 @@ set(NETWORK_TEST_EXECUTABLE_NAME NetworkTest)
 add_executable(${LAYER_TEST_EXECUTABLE_NAME}
     LayerTest.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Layer.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockWriter.cpp)
 
 target_link_libraries(${LAYER_TEST_EXECUTABLE_NAME}
@@ -40,7 +39,6 @@ add_executable(${INTERFACE_TEST_EXECUTABLE_NAME}
     InterfaceTest.cpp
     ${CMAKE_SOURCE_DIR}/src/plugins/network/interface/Interface.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockExecutor.cpp)
 
 target_link_libraries(${INTERFACE_TEST_EXECUTABLE_NAME}
@@ -59,7 +57,6 @@ add_executable(${NETWORK_TEST_EXECUTABLE_NAME}
     ${CMAKE_SOURCE_DIR}/src/plugins/network/layer/Layer.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/parser/Parser.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/helper/Errno.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockWriter.cpp
     ${CMAKE_SOURCE_DIR}/test/mocks/MockExecutor.cpp)
 

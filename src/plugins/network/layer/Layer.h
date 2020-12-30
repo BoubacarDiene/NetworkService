@@ -32,7 +32,6 @@
 #include <memory>
 #include <string>
 
-#include "service/plugins/ILogger.h"
 #include "utils/file/writer/IWriter.h"
 
 namespace service::plugins::network::layer {
@@ -58,11 +57,9 @@ public:
     /**
      * Class constructor
      *
-     * @param logger Logger object to print some useful logs
      * @param writer Writer object to write into files
      */
-    explicit Layer(const service::plugins::logger::ILogger& logger,
-                   const utils::file::IWriter& writer);
+    explicit Layer(const utils::file::IWriter& writer);
 
     /** Class destructor */
     ~Layer();

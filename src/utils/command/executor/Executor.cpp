@@ -28,37 +28,33 @@
 
 #include "Executor.h"
 
-using namespace service::plugins::logger;
 using namespace utils::command;
 using namespace utils::command::osal;
 
 struct Executor::Internal {
-    const ILogger& logger;
     const IOsal& osal;
 
-    explicit Internal(const ILogger& providedLogger, const IOsal& providedOsal)
-        : logger(providedLogger),
-          osal(providedOsal)
-    {}
+    explicit Internal(const IOsal& providedOsal) : osal(providedOsal) {}
 };
 
-Executor::Executor(const ILogger& logger, const IOsal& osal, Flags flags)
+Executor::Executor(const IOsal& osal, Flags flags)
     : IExecutor(flags),
-      m_internal(std::make_unique<Internal>(logger, osal))
+      m_internal(std::make_unique<Internal>(osal))
 {}
 
 Executor::~Executor() = default;
 
 void Executor::executeProgram(const ProgramParams& params) const
 {
-    m_internal->logger.debug("Create child process");
+    /* Create child process */
     IOsal::ProcessId pid = m_internal->osal.createProcess();
 
+    /* Reseed PRNG in both parent and the child */
     if ((m_flags & Flags::RESEED_PRNG) != 0) {
-        m_internal->logger.debug("Reseed PRNG in both parent and the child");
         m_internal->osal.reseedPRNG();
     }
 
+    /* Wait child process (if in parent process) */
     if (pid == IOsal::ProcessId::PARENT) {
         if ((m_flags & Flags::WAIT_COMMAND) != 0) {
             m_internal->osal.waitChildProcess();
@@ -66,13 +62,13 @@ void Executor::executeProgram(const ProgramParams& params) const
         return;
     }
 
+    /* In child process: Sanitize files */
     if ((m_flags & Flags::SANITIZE_FILES) != 0) {
-        m_internal->logger.debug("Child - Sanitize files");
         m_internal->osal.sanitizeFiles();
     }
 
+    /* In child process: Drop privileges */
     if ((m_flags & Flags::DROP_PRIVILEGES) != 0) {
-        m_internal->logger.debug("Child - Drop privileges");
         m_internal->osal.dropPrivileges();
     }
 

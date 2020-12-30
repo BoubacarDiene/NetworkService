@@ -31,25 +31,19 @@
 
 #include "Interface.h"
 
-using namespace service::plugins::logger;
 using namespace service::plugins::network::interface;
 using namespace utils::command;
 
 struct Interface::Internal {
-    const ILogger& logger;
     const IExecutor& executor;
     const Parser parser;
 
-    explicit Internal(const ILogger& providedLogger,
-                      const IExecutor& providedExecutor)
-        : logger(providedLogger),
-          executor(providedExecutor),
-          parser(Parser(providedLogger))
+    explicit Internal(const IExecutor& providedExecutor) : executor(providedExecutor)
     {}
 };
 
-Interface::Interface(const ILogger& logger, const IExecutor& executor)
-    : m_internal(std::make_unique<Internal>(logger, executor))
+Interface::Interface(const IExecutor& executor)
+    : m_internal(std::make_unique<Internal>(executor))
 {}
 
 Interface::~Interface() = default;
@@ -58,7 +52,6 @@ void Interface::applyCommand(const std::string& command) const
 {
     const auto& parsedCommand = m_internal->parser.parse(command);
 
-    m_internal->logger.debug("Apply command: " + command);
     const IExecutor::ProgramParams params
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
     m_internal->executor.executeProgram(params);

@@ -28,15 +28,12 @@
 
 #include "gtest/gtest.h"
 
-#include "mocks/MockLogger.h"
 #include "mocks/MockWriter.h"
 
 #include "plugins/network/layer/Layer.h"
 
 using ::testing::_;
-using ::testing::AtLeast;
 
-using namespace service::plugins::logger;
 using namespace service::plugins::network::layer;
 using namespace utils::file;
 
@@ -45,17 +42,9 @@ namespace {
 class LayerTestFixture : public ::testing::Test {
 
 protected:
-    LayerTestFixture() : m_layer(m_mockLogger, m_mockWriter)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
+    LayerTestFixture() : m_layer(m_mockWriter) {}
 
     MockWriter m_mockWriter;
-    MockLogger m_mockLogger;
     Layer m_layer;
 };
 

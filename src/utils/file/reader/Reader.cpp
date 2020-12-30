@@ -32,25 +32,12 @@
 
 #include "Reader.h"
 
-using namespace service::plugins::logger;
 using namespace utils::file;
-
-struct Reader::Internal {
-    const ILogger& logger;
-
-    explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
-};
-
-Reader::Reader(const ILogger& logger)
-    : m_internal(std::make_unique<Internal>(logger))
-{}
-
-Reader::~Reader() = default;
 
 void Reader::readFromStream(std::istream& stream, std::string& result) const
 {
     if (!stream.good()) {
-        throw std::runtime_error("Invalid input stream");
+        throw std::runtime_error("Reader: Invalid input stream");
     }
 
     // Get length of file
@@ -71,12 +58,10 @@ void Reader::readFromStream(std::istream& stream, std::string& result) const
 
         std::stringstream readCharacters;
         readCharacters << stream.gcount() << "/" << length;
-        throw std::runtime_error("Could not read all characters: "
+        throw std::runtime_error("Reader: Could not read all characters: "
                                  + readCharacters.str());
     }
 
     result.assign(buffer, static_cast<std::size_t>(length));
     delete[] buffer;
-
-    m_internal->logger.debug("Read: " + result);
 }

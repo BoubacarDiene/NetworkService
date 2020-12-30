@@ -28,12 +28,8 @@
 
 #include "gtest/gtest.h"
 
-#include "mocks/MockLogger.h"
 #include "utils/command/parser/Parser.h"
 
-using ::testing::AtLeast;
-
-using namespace service::plugins::logger;
 using namespace utils::command;
 
 namespace {
@@ -41,18 +37,7 @@ namespace {
 class ParserTestFixture : public ::testing::Test {
 
 protected:
-    ParserTestFixture() : m_parser(m_mockLogger)
-    {
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
-
     Parser m_parser;
-
-private:
-    MockLogger m_mockLogger;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)

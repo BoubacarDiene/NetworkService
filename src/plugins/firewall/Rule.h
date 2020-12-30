@@ -31,7 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
 #include "utils/command/executor/IExecutor.h"
 
 #include "service/plugins/IRule.h"
@@ -61,14 +60,12 @@ public:
     /**
      * Class constructor
      *
-     * @param logger   Logger object to print some useful logs
      * @param name     A name for the rule mainly used in logs messages to
      *                 help identifying rules
      * @param commands The list of shell commands that compose the rule
      * @param executor Command executor to use
      */
-    explicit Rule(const service::plugins::logger::ILogger& logger,
-                  const std::string& name,
+    explicit Rule(const std::string& name,
                   const std::vector<std::string>& commands,
                   const utils::command::IExecutor& executor);
 

@@ -32,34 +32,28 @@
 #include "Rule.h"
 
 using namespace service::plugins::firewall;
-using namespace service::plugins::logger;
 using namespace utils::command;
 
 struct Rule::Internal {
-    const ILogger& logger;
     const IExecutor& executor;
 
     const std::string& name;
     const std::vector<std::string>& commands;
     const Parser parser;
 
-    explicit Internal(const ILogger& providedLogger,
-                      const IExecutor& providedExecutor,
+    explicit Internal(const IExecutor& providedExecutor,
                       const std::string& providedName,
                       const std::vector<std::string>& providedCommands)
-        : logger(providedLogger),
-          executor(providedExecutor),
+        : executor(providedExecutor),
           name(providedName),
-          commands(providedCommands),
-          parser(Parser(providedLogger))
+          commands(providedCommands)
     {}
 };
 
-Rule::Rule(const ILogger& logger,
-           const std::string& name,
+Rule::Rule(const std::string& name,
            const std::vector<std::string>& commands,
            const IExecutor& executor)
-    : m_internal(std::make_unique<Internal>(logger, executor, name, commands))
+    : m_internal(std::make_unique<Internal>(executor, name, commands))
 {}
 
 Rule::~Rule() = default;
@@ -70,7 +64,6 @@ void Rule::applyCommands() const
         const std::unique_ptr<Parser::Command, Parser::CommandDeleter>& parsedCommand
             = m_internal->parser.parse(command);
 
-        m_internal->logger.debug(m_internal->name + " - Apply command: " + command);
         const IExecutor::ProgramParams params
             = {parsedCommand->pathname, parsedCommand->argv, nullptr};
         m_internal->executor.executeProgram(params);

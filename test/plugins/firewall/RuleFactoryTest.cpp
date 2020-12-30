@@ -29,13 +29,9 @@
 #include "gtest/gtest.h"
 
 #include "mocks/MockExecutor.h"
-#include "mocks/MockLogger.h"
 
 #include "plugins/firewall/RuleFactory.h"
 
-using ::testing::AtLeast;
-
-using namespace service::plugins::logger;
 using namespace service::plugins::firewall;
 using namespace utils::command;
 
@@ -44,17 +40,9 @@ namespace {
 class RuleFactoryTestFixture : public ::testing::Test {
 
 protected:
-    RuleFactoryTestFixture() : m_ruleFactory(m_mockLogger, m_mockExecutor)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
+    RuleFactoryTestFixture() : m_ruleFactory(m_mockExecutor) {}
 
     MockExecutor m_mockExecutor;
-    MockLogger m_mockLogger;
     RuleFactory m_ruleFactory;
 };
 

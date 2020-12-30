@@ -31,7 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
 #include "utils/command/executor/IOsal.h"
 
 namespace utils::command::osal {
@@ -54,14 +53,15 @@ namespace utils::command::osal {
 class Linux : public IOsal {
 
 public:
-    /**
-     * Class constructor
-     *
-     * @param logger Logger object to print some useful logs
-     */
-    explicit Linux(const service::plugins::logger::ILogger& logger);
+    /* Class constructor */
+    Linux();
 
-    /** Class destructor */
+    /**
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
+     */
     ~Linux() override;
 
     /** Class copy constructor */

@@ -26,8 +26,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     fakes/MockOS.cpp
     fakes/OS.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/command/executor/osal/Linux.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/helper/Errno.cpp
-    ${CMAKE_SOURCE_DIR}/test/mocks/MockLogger.cpp)
+    ${CMAKE_SOURCE_DIR}/src/utils/helper/Errno.cpp)
 
 target_link_libraries(${TEST_EXECUTABLE_NAME}
     PRIVATE gtest gmock ${CMAKE_DL_LIBS})

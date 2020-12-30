@@ -31,8 +31,6 @@
 
 #include <memory>
 
-#include "service/plugins/ILogger.h"
-
 #include "IWriter.h"
 
 namespace utils::file {
@@ -57,15 +55,16 @@ namespace utils::file {
 class Writer : public IWriter {
 
 public:
-    /**
-     * Class constructor
-     *
-     * @param logger Logger object to print some useful logs
-     */
-    explicit Writer(const service::plugins::logger::ILogger& logger);
+    /* Class constructor */
+    Writer() = default;
 
-    /** Class destructor */
-    ~Writer() override;
+    /**
+     * Class destructor
+     *
+     * @note The override specifier aims at making the compiler warn if the
+     *       base class's destructor is not virtual.
+     */
+    ~Writer() override = default;
 
     /** Class copy constructor */
     Writer(const Writer&) = delete;
@@ -88,10 +87,6 @@ public:
      */
     void writeToStream(std::ostream& stream,
                        const std::string& value) const override;
-
-private:
-    struct Internal;
-    std::unique_ptr<Internal> m_internal;
 };
 
 }

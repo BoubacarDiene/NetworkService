@@ -97,13 +97,13 @@ int main(int argc, char** argv)
 
     /* Initialize and inject dependencies */
     Logger logger           = Logger();
-    Linux osal              = Linux(logger);
-    Executor executor       = Executor(logger, osal, commandLine.flags);
-    Writer writer           = Writer(logger);
-    Reader reader           = Reader(logger);
-    Network network         = Network(logger, executor, writer);
-    RuleFactory ruleFactory = RuleFactory(logger, executor);
-    Config config           = Config(logger, reader);
+    Linux osal              = Linux();
+    Executor executor       = Executor(osal, commandLine.flags);
+    Writer writer           = Writer();
+    Reader reader           = Reader();
+    Network network         = Network(executor, writer);
+    RuleFactory ruleFactory = RuleFactory(executor);
+    Config config           = Config(reader);
 
     NetworkService::NetworkServiceParams networkServiceParams(
         {logger, config, network, ruleFactory});

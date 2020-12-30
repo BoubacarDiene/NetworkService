@@ -28,15 +28,12 @@
 
 #include "gtest/gtest.h"
 
-#include "mocks/MockLogger.h"
 #include "mocks/MockReader.h"
 
 #include "plugins/config/Config.h"
 
 using ::testing::_;
-using ::testing::AtLeast;
 
-using namespace service::plugins::logger;
 using namespace service::plugins::config;
 using namespace utils::file;
 
@@ -45,17 +42,9 @@ namespace {
 class JsonConfigTestFixture : public ::testing::Test {
 
 protected:
-    JsonConfigTestFixture() : m_jsonConfig(m_mockLogger, m_mockReader)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
+    JsonConfigTestFixture() : m_jsonConfig(m_mockReader) {}
 
     MockReader m_mockReader;
-    MockLogger m_mockLogger;
     Config m_jsonConfig;
 };
 

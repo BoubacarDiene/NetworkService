@@ -29,15 +29,12 @@
 #include "gtest/gtest.h"
 
 #include "mocks/MockExecutor.h"
-#include "mocks/MockLogger.h"
 
 #include "plugins/network/interface/Interface.h"
 #include "utils/command/parser/Parser.h"
 
 using ::testing::_;
-using ::testing::AtLeast;
 
-using namespace service::plugins::logger;
 using namespace service::plugins::network::interface;
 using namespace utils::command;
 
@@ -46,17 +43,9 @@ namespace {
 class InterfaceTestFixture : public ::testing::Test {
 
 protected:
-    InterfaceTestFixture() : m_interface(m_mockLogger, m_mockExecutor)
-    {
-        // Logger methods are not always called
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
+    InterfaceTestFixture() : m_interface(m_mockExecutor) {}
 
     MockExecutor m_mockExecutor;
-    MockLogger m_mockLogger;
     Interface m_interface;
 };
 
@@ -67,7 +56,7 @@ TEST_F(InterfaceTestFixture, shouldCallExecutorWithExpectedValues)
 
     // Parser is deterministic meaning that for the same input, it will
     // always produce the same output so it's fine using it.
-    const auto& parsedCommand = Parser(m_mockLogger).parse(command);
+    const auto& parsedCommand = Parser().parse(command);
     const IExecutor::ProgramParams expectedParams
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
 

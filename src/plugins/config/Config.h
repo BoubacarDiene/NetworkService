@@ -32,7 +32,6 @@
 #include <memory>
 
 #include "service/plugins/IConfig.h"
-#include "service/plugins/ILogger.h"
 #include "utils/file/reader/IReader.h"
 
 namespace service::plugins::config {
@@ -60,12 +59,9 @@ public:
     /**
      * Class constructor
      *
-     * @param logger Logger object to print some useful logs while loading
-     *               the configuration file
      * @param reader Reader object to allow reading from files
      */
-    explicit Config(const service::plugins::logger::ILogger& logger,
-                    const utils::file::IReader& reader);
+    explicit Config(const utils::file::IReader& reader);
 
     /**
      * Class destructor

@@ -30,12 +30,8 @@
 
 #include "gtest/gtest.h"
 
-#include "mocks/MockLogger.h"
 #include "utils/file/writer/Writer.h"
 
-using ::testing::AtLeast;
-
-using namespace service::plugins::logger;
 using namespace utils::file;
 
 namespace {
@@ -43,18 +39,7 @@ namespace {
 class WriterTestFixture : public ::testing::Test {
 
 protected:
-    WriterTestFixture() : m_writer(m_mockLogger)
-    {
-        EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, info).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, warn).Times(AtLeast(0));
-        EXPECT_CALL(m_mockLogger, error).Times(AtLeast(0));
-    }
-
     Writer m_writer;
-
-private:
-    MockLogger m_mockLogger;
 };
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)

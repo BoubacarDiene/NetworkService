@@ -30,29 +30,14 @@
 
 #include "Writer.h"
 
-using namespace service::plugins::logger;
 using namespace utils::file;
-
-struct Writer::Internal {
-    const ILogger& logger;
-
-    explicit Internal(const ILogger& providedLogger) : logger(providedLogger) {}
-};
-
-Writer::Writer(const ILogger& logger)
-    : m_internal(std::make_unique<Internal>(logger))
-{}
-
-Writer::~Writer() = default;
 
 void Writer::writeToStream(std::ostream& stream, const std::string& value) const
 {
-    m_internal->logger.debug("Write value: " + value);
-
     const auto& streamSize = static_cast<std::streamsize>(value.length());
     stream.write(value.c_str(), streamSize);
 
     if (stream.fail()) {
-        throw std::runtime_error("Writing to the given stream failed");
+        throw std::runtime_error("Writer: Writing to the given stream failed");
     }
 }

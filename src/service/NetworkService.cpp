@@ -42,7 +42,7 @@ NetworkService::NetworkService(const NetworkServiceParams& params) : m_params(pa
 int NetworkService::applyConfig(const std::string& configFile) const
 {
     try {
-        m_params.logger.info("Load config: " + configFile);
+        m_params.logger.debug("Load config: " + configFile);
         const std::unique_ptr<ConfigData>& configData
             = m_params.config.load(configFile);
 
@@ -53,8 +53,9 @@ int NetworkService::applyConfig(const std::string& configFile) const
         for (const std::string& interfaceName : networkData.interfaceNames) {
             m_params.logger.debug("Check validity of interface: " + interfaceName);
             if (!m_params.network.hasInterface(interfaceName)) {
-                throw std::invalid_argument("No valid interface found for: "
-                                            + interfaceName);
+                throw std::invalid_argument(
+                    "NetworkService: No valid interface found for: "
+                    + interfaceName);
             }
         }
 
@@ -70,7 +71,8 @@ int NetworkService::applyConfig(const std::string& configFile) const
                 = m_params.ruleFactory.createRule(ruleData.name, ruleData.commands);
 
             if (!rule) {
-                throw std::runtime_error("createRule() returned an invalid object");
+                throw std::runtime_error(
+                    "NetworkService: createRule() returned an invalid object");
             }
 
             rule->applyCommands();
