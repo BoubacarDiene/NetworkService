@@ -231,7 +231,7 @@ docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-i
 
 | Short option | Long option | Values | Description |
 | --- | --- | --- | --- |
-| -c | --config | <path> | Path to the configuration file |
+| -c | --config | e.g. /etc/myconfig.json | Path to the configuration file |
 | -s | --secure | true OR false | true: Secure mode / false: Non secure mode |
 
 Above runtime options are required to run the service. The configuration file contains commands to execute while the secure mode refers (more or less) to features used when executing commands. Running the service securely means "sanitize files", "drop privileges", "reseed PRNG" before executing commands.
@@ -328,7 +328,7 @@ out/bin/networkservice --config ../res/example.json --secure true
 ```
 
 ### Third-party dependencies
-  - [**CMake v3.18.5**](https://cmake.org/cmake/help/git-master/index.html): Build the source code
+  - [**CMake v3.18.2**](https://cmake.org/cmake/help/git-master/index.html): Build the source code
   - [**CLI11 v1.9.0**](https://github.com/CLIUtils/CLI11): Parse command line options (Header-only)
   - [**nlohmann/json v3.7.3**](https://github.com/nlohmann/json): Parse configuration file (Header-only)
   - [**GTest/GMock v1.10.0**](https://github.com/google/googletest): Unit testing and mocking
