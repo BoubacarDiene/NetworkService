@@ -71,7 +71,8 @@ void Reader::readFromStream(std::istream& stream, std::string& result) const
 
         std::stringstream readCharacters;
         readCharacters << stream.gcount() << "/" << length;
-        throw std::runtime_error("Could not read all characters: " + readCharacters.str());
+        throw std::runtime_error("Could not read all characters: "
+                                 + readCharacters.str());
     }
 
     result.assign(buffer, static_cast<std::size_t>(length));
