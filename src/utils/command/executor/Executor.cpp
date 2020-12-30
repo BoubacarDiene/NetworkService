@@ -42,35 +42,36 @@ struct Executor::Internal {
     {}
 };
 
-Executor::Executor(const ILogger& logger, const IOsal& osal)
-    : m_internal(std::make_unique<Internal>(logger, osal))
+Executor::Executor(const ILogger& logger, const IOsal& osal, Flags flags)
+    : IExecutor(flags),
+      m_internal(std::make_unique<Internal>(logger, osal))
 {}
 
 Executor::~Executor() = default;
 
-void Executor::executeProgram(const ProgramParams& params, Flags flags) const
+void Executor::executeProgram(const ProgramParams& params) const
 {
     m_internal->logger.debug("Create child process");
     IOsal::ProcessId pid = m_internal->osal.createProcess();
 
-    if ((flags & Flags::RESEED_PRNG) != 0) {
+    if ((m_flags & Flags::RESEED_PRNG) != 0) {
         m_internal->logger.debug("Reseed PRNG in both parent and the child");
         m_internal->osal.reseedPRNG();
     }
 
     if (pid == IOsal::ProcessId::PARENT) {
-        if ((flags & Flags::WAIT_COMMAND) != 0) {
+        if ((m_flags & Flags::WAIT_COMMAND) != 0) {
             m_internal->osal.waitChildProcess();
         }
         return;
     }
 
-    if ((flags & Flags::SANITIZE_FILES) != 0) {
+    if ((m_flags & Flags::SANITIZE_FILES) != 0) {
         m_internal->logger.debug("Child - Sanitize files");
         m_internal->osal.sanitizeFiles();
     }
 
-    if ((flags & Flags::DROP_PRIVILEGES) != 0) {
+    if ((m_flags & Flags::DROP_PRIVILEGES) != 0) {
         m_internal->logger.debug("Child - Drop privileges");
         m_internal->osal.dropPrivileges();
     }

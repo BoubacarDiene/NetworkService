@@ -47,7 +47,7 @@ namespace {
 class ExecutorTestFixture : public ::testing::Test {
 
 protected:
-    ExecutorTestFixture() : m_executor(m_mockLogger, m_mockOsal)
+    ExecutorTestFixture()
     {
         // Logger methods are not always called
         EXPECT_CALL(m_mockLogger, debug).Times(AtLeast(0));
@@ -65,10 +65,7 @@ protected:
         EXPECT_CALL(m_mockOsal, dropPrivileges).Times(0);
     }
 
-    Executor m_executor;
     MockOsal m_mockOsal;
-
-private:
     MockLogger m_mockLogger;
 };
 
@@ -77,6 +74,9 @@ TEST_F(ExecutorTestFixture, waitCommandInFlags)
 {
     Executor::Flags flags                = Executor::Flags::WAIT_COMMAND;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
+
+    /* Instantiate an executor */
+    Executor executor(m_mockLogger, m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -90,7 +90,7 @@ TEST_F(ExecutorTestFixture, waitCommandInFlags)
         EXPECT_CALL(m_mockOsal, waitChildProcess).Times(1);
     }
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 
     /* In child process
      * - createProcess() must return ProcessId::CHILD
@@ -105,7 +105,7 @@ TEST_F(ExecutorTestFixture, waitCommandInFlags)
         EXPECT_CALL(m_mockOsal, executeProgram).Times(1);
     }
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
@@ -113,6 +113,9 @@ TEST_F(ExecutorTestFixture, reseedPrngInFlags)
 {
     Executor::Flags flags                = Executor::Flags::RESEED_PRNG;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
+
+    /* Instantiate an executor */
+    Executor executor(m_mockLogger, m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -126,7 +129,7 @@ TEST_F(ExecutorTestFixture, reseedPrngInFlags)
         EXPECT_CALL(m_mockOsal, reseedPRNG).Times(1);
     }
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 
     /* In child process
      * - createProcess() must return ProcessId::CHILD
@@ -143,7 +146,7 @@ TEST_F(ExecutorTestFixture, reseedPrngInFlags)
         EXPECT_CALL(m_mockOsal, executeProgram).Times(1);
     }
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
@@ -152,13 +155,16 @@ TEST_F(ExecutorTestFixture, sanitizeFilesInFlags)
     Executor::Flags flags                = Executor::Flags::SANITIZE_FILES;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
+    /* Instantiate an executor */
+    Executor executor(m_mockLogger, m_mockOsal, flags);
+
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
      * - None of other functions must be called */
     EXPECT_CALL(m_mockOsal, createProcess)
         .WillOnce(Return(IOsal::ProcessId::PARENT));
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 
     /* In child process
      * - createProcess() must return ProcessId::CHILD
@@ -175,7 +181,7 @@ TEST_F(ExecutorTestFixture, sanitizeFilesInFlags)
         EXPECT_CALL(m_mockOsal, executeProgram).Times(1);
     }
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
@@ -184,13 +190,16 @@ TEST_F(ExecutorTestFixture, dropPrivilegesInFlags)
     Executor::Flags flags                = Executor::Flags::DROP_PRIVILEGES;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
 
+    /* Instantiate an executor */
+    Executor executor(m_mockLogger, m_mockOsal, flags);
+
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
      * - None of other functions must be called */
     EXPECT_CALL(m_mockOsal, createProcess)
         .WillOnce(Return(IOsal::ProcessId::PARENT));
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 
     /* In child process
      * - createProcess() must return ProcessId::CHILD
@@ -207,13 +216,17 @@ TEST_F(ExecutorTestFixture, dropPrivilegesInFlags)
         EXPECT_CALL(m_mockOsal, executeProgram).Times(1);
     }
 
-    m_executor.executeProgram(params, flags);
+    executor.executeProgram(params);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(ExecutorTestFixture, defaultIsAllFlagsSet)
+TEST_F(ExecutorTestFixture, AllInFlags)
 {
+    Executor::Flags flags                = Executor::Flags::ALL;
     const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
+
+    /* Instantiate an executor */
+    Executor executor(m_mockLogger, m_mockOsal, flags);
 
     /* In parent process
      * - createProcess() must return ProcessId::PARENT
@@ -235,7 +248,7 @@ TEST_F(ExecutorTestFixture, defaultIsAllFlagsSet)
         EXPECT_CALL(m_mockOsal, waitChildProcess).Times(1).InSequence(seq2);
     }
 
-    m_executor.executeProgram(params);
+    executor.executeProgram(params);
 
     /* In child process
      * - createProcess() must return ProcessId::CHILD
@@ -265,7 +278,45 @@ TEST_F(ExecutorTestFixture, defaultIsAllFlagsSet)
             .InSequence(seq1, seq2, seq3);
     }
 
-    m_executor.executeProgram(params);
+    executor.executeProgram(params);
+}
+
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(ExecutorTestFixture, defaultIsWaitCommandFlagSet)
+{
+    const Executor::ProgramParams params = {nullptr, nullptr, nullptr};
+
+    /* Instantiate an executor */
+    Executor executor(m_mockLogger, m_mockOsal);
+
+    /* In parent process
+     * - createProcess() must return ProcessId::PARENT
+     * - waitChildProcess() must be called
+     * - None of other functions must be called */
+    {
+        InSequence seq;
+
+        EXPECT_CALL(m_mockOsal, createProcess)
+            .WillOnce(Return(IOsal::ProcessId::PARENT));
+        EXPECT_CALL(m_mockOsal, waitChildProcess).Times(1);
+    }
+
+    executor.executeProgram(params);
+
+    /* In child process
+     * - createProcess() must return ProcessId::CHILD
+     * - executeProgram() must be called to replace the child process
+     *   with given program
+     * - None of other functions must be called */
+    {
+        InSequence seq;
+
+        EXPECT_CALL(m_mockOsal, createProcess)
+            .WillOnce(Return(IOsal::ProcessId::CHILD));
+        EXPECT_CALL(m_mockOsal, executeProgram).Times(1);
+    }
+
+    executor.executeProgram(params);
 }
 
 }

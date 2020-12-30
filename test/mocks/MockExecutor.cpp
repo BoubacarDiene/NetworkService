@@ -30,5 +30,5 @@
 
 using namespace utils::command;
 
-MockExecutor::MockExecutor()  = default;
+MockExecutor::MockExecutor(Flags flags) : IExecutor(flags) {}
 MockExecutor::~MockExecutor() = default;

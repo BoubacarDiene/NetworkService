@@ -64,9 +64,11 @@ public:
      * @param logger Logger object to print some useful logs
      * @param osal   OS abstract layer's implementation to use. This is passed
      *               to the constructor to ease unit testing of Executor class.
+     * @param flags  A set of masks of type @ref IExecutor::Flags
      */
     explicit Executor(const service::plugins::logger::ILogger& logger,
-                      const osal::IOsal& osal);
+                      const osal::IOsal& osal,
+                      Flags flags = Flags::WAIT_COMMAND);
 
     /** Class destructor */
     ~Executor() override;
@@ -87,17 +89,15 @@ public:
      * @brief Execute the program pointed to by pathname
      *
      * This function performs a fork+execve in a secure way (re-initialize
-     * the random number generator, close file descriptors, ...). Except
-     * "flags", all input parameters have the same meaning as in execve()
-     * manpage.
+     * the random number generator, close file descriptors, ...) depending
+     * on @ref Flags. All input parameters have the same meaning as in
+     * execve() manpage.
      *
      * @param params An object of type @ref IExecutor::ProgramParams
-     * @param flags  A set of masks of type @ref IExecutor::Flags
      *
      * @see http://man7.org/linux/man-pages/man2/execve.2.html
      */
-    void executeProgram(const ProgramParams& params,
-                        Flags flags = Flags::ALL) const override;
+    void executeProgram(const ProgramParams& params) const override;
 
 private:
     struct Internal;

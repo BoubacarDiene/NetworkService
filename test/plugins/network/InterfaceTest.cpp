@@ -71,9 +71,8 @@ TEST_F(InterfaceTestFixture, shouldCallExecutorWithExpectedValues)
     const IExecutor::ProgramParams expectedParams
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
 
-    EXPECT_CALL(m_mockExecutor, executeProgram(_, _))
-        .WillOnce([&expectedParams](const IExecutor::ProgramParams& params,
-                                    [[maybe_unused]] IExecutor::Flags flags) {
+    EXPECT_CALL(m_mockExecutor, executeProgram(_))
+        .WillOnce([&expectedParams](const IExecutor::ProgramParams& params) {
             ASSERT_STREQ(params.pathname, expectedParams.pathname);
             ASSERT_STREQ(params.argv[0], expectedParams.argv[0]);
             ASSERT_STREQ(params.argv[1], expectedParams.argv[1]);

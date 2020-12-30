@@ -52,7 +52,12 @@ using namespace utils::command;
 using namespace utils::command::osal;
 using namespace utils::file;
 
-static inline std::string parseCommandLine(int argc, char** argv)
+struct CommandLine {
+    std::string configFile;
+    Executor::Flags flags;
+};
+
+static inline CommandLine parseCommandLine(int argc, char** argv)
 {
     CLI::App app(" ");
 
@@ -60,11 +65,20 @@ static inline std::string parseCommandLine(int argc, char** argv)
     app.get_formatter()->column_width(columnWidth);
     app.get_formatter()->label("REQUIRED", "(REQUIRED)");
 
-    std::string configFile;
+    CommandLine commandLine;
 
-    app.add_option("-c", configFile, "Path to configuration file")
+    app.add_option(
+           "-c,--config", commandLine.configFile, "Path to configuration file")
         ->required()
         ->check(CLI::ExistingFile);
+
+    std::map<bool, Executor::Flags> option2Flags {
+        {false, Executor::Flags::WAIT_COMMAND}, {true, Executor::Flags::ALL}};
+
+    app.add_option(
+           "-s,--secure", commandLine.flags, "Secure mode (true) or not (false)")
+        ->required()
+        ->transform(CLI::CheckedTransformer(option2Flags));
 
     try {
         app.parse(argc, argv);
@@ -74,17 +88,17 @@ static inline std::string parseCommandLine(int argc, char** argv)
         std::exit(EXIT_FAILURE);
     }
 
-    return configFile;
+    return commandLine;
 }
 
 int main(int argc, char** argv)
 {
-    std::string configFile = parseCommandLine(argc, argv);
+    CommandLine commandLine = parseCommandLine(argc, argv);
 
     /* Initialize and inject dependencies */
     Logger logger           = Logger();
     Linux osal              = Linux(logger);
-    Executor executor       = Executor(logger, osal);
+    Executor executor       = Executor(logger, osal, commandLine.flags);
     Writer writer           = Writer(logger);
     Reader reader           = Reader(logger);
     Network network         = Network(logger, executor, writer);
@@ -96,5 +110,5 @@ int main(int argc, char** argv)
     NetworkService networkService(networkServiceParams);
 
     /* Set up the network and firewall based on provided file */
-    return networkService.applyConfig(configFile);
+    return networkService.applyConfig(commandLine.configFile);
 }

@@ -91,8 +91,12 @@ public:
         char* const* const envp;
     };
 
-    /** Class constructor */
-    IExecutor() = default;
+    /**
+     * Class constructor
+     *
+     * @param flags A set of masks of type @ref Flags
+     */
+    explicit IExecutor(Flags flags) : m_flags(flags) {}
 
     /** Class destructor */
     virtual ~IExecutor() = default;
@@ -113,17 +117,18 @@ public:
      * @brief Execute the program pointed to by pathname
      *
      * This function performs a fork+execve in a secure way (re-initialize
-     * the random number generator, close file descriptors, ...). Except
-     * "flags", all input parameters have the same meaning as in execve()
-     * manpage.
+     * the random number generator, close file descriptors, ...) depending
+     * on @ref Flags. All input parameters have the same meaning as in
+     * execve() manpage.
      *
      * @param params An object of type @ref ProgramParams
-     * @param flags  A set of masks of type @ref Flags
      *
      * @see http://man7.org/linux/man-pages/man2/execve.2.html
      */
-    virtual void executeProgram(const ProgramParams& params,
-                                Flags flags = Flags::ALL) const = 0;
+    virtual void executeProgram(const ProgramParams& params) const = 0;
+
+protected:
+    Flags m_flags;
 };
 
 }

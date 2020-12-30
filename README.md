@@ -35,6 +35,7 @@ https://travis-ci.org/BoubacarDiene/NetworkService)
   - [Git hook](#git-hook)
 - [Installation](#installation)
   - [Custom build options](#custom-build-options)
+  - [Runtime options](#runtime-options)
   - [Development](#development)
     - [Build in debug mode](#build-in-debug-mode)
     - [Run unit tests](#run-unit-tests)
@@ -226,6 +227,17 @@ docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-i
 | ENABLE_UNIT_TESTING | ON, OFF | OFF | Allow to enable/disable unit testing |
 | EXECUTABLE_NAME | Any valid executable name | networkservice | Name of the generated executable |
 
+### Runtime options
+
+| Short option | Long option | Values | Description |
+| --- | --- | --- | --- |
+| -c | --config | <path> | Path to the configuration file |
+| -s | --secure | true OR false | true: Secure mode / false: Non secure mode |
+
+Above runtime options are required to run the service. The configuration file contains commands to execute while the secure mode refers (more or less) to features used when executing commands. Running the service securely means "sanitize files", "drop privileges", "reseed PRNG" before executing commands.
+
+To improve execution time of the service, it might be interesting to test both modes then make your choice depending to your time constraints.
+
 ### Development
 
 #### Build in debug mode
@@ -292,11 +304,11 @@ make analysis
 
 #### Start the application
 ```
-out/bin/networkservice -c ../res/example.json
+out/bin/networkservice --config ../res/example.json --secure true
 
 or
 
-valgrind out/bin/networkservice -c ../res/example.json
+valgrind out/bin/networkservice --config ../res/example.json --secure true
 ```
 
 **Note:** Obviously, *res/example.json* file is just a sample configuration file to test the software and show how to write config files.
@@ -312,7 +324,7 @@ make && make install
 
 #### Start the application
 ```
-out/bin/networkservice -c ../res/example.json
+out/bin/networkservice --config ../res/example.json --secure true
 ```
 
 ### Third-party dependencies

@@ -39,7 +39,7 @@ class MockExecutor : public IExecutor {
 
 public:
     /** Class constructor */
-    MockExecutor();
+    explicit MockExecutor(Flags flags = Flags::WAIT_COMMAND);
 
     /** Class destructor */
     ~MockExecutor() override;
@@ -59,7 +59,7 @@ public:
     /** Mocks */
     MOCK_METHOD(void,
                 executeProgram,
-                (const ProgramParams& params, Flags flags),
+                (const ProgramParams& params),
                 (const, override));
 };
 
