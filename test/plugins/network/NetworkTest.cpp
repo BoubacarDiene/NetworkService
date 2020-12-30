@@ -127,7 +127,7 @@ TEST_F(NetworkTestFixture, applyInterfaceCommandsShouldNotFailWithValidParameter
 
     // Parser is deterministic meaning that for the same input, it will
     // always produce the same output so it's fine using it.
-    const auto& parsedCommand = Parser().parse(interfaceCommands[0]);
+    const auto& parsedCommand = Parser::parse(interfaceCommands[0]);
     const IExecutor::ProgramParams expectedParams
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
 

@@ -34,17 +34,11 @@ using namespace utils::command;
 
 namespace {
 
-class ParserTestFixture : public ::testing::Test {
-
-protected:
-    Parser m_parser;
-};
-
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(ParserTestFixture, returnTheSameStringIfInvalidDelimiter)
+TEST(ParserTest, returnTheSameStringIfInvalidDelimiter)
 {
     const std::string command("/sbin/iptables -P OUTPUT ACCEPT");
-    auto result = m_parser.parse(command, ';');
+    auto result = Parser::parse(command, ';');
 
     ASSERT_STREQ(result->pathname, command.c_str());
     ASSERT_EQ(result->argc, 1);
@@ -52,10 +46,10 @@ TEST_F(ParserTestFixture, returnTheSameStringIfInvalidDelimiter)
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
-TEST_F(ParserTestFixture, returnSplittedStringIfValidDelimiter)
+TEST(ParserTest, returnSplittedStringIfValidDelimiter)
 {
     const std::string command("/sbin/iptables -P OUTPUT ACCEPT");
-    auto result = m_parser.parse(command);
+    auto result = Parser::parse(command);
 
     ASSERT_STREQ(result->pathname, "/sbin/iptables");
     ASSERT_EQ(result->argc, 4);

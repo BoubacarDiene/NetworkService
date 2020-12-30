@@ -56,7 +56,7 @@ TEST_F(InterfaceTestFixture, shouldCallExecutorWithExpectedValues)
 
     // Parser is deterministic meaning that for the same input, it will
     // always produce the same output so it's fine using it.
-    const auto& parsedCommand = Parser().parse(command);
+    const auto& parsedCommand = Parser::parse(command);
     const IExecutor::ProgramParams expectedParams
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};
 

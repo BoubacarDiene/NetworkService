@@ -34,23 +34,25 @@
 
 using namespace utils::command;
 
-struct Parser::Internal {
-    /* Provided "delimiter", return an array of strings resulting from the
-     * splitting of "stringToSplit" into substrings */
-    std::vector<std::string> splitString(const std::string& stringToSplit,
-                                         char delimiter = ' ')
-    {
-        std::vector<std::string> results;
-        std::string substring;
+namespace {
 
-        std::istringstream iss(stringToSplit);
-        while (std::getline(iss, substring, delimiter)) {
-            results.push_back(substring);
-        }
+/* Provided "delimiter", return an array of strings resulting from the
+ * splitting of "stringToSplit" into substrings */
+std::vector<std::string> splitString(const std::string& stringToSplit,
+                                     char delimiter = ' ')
+{
+    std::vector<std::string> results;
+    std::string substring;
 
-        return results;
+    std::istringstream iss(stringToSplit);
+    while (std::getline(iss, substring, delimiter)) {
+        results.push_back(substring);
     }
-};
+
+    return results;
+}
+
+}
 
 void Parser::CommandDeleter::operator()(Command* command)
 {
@@ -64,16 +66,11 @@ void Parser::CommandDeleter::operator()(Command* command)
     delete command;
 }
 
-Parser::Parser() : m_internal(std::make_unique<Internal>()) {}
-
-Parser::~Parser() = default;
-
 std::unique_ptr<Parser::Command, Parser::CommandDeleter>
-    Parser::parse(const std::string& commandToParse, char delimiter) const
+    Parser::parse(const std::string& commandToParse, char delimiter)
 {
     /* Split command into substrings */
-    std::vector<std::string> results
-        = m_internal->splitString(commandToParse, delimiter);
+    std::vector<std::string> results = splitString(commandToParse, delimiter);
 
     std::size_t nbResults     = results.size();
     std::size_t oneResultSize = 0llu;

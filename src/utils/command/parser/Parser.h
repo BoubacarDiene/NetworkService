@@ -40,12 +40,6 @@ namespace utils::command {
  * @brief A helper class to parse a string representing a command so
  *        as to create a real command that can be passed to @ref IExecutor.
  *
- * @note Copy contructor, copy-assignment operator, move constructor and
- *       move-assignment operator are defined to be compliant with the
- *       "Rule of five"
- *
- * @see https://en.cppreference.com/w/cpp/language/rule_of_three
- *
  * @author Boubacar DIENE <boubacar.diene@gmail.com>
  * @date April 2020
  */
@@ -74,24 +68,6 @@ public:
         void operator()(Command* command);
     };
 
-    /* Class constructor */
-    Parser();
-
-    /** Class destructor */
-    ~Parser();
-
-    /** Class copy constructor */
-    Parser(const Parser&) = delete;
-
-    /** Class copy-assignment operator */
-    Parser& operator=(const Parser&) = delete;
-
-    /** Class move constructor */
-    Parser(Parser&&) = delete;
-
-    /** Class move-assignment operator */
-    Parser& operator=(Parser&&) = delete;
-
     /**
      * @brief Parse the given string to create a command
      *
@@ -103,12 +79,8 @@ public:
      *
      * @see Command
      */
-    [[nodiscard]] std::unique_ptr<Command, CommandDeleter>
-        parse(const std::string& commandToParse, char delimiter = ' ') const;
-
-private:
-    struct Internal;
-    std::unique_ptr<Internal> m_internal;
+    [[nodiscard]] static std::unique_ptr<Command, CommandDeleter>
+        parse(const std::string& commandToParse, char delimiter = ' ');
 };
 
 }

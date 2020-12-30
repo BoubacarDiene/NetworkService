@@ -36,7 +36,6 @@ using namespace utils::command;
 
 struct Interface::Internal {
     const IExecutor& executor;
-    const Parser parser;
 
     explicit Internal(const IExecutor& providedExecutor) : executor(providedExecutor)
     {}
@@ -50,7 +49,7 @@ Interface::~Interface() = default;
 
 void Interface::applyCommand(const std::string& command) const
 {
-    const auto& parsedCommand = m_internal->parser.parse(command);
+    const auto& parsedCommand = Parser::parse(command);
 
     const IExecutor::ProgramParams params
         = {parsedCommand->pathname, parsedCommand->argv, nullptr};

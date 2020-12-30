@@ -39,7 +39,6 @@ struct Rule::Internal {
 
     const std::string& name;
     const std::vector<std::string>& commands;
-    const Parser parser;
 
     explicit Internal(const IExecutor& providedExecutor,
                       const std::string& providedName,
@@ -62,7 +61,7 @@ void Rule::applyCommands() const
 {
     for (const std::string& command : m_internal->commands) {
         const std::unique_ptr<Parser::Command, Parser::CommandDeleter>& parsedCommand
-            = m_internal->parser.parse(command);
+            = Parser::parse(command);
 
         const IExecutor::ProgramParams params
             = {parsedCommand->pathname, parsedCommand->argv, nullptr};
