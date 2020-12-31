@@ -236,7 +236,7 @@ docker run --privileged -it -u $(id -u) --rm -v $(pwd):/workdir networkservice-i
 
 Above runtime options are required to run the service. The configuration file contains commands to execute while the secure mode refers (more or less) to features used when executing commands. Running the service securely means "sanitize files", "drop privileges", "reseed PRNG" before executing commands.
 
-To improve execution time of the service, it might be interesting to test both modes then make your choice depending to your time constraints.
+To improve execution time of the service, it might be interesting to test both modes then make your choice depending on your time constraints.
 
 ### Development
 
@@ -261,7 +261,7 @@ make coverage && make install
 
 **Notes:**
 - Make sure to run coverage command after unit tests (```ctest -V``` command) and before [starting the application](#start-the-application)
-- The index.html file can then be found at *"out/share/coverage/index.html"*
+- The index.html file can then be found at *"out/share/coverage/html/index.html"*
 
 #### Generate dependency graph
 ```

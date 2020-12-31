@@ -159,8 +159,8 @@ void Linux::dropPrivileges() const
      *                 granted to the process
      *
      * Note: The real uid can differ from the effective one when for example
-     *       root changes the owner of the program to itself and set
-     * "Set-UID" bit (chmod u+s). Thus, the effective uid with be equal to 0 */
+     *       root changes the owner of the program to itself and set "Set-UID"
+     *       bit (chmod u+s). Thus, the effective uid will be equal to 0 */
     gid_t realGid      = getgid();
     gid_t effectiveGid = getegid();
     uid_t realUid      = getuid();
