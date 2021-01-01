@@ -1,0 +1,6 @@
+<map id="service::NetworkService::NetworkServiceParams" name="service::NetworkService::NetworkServiceParams">
+<area shape="rect" id="node2" href="$classservice_1_1plugins_1_1network_1_1INetwork.html" title="Configure the network (enable network interfaces, set IP addresses, add new network interfaces..." alt="" coords="5,5,191,47"/>
+<area shape="rect" id="node3" href="$classservice_1_1plugins_1_1config_1_1IConfig.html" title="Load the configuration used by the service to set up the network. " alt="" coords="13,71,183,112"/>
+<area shape="rect" id="node4" href="$classservice_1_1plugins_1_1firewall_1_1IRuleFactory.html" title="A factory class to help creating rules thus hiding low level details to the core service. " alt="" coords="8,136,188,177"/>
+<area shape="rect" id="node5" href="$classservice_1_1plugins_1_1logger_1_1ILogger.html" title="Print logs to help understanding what the service is doing. " alt="" coords="11,201,185,243"/>
+</map>

@@ -1,0 +1,3 @@
+<map id="service::plugins::firewall::RuleFactory" name="service::plugins::firewall::RuleFactory">
+<area shape="rect" id="node2" href="$classservice_1_1plugins_1_1firewall_1_1IRuleFactory.html" title="A factory class to help creating rules thus hiding low level details to the core service. " alt="" coords="5,5,185,47"/>
+</map>

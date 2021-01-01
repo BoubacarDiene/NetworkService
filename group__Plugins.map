@@ -1,0 +1,6 @@
+<map id="Plugins" name="Plugins">
+<area shape="rect" id="node1" href="$group__Implementation.html" title="Implementation" alt="" coords="273,5,400,32"/>
+<area shape="rect" id="node2" href="$group__Core.html" title="Core service" alt="" coords="5,56,108,83"/>
+<area shape="rect" id="node3" href="$group__Abstraction.html" title="Abstraction" alt="" coords="289,56,385,83"/>
+<area shape="rect" id="node4" href="$group__Data.html" title="Data structure" alt="" coords="279,107,394,133"/>
+</map>
