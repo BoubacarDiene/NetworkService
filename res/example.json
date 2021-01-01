@@ -11,14 +11,8 @@
         ],
 
         "layerCommands": [
-            {
-                "pathname": "/proc/sys/net/ipv4/ip_forward",
-                "value": "0"
-            },
-            {
-                "pathname": "/proc/sys/net/ipv4/ip_local_port_range",
-                "value": "42768-50999"
-            }
+            { "pathname": "/proc/sys/net/ipv4/ip_forward", "value": "0" },
+            { "pathname": "/proc/sys/net/ipv4/ip_local_port_range", "value": "42768 50999" }
         ]
     },
 

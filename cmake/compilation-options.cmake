@@ -113,7 +113,7 @@ if (CMAKE_BUILD_TYPE MATCHES "^Debug$")
     set(ENABLE_COVERAGE ON)
 else()
     message(STATUS "Release build")
-    list(APPEND CFLAGS_OPTIONS -s -DNDEBUG)
+    list(APPEND CFLAGS_OPTIONS -DNDEBUG)
 endif()
 
 # Address sanitizer

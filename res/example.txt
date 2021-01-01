@@ -1,0 +1,63 @@
+#################################################################################
+#                                    network                                    #
+#################################################################################
+
+  -------------------------------------------------------------------------------
+  ## interfaceNames
+  -------------------------------------------------------------------------------
+
+  "interface0" is ...
+
+  "interface1" is ...
+
+  Why is provided interfaces ("," separated) required? Why would the service fail
+  if they are not available?
+
+  -------------------------------------------------------------------------------
+  ## interfaceCommands
+  -------------------------------------------------------------------------------
+
+  What's the purpose of provided commands?
+
+  -------------------------------------------------------------------------------
+  ## layerCommands
+  -------------------------------------------------------------------------------
+
+  + 0 > /proc/sys/net/ipv4/ip_forward
+
+    Disable IP forwarding as a full network bridge configuration is used.
+
+  + 42768 50999 > /proc/sys/net/ipv4/ip_local_port_range
+
+    Set the "local port range" used to choose the local port. This can be useful
+    for various reasons:
+    - Avoid using the default range (32768 - 60999)
+    - Reduce the number of available ports on the system
+
+#################################################################################
+#                                     rules                                     #
+#################################################################################
+
+  -------------------------------------------------------------------------------
+  ## Clean old rules
+  -------------------------------------------------------------------------------
+
+  ## rule 0.0
+
+  Explain the purpose of commands in this rule ...
+
+  ## rule 0.x
+
+  Explain the purpose of commands in this rule ...
+
+  -------------------------------------------------------------------------------
+  ## <Short description of rules in this section>
+  -------------------------------------------------------------------------------
+
+  ## rule 1.1
+
+  Explain the purpose of commands in this rule ...
+
+  ## rule 1.x
+
+  Explain the purpose of commands in this rule ...
