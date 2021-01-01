@@ -210,6 +210,33 @@ TEST_F(NetworkServiceTestFixture, setupNetworkBeforeFirewall)
     ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_SUCCESS);
 }
 
+// NOLINTNEXTLINE(cert-err58-cpp, hicpp-special-member-functions)
+TEST_F(NetworkServiceTestFixture, applyLayerBeforeInterfaceCommands)
+{
+    EXPECT_CALL(m_mockConfig, load(m_configFile)).Times(1);
+
+    {
+        Sequence seq1;
+        Sequence seq2;
+
+        EXPECT_CALL(m_mockNetwork, hasInterface)
+            .InSequence(seq1, seq2)
+            .WillRepeatedly(Return(true));
+        EXPECT_CALL(m_mockNetwork, applyLayerCommands).InSequence(seq1);
+        EXPECT_CALL(m_mockNetwork, applyInterfaceCommands).InSequence(seq1);
+        EXPECT_CALL(m_mockRuleFactory, createRule)
+            .InSequence(seq2)
+            .WillOnce([]([[maybe_unused]] const std::string& name,
+                         [[maybe_unused]] const std::vector<std::string>& commands) {
+                auto rule = std::make_unique<MockRule>();
+                EXPECT_CALL(*rule, applyCommands);
+                return rule;
+            });
+    }
+
+    ASSERT_EQ(m_networkService.applyConfig(m_configFile), EXIT_SUCCESS);
+}
+
 }
 
 int main(int argc, char** argv)

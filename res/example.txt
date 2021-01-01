@@ -10,7 +10,7 @@
 
   "interface1" is ...
 
-  Why is provided interfaces ("," separated) required? Why would the service fail
+  Why are provided interfaces ("," separated) required? Why would the service fail
   if they are not available?
 
   -------------------------------------------------------------------------------
